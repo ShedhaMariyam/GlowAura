@@ -1,0 +1,234 @@
+ :root {
+            --bg-cream: #f6efe7;
+            --bg-beige: #e5c8b8;
+            --text-dark: #2b2b2b;
+            --text-gray: #4b5563;
+            --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+        }
+        
+        .hero-section {
+            background-color: var(--bg-cream);
+            min-height: 392px;
+        }
+        
+        .hero-content {
+            padding: 96px 0;
+        }
+        
+        .hero-title {
+            font-size: 40.8px;
+            font-weight: 300;
+            line-height: 48px;
+        }
+        
+        .hero-text {
+            font-size: 15.3px;
+            color: var(--text-gray);
+        }
+        
+        .btn-shop {
+            background-color: var(--bg-beige);
+            color: var(--text-dark);
+            border: none;
+            padding: 14px 32px;
+            font-size: 13.6px;
+            border-radius: 8px;
+        }
+        
+        .btn-shop:hover {
+            background-color: #d4b8a8;
+            color: var(--text-dark);
+        }
+        
+        .category-card {
+            border-radius: 50%;
+            width: 224px;
+            height: 224px;
+            box-shadow: var(--card-shadow);
+            background-size: cover;
+            background-position: center;
+            margin: 0 auto;
+        }
+        
+        .category-title {
+            font-size: 15.3px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 25.5px;
+            font-weight: 300;
+            text-align: center;
+            color: var(--text-dark);
+        }
+        
+        .product-card {
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 256px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .product-title {
+            font-size: 15.3px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .product-price {
+            font-size: 13.6px;
+            color: #1f2937;
+        }
+        
+        .btn-add-cart {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            border: none;
+            padding: 8px 16px;
+            font-size: 11.9px;
+            border-radius: 8px;
+        }
+        
+        .btn-add-cart:hover {
+            background-color: #ece5dd;
+            color: var(--text-dark);
+        }
+        
+        .why-image {
+            width: 100%;
+            height: 900px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        
+        .feature-title {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .feature-text {
+            font-size: 13.6px;
+            color: var(--text-gray);
+        }
+        
+        .benefit-card {
+            text-align: center;
+        }
+        
+        .benefit-icon {
+            font-size: 24px;
+            color: var(--text-dark);
+        }
+        
+        .benefit-title {
+            font-size: 15.3px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .benefit-text {
+            font-size: 13.6px;
+            color: var(--text-gray);
+        }
+        
+        .footer-section {
+            background-color: var(--bg-cream);
+            padding: 48px 0;
+        }
+        
+        .footer-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .footer-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 13.6px;
+        }
+        
+        .footer-link:hover {
+            color: var(--text-dark);
+        }
+        
+        .footer-brand {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .footer-tagline {
+            font-size: 11.9px;
+            color: var(--text-gray);
+        }
+        
+        .copyright {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 24px;
+            margin-top: 48px;
+            text-align: center;
+            font-size: 11.9px;
+            color: var(--text-gray);
+        }
+        
+        .navbar-brand {
+            font-size: 20.4px;
+            font-weight: 600;
+            color: var(--text-dark) !important;
+        }
+        
+        .nav-link {
+            font-size: 13.6px;
+            color: var(--text-dark) !important;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -8px;
+            background-color: #b9c8b0;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10.2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-wrapper {
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 28px;
+            }
+            
+            .category-card {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .why-image {
+                height: 400px;
+            }
+        }

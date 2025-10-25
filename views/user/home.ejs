@@ -1,0 +1,177 @@
+<%- include('../../views/partials/user/header.ejs') %>
+
+    <section class="hero-section">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title mb-4">Illuminate Your Aura</h1>
+                    <p class="hero-text mb-2">Glow Naturally. Feel the Aura. Discover luxury</p>
+                    <p class="hero-text mb-4">skincare that enhances your natural radiance.</p>
+                    <button class="btn btn-shop">Shop All</button>
+                </div>
+                <div class="col-lg-6">
+                    <img src="/hero.jpg" alt="Hero Image" class="img-fluid rounded shadow">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop by Category -->
+    <section class="py-5" id="products">
+        <div class="container">
+            <h2 class="section-title mb-5">Shop by Category</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" style="background-image: url('./img/image.png')"></div>
+                    <div class="category-title mt-3">
+                        <span>Facewash</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" style="background-image: url('./img/image-2.png')"></div>
+                    <div class="category-title mt-3">
+                        <span>Moisturizer</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card" style="background-image: url('./img/image-4.png')"></div>
+                    <div class="category-title mt-3">
+                        <span>Sunscreen</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <h2 class="section-title mb-5">Featured Products</h2>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card product-card">
+                        <img src="img/container-4.svg" class="product-img" alt="Radiance Facewash">
+                        <div class="card-body">
+                            <h5 class="product-title">Radiance Facewash</h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="product-price">$24.99</span>
+                                <button class="btn btn-add-cart">
+                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card product-card">
+                        <img src="img/container-5.svg" class="product-img" alt="Hydra-Boost Moisturizer">
+                        <div class="card-body">
+                            <h5 class="product-title">Hydra-Boost Moisturizer</h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="product-price">$34.99</span>
+                                <button class="btn btn-add-cart">
+                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card product-card">
+                        <img src="img/container-2.svg" class="product-img" alt="UV Shield Sunscreen">
+                        <div class="card-body">
+                            <h5 class="product-title">UV Shield Sunscreen</h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="product-price">$29.99</span>
+                                <button class="btn btn-add-cart">
+                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card product-card">
+                        <img src="img/container-6.svg" class="product-img" alt="Overnight Repair Serum">
+                        <div class="card-body">
+                            <h5 class="product-title">Overnight Repair Serum</h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="product-price">$49.99</span>
+                                <button class="btn btn-add-cart">
+                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why GlowAura -->
+    <section class="py-5" id="about">
+        <div class="container">
+            <h2 class="section-title mb-5">Why GlowAura</h2>
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <img src="./img/image-3.png" alt="Why GlowAura" class="why-image">
+                </div>
+                <div class="col-lg-6 d-flex flex-column justify-content-center">
+                    <div class="mb-4">
+                        <h3 class="feature-title mb-2">Natural Ingredients</h3>
+                        <p class="feature-text mb-0">We source the finest natural ingredients from around the world, ensuring our</p>
+                        <p class="feature-text">formulations are gentle yet effective.</p>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="feature-title mb-2">Sustainable Practices</h3>
+                        <p class="feature-text mb-0">From eco-friendly packaging to ethical sourcing, we're committed to minimizing</p>
+                        <p class="feature-text">our environmental footprint.</p>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="feature-title mb-2">Cruelty-Free</h3>
+                        <p class="feature-text mb-0">We never test on animals and work only with suppliers who share our</p>
+                        <p class="feature-text">commitment to cruelty-free practices.</p>
+                    </div>
+                    <div>
+                        <h3 class="feature-title mb-2">Science-Backed</h3>
+                        <p class="feature-text mb-0">Our dermatologist-developed formulas combine the best of nature with</p>
+                        <p class="feature-text">scientific innovation for real results.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="py-5" style="background-color: var(--bg-cream);">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="benefit-card">
+                        <i class="bi bi-truck benefit-icon mb-3"></i>
+                        <h4 class="benefit-title mb-2">Free Shipping</h4>
+                        <p class="benefit-text">On all orders over $50</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="benefit-card">
+                        <i class="bi bi-shield-check benefit-icon mb-3"></i>
+                        <h4 class="benefit-title mb-2">Dermatologist Tested</h4>
+                        <p class="benefit-text">Safe for all skin types</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="benefit-card">
+                        <i class="bi bi-lock benefit-icon mb-3"></i>
+                        <h4 class="benefit-title mb-2">Secure Payment</h4>
+                        <p class="benefit-text">100% secure checkout</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <%- include('../../views/partials/user/footer.ejs') %>
