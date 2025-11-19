@@ -1,47 +1,80 @@
- :root {
-            --bg-cream: #f6efe7;
-            --bg-beige: #e5c8b8;
-            --text-dark: #2b2b2b;
-            --text-gray: #4b5563;
-            --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-        }
-        
+:root{
+  --bg-cream: #f6efe7;
+  --bg-beige: #e9bba2;
+  --text-dark: #2b2b2b;
+  --text-gray: #6b6b6b;
+  --card-shadow: 0 6px 18px rgba(15,15,15,0.06);
+}
+
+
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: var(--text-dark);
+            background: #fff;
+            }
+
+        .navbar-brand { 
+            font-size: 22px; 
+            font-weight: 600; 
+            color: var(--text-dark) !important;
+         }
+
+        .navbar .navbar-nav { 
+            margin-left: auto;
+            margin-right: auto;
+            gap: 2rem;   
+            } 
+        .navbar .nav-link { 
+            font-size: 20.6px; 
+            color: var(--text-dark) !important; 
+       
         }
         
+      
         .hero-section {
-            background-color: var(--bg-cream);
-            min-height: 392px;
+            background: var(--bg-cream);
+            min-height: 420px;
+            display: flex;
         }
         
         .hero-content {
-            padding: 96px 0;
+            padding: 50px 0;
+            width: 100%;
         }
         
+        
         .hero-title {
-            font-size: 40.8px;
-            font-weight: 300;
+            font-size: 56px;
+            font-weight: 400;
             line-height: 48px;
         }
         
         .hero-text {
-            font-size: 15.3px;
+            font-size: 19.3px;
             color: var(--text-gray);
+            padding-left: 10 px;
         }
         
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;       /* crucial: crops and covers the entire column */
+             object-position: center center; /* adjust to focus point */
+             display: block;
+}
         .btn-shop {
-            background-color: var(--bg-beige);
+            background-color: #e9bba2;
             color: var(--text-dark);
             border: none;
             padding: 14px 32px;
-            font-size: 13.6px;
-            border-radius: 8px;
+            font-size: 15.6px;
+            border-radius: 10px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.03);
         }
         
         .btn-shop:hover {
-            background-color: #d4b8a8;
+            background-color: #e4bda5;
             color: var(--text-dark);
         }
         
@@ -56,7 +89,7 @@
         }
         
         .category-title {
-            font-size: 15.3px;
+            font-size: 19.3px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
@@ -65,8 +98,8 @@
         }
         
         .section-title {
-            font-size: 25.5px;
-            font-weight: 300;
+            font-size: 28.5px;
+            font-weight: 500;
             text-align: center;
             color: var(--text-dark);
         }
@@ -84,22 +117,22 @@
         }
         
         .product-title {
-            font-size: 15.3px;
-            font-weight: 500;
+            font-size: 22.3px;
+            font-weight: 600;
             color: var(--text-dark);
         }
         
         .product-price {
-            font-size: 13.6px;
+            font-size: 15.6px;
             color: #1f2937;
         }
         
         .btn-add-cart {
-            background-color: var(--bg-cream);
+            background-color: var(--bg-beige);
             color: var(--text-dark);
             border: none;
             padding: 8px 16px;
-            font-size: 11.9px;
+            font-size: 15.9px;
             border-radius: 8px;
         }
         
@@ -117,13 +150,13 @@
         }
         
         .feature-title {
-            font-size: 17px;
-            font-weight: 500;
+            font-size: 22px;
+            font-weight: 600;
             color: var(--text-dark);
         }
         
         .feature-text {
-            font-size: 13.6px;
+            font-size: 15.6px;
             color: var(--text-gray);
         }
         
@@ -132,28 +165,28 @@
         }
         
         .benefit-icon {
-            font-size: 24px;
+            font-size: 27px;
             color: var(--text-dark);
         }
         
         .benefit-title {
-            font-size: 15.3px;
-            font-weight: 500;
+            font-size: 18.3px;
+            font-weight: 600;
             color: var(--text-dark);
         }
         
         .benefit-text {
-            font-size: 13.6px;
+            font-size: 15.6px;
             color: var(--text-gray);
         }
         
         .footer-section {
-            background-color: var(--bg-cream);
+            background-color: rgb(246 239 231);
             padding: 48px 0;
         }
         
         .footer-title {
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 600;
             color: var(--text-dark);
         }
@@ -161,7 +194,7 @@
         .footer-link {
             color: var(--text-gray);
             text-decoration: none;
-            font-size: 13.6px;
+            font-size: 15.6px;
         }
         
         .footer-link:hover {
@@ -169,13 +202,13 @@
         }
         
         .footer-brand {
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 600;
             color: var(--text-dark);
         }
         
         .footer-tagline {
-            font-size: 11.9px;
+            font-size: 15.9px;
             color: var(--text-gray);
         }
         
@@ -184,18 +217,18 @@
             padding-top: 24px;
             margin-top: 48px;
             text-align: center;
-            font-size: 11.9px;
+            font-size: 15.9px;
             color: var(--text-gray);
         }
         
         .navbar-brand {
-            font-size: 20.4px;
+            font-size: 23.4px;
             font-weight: 600;
             color: var(--text-dark) !important;
         }
         
         .nav-link {
-            font-size: 13.6px;
+            font-size: 15.6px;
             color: var(--text-dark) !important;
         }
         
@@ -216,8 +249,18 @@
         
         .icon-wrapper {
             position: relative;
+             cursor: pointer;
         }
         
+
+
+        .icon-wrapper {
+            position: relative;
+            display: inline-block;
+           
+        }
+
+
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 28px;
@@ -229,6 +272,47 @@
             }
             
             .why-image {
-                height: 400px;
+                height: 300px;
             }
         }
+        .btn-shop.btn-outline {
+        border: 2px solid var(--bg-beige);         
+        background: transparent;
+        color: #2b2b2b;
+        border-radius: 6px;              
+        padding: 0.4rem 1.2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+}
+
+    .btn-shop.btn-outline:hover {
+        background: var(--bg-beige);
+        color: white !important;
+        }
+
+
+.profile-circle::after {
+    display: none !important;
+}
+
+
+.profile-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #e9bba2;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+} 
+
+
+.dropdown-menu a:hover{
+    background-color:#e9bba2 ;   
+}
+

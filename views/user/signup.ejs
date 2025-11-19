@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - GlowAura</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --bg-cream: #f6efe7;
+            --bg-beige: #e5c8b8;
+            --text-dark: #2b2b2b;
+            --text-gray: #4b5563;
+            --primary-border: #d1d5db;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-cream);
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+            padding: 2.5rem 2rem 2rem 2rem;
+        }
+        .form-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+        }
+        .input-group-text {
+            background: transparent;
+            border: none;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--primary-border);
+            background: #fff;
+            color: #2b2b2b;
+            font-size: 19px;
+        }
+        .form-control::placeholder {
+            color: #cccccc;
+        }
+        .btn-signup {
+            background-color: var(--bg-beige);
+            color: var(--text-dark);
+            border-radius: 8px;
+            padding: 14px 0;
+            font-size: 16.6px;
+            border: none;
+            width: 100%;
+        }
+        .btn-signup:hover {
+            background-color: #d4b8a8;
+            color: var(--text-dark);
+        }
+        .divider {
+            text-align: center;
+            position: relative;
+            margin: 18px 0;
+        }
+        .divider:before, .divider:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #e5e7eb;
+        }
+        .divider:before { left: 0; }
+        .divider:after { right: 0; }
+        .divider span {
+            background: #fff;
+            padding: 0 10px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+        .login-link {
+            color: #b9c8b0 !important;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .error-message{
+            color: red;
+            font-size: 0.75rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-lg-5 col-md-7 col-12">
+            <div class="form-card shadow">
+                <div class="mb-4 text-center">
+                    <div class="mb-2">
+                        <span class="fw-bold fs-4" style="color:var(--text-dark)">GlowAura</span>
+                    </div>
+                    <div class="fs-5 fw-medium" style="color:var(--text-dark)">Create your account</div>
+                </div>
+
+                <!-- keep action/method attributes for progressive enhancement -->
+                <form id="signform" method="post" action="/signup" novalidate>
+
+                    <!-- server-rendered message fallback (if server still renders page with message) -->
+                    <% if (typeof message !== "undefined" && message) { %>
+                        <div class="alert alert-danger"><%= message %></div>
+                    <% } %>
+
+                    <!-- Name -->
+                    <div class="mb-3">
+                        <label for="signupName" class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="John Doe" id="name" name="name" autocomplete="name">   
+                        </div>
+                        <div id="error1" class="error-message"></div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="signupEmail" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="you@example.com" id="email" name="email" autocomplete="email">    
+                        </div>
+                        <div id="error2" class="error-message"></div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-2">
+                        <label for="signupPassword" class="form-label">Password</label>
+                        <div class="input-group">
+                           
+                             <input type="password" class="form-control" placeholder="••••••••" id="password" name ="password" autocomplete="new-password">
+                    
+                        </div>
+                        <small class="text-muted d-block mt-1" style="font-size:11px;">
+                            Password must be at least 8 characters long with a mix of letters, numbers, and symbols.
+                        </small> 
+                        <div id="error3" class="error-message"></div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-3">
+                        <label for="signupPassword2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" placeholder="••••••••" id="confirmpassword" name="confirmpassword" autocomplete="new-password" >
+                         <div id="error4" class="error-message"></div>
+                    </div>
+
+                    <!-- Referral -->
+                    <div class="mb-3">
+                        <label for="referralCode" class="form-label">Referral Code (Optional)</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter code if you have one" id="referralCode" name="referralCode">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-signup">Create Account</button>
+                </form>
+
+                <!-- Already have account -->
+                <div class="text-center mt-3">
+                    <span style="color:#4b5563;font-size:12px;">Already have an account?</span>
+                    <a href="/signin" class="login-link ms-1">Sign in</a>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider"><span>Or sign up with</span></div>
+
+                <!-- Social -->
+                <div class="d-flex justify-content-center">
+                    <a href="/auth/google" class="btn btn-outline-secondary w-50 me-2"><i class="bi bi-google me-1"></i> Google</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+  
+
+    // Elements
+    const name = document.getElementById("name");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const confirmpassword = document.getElementById("confirmpassword");
+    const error1 = document.getElementById ("error1");
+    const error2 = document.getElementById ("error2");
+    const error3 = document.getElementById ("error3");
+    const error4 = document.getElementById ("error4");
+    const signform = document.getElementById("signform");
+    const referralCode = document.getElementById("referralCode");
+    const submitBtn = document.getElementById("submitBtn");
+
+
+
+    // validation helpers
+    function nameValidateChecking() {
+        const nameval = (name.value || "").trim();
+        const namepattern = /^[A-Za-z\s]+$/;
+
+        if (nameval === "") {
+            error1.style.display = "block";
+            error1.innerHTML = "Name is mandatory";
+            return false;
+        } else if (!namepattern.test(nameval)) {
+            error1.style.display = "block";
+            error1.innerHTML = "Name must contain alphabets only";
+            return false;
+        } else {
+            error1.style.display = "none";
+            error1.innerHTML = "";
+            return true;
+        }
+    }
+
+    function emailValidateChecking() {
+        const emailval = (email.value || "").trim();
+        const emailpattern = /^[A-Za-z0-9_\-.]+@[a-zA-Z]+\.[a-z]{2,4}$/;
+
+        if (emailval === "") {
+            error2.style.display = "block";
+            error2.innerHTML = "Email is mandatory";
+            return false;
+        } else if (!emailpattern.test(emailval)) {
+            error2.style.display = "block";
+            error2.innerHTML = "Invalid email format";
+            return false;
+        } else {
+            error2.style.display = "none";
+            error2.innerHTML = "";
+            return true;
+        }
+    }
+
+    function passwordValidateChecking() {
+        const passwordval = password.value || "";
+        const confirmpasswordval = confirmpassword.value || "";
+        const alpha = /[a-zA-Z]/;
+        const digit = /\d/;
+
+        if (passwordval.trim() === "") {
+            error3.style.display = "block";
+            error3.innerHTML = "Password is mandatory";
+            return false;
+        } else if (passwordval.length < 8) {
+            error3.style.display = "block";
+            error3.innerHTML = "Should contain at least 8 characters";
+            return false;
+        } else if (!alpha.test(passwordval) || !digit.test(passwordval)) {
+            error3.style.display = "block";
+            error3.innerHTML = "Should contain alpha numeric characters";
+            return false;
+        } else {
+            error3.style.display = "none";
+            error3.innerHTML = "";
+        }
+
+        if (confirmpasswordval.trim() === "") {
+            error4.style.display = "block";
+            error4.innerHTML = "Confirm Password is mandatory";
+            return false;
+        } else if (passwordval !== confirmpasswordval) {
+            error4.style.display = "block";
+            error4.innerHTML = "Password and Confirm Password should be same";
+            return false;
+        } else {
+            error4.style.display = "none";
+            error4.innerHTML = "";
+            return true;
+        }
+    }
+
+   
+
+    
+    signform.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        // perform client-side validation
+        const okName = nameValidateChecking();
+        const okEmail = emailValidateChecking();
+        const okPass = passwordValidateChecking();
+
+        if (!okName || !okEmail || !okPass) {
+            return; // don't submit if client validation fails
+        }
+
+        // prevent double submits
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
+
+        // prepare payload
+        const payload = {
+            name: name.value.trim(),
+            email: email.value.trim(),
+            password: password.value,
+            confirmpassword: confirmpassword.value,
+            referralCode: referralCode.value ? referralCode.value.trim() : undefined
+        };
+
+        try {
+            // send POST to /signup using axios
+            const response = await axios.post('/signup', payload, {
+                validateStatus: () => true 
+            });
+
+            const respUrl = response.request && response.request.responseURL;
+
+            if (response.data && response.data.success && response.data.redirectUrl) {
+                 window.location.href = response.data.redirectUrl; // handle JSON redirect
+                  return;
+                }
+          
+            if (response.data === "email-error" || (typeof response.data === "object" && response.data === "email-error")) {
+                alert("Failed to send verification email. Please try again or contact support.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Create Account";
+                return;
+            }
+
+
+            if (response.status >= 400 && response.data && typeof response.data === 'object' && response.data.message) {
+                alert(response.data.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Create Account";
+                return;
+            }
+
+          
+            if (respUrl && respUrl.includes('/verify-otp')) {
+             
+                window.location.href = respUrl;
+                return;
+            }
+
+
+            if (typeof response.data === 'string' && response.data.trim().startsWith('<')) {
+                // replace current document with server-rendered HTML (fallback)
+                document.open();
+                document.write(response.data);
+                document.close();
+                return;
+            }
+
+            // As a last attempt, if status is 200 assume success and navigate to /verify-otp
+            if (response.status === 200) {
+                window.location.href = '/verify-otp';
+                return;
+            }
+
+            // Unexpected response
+            alert("Unexpected server response. Please try again.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Account";
+
+        } catch (err) {
+            console.error("Signup error:", err);
+            alert("Server error. Please try again later.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Account";
+        }
+    });
+</script>
+
+</body>
+</html>

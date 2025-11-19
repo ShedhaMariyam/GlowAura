@@ -1,7 +1,9 @@
 <%- include('../../views/partials/user/header.ejs') %>
 
+    <!-- Hero Section -->
     <section class="hero-section">
-        <div class="container hero-content">
+        <div class="container-fluid hero-content p-0 ps-5">
+
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h1 class="hero-title mb-4">Illuminate Your Aura</h1>
@@ -10,7 +12,7 @@
                     <button class="btn btn-shop">Shop All</button>
                 </div>
                 <div class="col-lg-6">
-                    <img src="/hero.jpg" alt="Hero Image" class="img-fluid rounded shadow">
+                    <img src="./images/heroimage.png" alt="Hero Image" class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
@@ -22,21 +24,21 @@
             <h2 class="section-title mb-5">Shop by Category</h2>
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image.png')"></div>
-                    <div class="category-title mt-3">
-                        <span>Facewash</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
+                    <div class="category-card" style="background-image: url('/images/facewash.jpg');"></div>
+                        <div class="category-title mt-3">
+                            <span>Facewash</span>
+                             <i class="bi bi-arrow-right"></i>
+                        </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image-2.png')"></div>
+                    <div class="category-card" style="background-image: url('/images/moisturizer.jpg')"></div>
                     <div class="category-title mt-3">
                         <span>Moisturizer</span>
                         <i class="bi bi-arrow-right"></i>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image-4.png')"></div>
+                    <div class="category-card" style="background-image: url('./images/sunscreen.png')"></div>
                     <div class="category-title mt-3">
                         <span>Sunscreen</span>
                         <i class="bi bi-arrow-right"></i>
@@ -53,7 +55,7 @@
             <div class="row g-4">
                 <div class="col-lg-3 col-md-6">
                     <div class="card product-card">
-                        <img src="img/container-4.svg" class="product-img" alt="Radiance Facewash">
+                        <img src="./images/facewash.jpg" class="product-img" alt="Radiance Facewash">
                         <div class="card-body">
                             <h5 class="product-title">Radiance Facewash</h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -67,7 +69,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="card product-card">
-                        <img src="img/container-5.svg" class="product-img" alt="Hydra-Boost Moisturizer">
+                        <img src="/images/moisturizer.jpg" class="product-img" alt="Hydra-Boost Moisturizer">
                         <div class="card-body">
                             <h5 class="product-title">Hydra-Boost Moisturizer</h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -81,7 +83,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="card product-card">
-                        <img src="img/container-2.svg" class="product-img" alt="UV Shield Sunscreen">
+                        <img src="./images/sunscreen.jpg" class="product-img" alt="UV Shield Sunscreen">
                         <div class="card-body">
                             <h5 class="product-title">UV Shield Sunscreen</h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -95,7 +97,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="card product-card">
-                        <img src="img/container-6.svg" class="product-img" alt="Overnight Repair Serum">
+                        <img src="/images/moisturizer.jpg" class="product-img" alt="Overnight Repair Serum">
                         <div class="card-body">
                             <h5 class="product-title">Overnight Repair Serum</h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -117,7 +119,7 @@
             <h2 class="section-title mb-5">Why GlowAura</h2>
             <div class="row g-5">
                 <div class="col-lg-6">
-                    <img src="./img/image-3.png" alt="Why GlowAura" class="why-image">
+                    <img src="./images/why.avif" alt="Why GlowAura" class="why-image">
                 </div>
                 <div class="col-lg-6 d-flex flex-column justify-content-center">
                     <div class="mb-4">
@@ -173,5 +175,6 @@
             </div>
         </div>
     </section>
+
 
   <%- include('../../views/partials/user/footer.ejs') %>

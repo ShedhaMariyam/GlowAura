@@ -9,12 +9,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
-    "dotevn": "^0.0.1-security",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.2",
-    "nodemon": "^3.1.10"
+    "nocache": "^4.0.0",
+    "nodemailer": "^7.0.10",
+    "nodemon": "^3.1.11",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
