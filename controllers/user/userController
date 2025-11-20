@@ -292,7 +292,7 @@ const signin = async (req, res) => {
     }
     
     // if user blocked
-    if(findUser.isBlocked){
+    if(findUser.is_Blocked){
       return res.render('signin',{message :'User is blocket by admin'});
     }
     
@@ -304,7 +304,8 @@ const signin = async (req, res) => {
     if (!passwordMatch) {
       return res.render('signin', { message: 'Invalid email or password' });
     }
-
+    findUser.lastLogin = new Date();
+    await findUser.save();
     req.session.user = findUser._id;
 
     res.redirect('/');

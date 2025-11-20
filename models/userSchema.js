@@ -30,50 +30,54 @@ const userSchema = new Schema({
         required : false,
         minlength : 6
     },
+    lastLogin: {
+        type: Date,
+    },  
+
     is_Blocked : {
-    type: Boolean,
-    default: false
+        type: Boolean,
+        default: false
     },
    is_admin : {
-    type: Boolean,
-    default: false
+        type: Boolean,
+        default: false
    },
   is_referred : {
-    type: Boolean,
-    default: false
+      type: Boolean,
+      default: false
   },
   referralCode : {
-     type: String,
-     unique: true,
-     sparse: true 
+      type: String,
+      unique: true,
+      sparse: true 
   },
   cart : [{
-    type : Schema.Types.ObjectId,
-    ref : "Cart",
+      type : Schema.Types.ObjectId,
+      ref : "Cart",
   }],
   wallet : {
-    type : Number,
-    default : 0,
+      type : Number,
+      default : 0,
   },
   wishlist : [{
-    type : Schema.Types.ObjectId,
-    ref  : "Wishlist"
+      type : Schema.Types.ObjectId,
+      ref  : "Wishlist"
   }],
   orderHistory : [{
-    type : Schema.Types.ObjectId,
-    ref: "Order"
+      type : Schema.Types.ObjectId,
+      ref: "Order"
   }],
   reviews : [{
-    type : Schema.Types.ObjectId,
-    ref : "Reviews"
+      type : Schema.Types.ObjectId,
+      ref : "Reviews"
   }],
   messages : [{
-    type: Schema.Types.ObjectId,
-    ref : "Messages"
+      type: Schema.Types.ObjectId,
+      ref : "Messages"
   }],
   redeemedUsers: [{
-    type : Schema.Types.ObjectId,
-    ref : "User"
+      type : Schema.Types.ObjectId,
+      ref : "User"
   }],
   searchHistory : [{
     category : {

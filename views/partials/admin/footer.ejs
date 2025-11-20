@@ -1,30 +1,21 @@
-<!-- views/partials/sidebar.ejs -->
-<aside id="sidebar" class="sidebar d-flex flex-column">
-  <div class="sidebar-top px-3 py-3 d-flex align-items-center justify-content-between">
-    <div class="brand d-flex align-items-center gap-2">
-      <span class="brand-logo"></span>
-      <span class="fw-bold">GlowAura</span>
-    </div>
-    <button id="sidebarCollapse" class="btn btn-sm btn-light d-md-none">
-      <i class="bi bi-list"></i>
-    </button>
-  </div>
 
-  <nav class="nav flex-column mt-3 px-2">
-    <a href="/admin/dashboard" class="nav-link <%= active==='dashboard' ? 'active' : '' %>">
-      <i class="bi bi-grid me-2"></i> Dashboard
-    </a>
-    <a href="/admin/products" class="nav-link <%= active==='products' ? 'active' : '' %>">
-      <i class="bi bi-box-seam me-2"></i> Products
-    </a>
-    <a href="/admin/orders" class="nav-link <%= active==='orders' ? 'active' : '' %>">
-      <i class="bi bi-bag-check me-2"></i> Orders
-    </a>
-    <a href="/admin/users" class="nav-link <%= active==='users' ? 'active' : '' %>">
-      <i class="bi bi-people me-2"></i> Users
-    </a>
-    <a href="/admin/logout" class="nav-link text-danger mt-3">
-      <i class="bi bi-box-arrow-right me-2"></i> Logout
-    </a>
-  </nav>
-</aside>
+        <!-- footer: pagination / results -->
+        <div class="p-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
+          <div class="text-muted small">Showing page <%= currentPage %> of <%= totalPages %> — <%= resultsCount %> results</div>
+         
+          <nav aria-label="Page navigation">
+            <ul class="pagination mb-0">
+                <%for(let i=1;i<=totalPages;i++){ %>
+              <!--<li class="page-item disabled"><a class="page-link">Previous</a></li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>-->
+              <li class="page-item <%=(i===currentPage) ? 'active': '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a></li>
+              <!--<li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>-->
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+         </div>
+
+   

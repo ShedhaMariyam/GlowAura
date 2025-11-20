@@ -107,6 +107,55 @@
       background:#28a745; color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center;
     }
 
+    .search-card { background:var(--panel); border-radius:12px; padding:18px; box-shadow:0 6px 18px rgba(15,15,15,0.04); margin-bottom:18px; }
+.table thead th {
+  border-bottom: none;
+  color: #6b6b6b; 
+  font-weight:600;
+}
+
+.user-row .avatar {  
+  border-radius:50%; 
+  object-fit:cover; 
+}
+
+.status-active { 
+  background:#ecf8ef; 
+  color:#0b7a3a; 
+}
+
+.status-blocked { 
+  background:#fdecef; 
+  color:#b91c1c; 
+}
+
+/* Row height increased */
+.table tbody tr {
+  height: 95px; /* set row height to show 3 rows in good spacing */
+}
+
+/* Your existing TD style */
+.table tbody tr td { 
+  vertical-align: middle; 
+  border-top:1px solid #f1ece8; 
+}
+
+/* Icon scaling */
+.table .btn .bi {
+  transform: scale(1.08);
+  transition: transform .12s ease;
+}
+
+.table .btn:hover .bi {
+  transform: scale(1.12);
+}
+
+.table .btn .bi {
+  color: #2b2b2b;
+}
+
+
+    .pager-wrap { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:8px; }
     /* page content */
     .page-content { padding: 28px; }
 

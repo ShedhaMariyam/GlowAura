@@ -44,7 +44,7 @@
                         <%if(locals.user){%>
                           <div class="dropdown">
                               <div class="profile-circle" data-bs-toggle="dropdown">
-                                  <%= locals.user.name.charAt(0).toUpperCase() %>
+                                  <%= locals.user.name.substring(0, 2).toUpperCase() %>
                              </div>
 
                              <ul class="dropdown-menu dropdown-menu-end">

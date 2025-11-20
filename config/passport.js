@@ -1,6 +1,5 @@
 const passport = require ('passport');
 const GoogleStrategy = require ('passport-google-oauth20').Strategy;
-const user = require ("../models/userSchema");
 const User = require('../models/userSchema');
 const env = require('dotenv').config();
 
@@ -16,37 +15,46 @@ passport.use(new GoogleStrategy({
     async (accessToken, refreshToken, profile, done)=>{
     try {
         const googleId = profile.id;
-        const email = profile.emails[0].value;
+        const email = profile.emails?.[0]?.value?.toLowerCase();
         const name = profile.displayName;
 
+        // find by google id 
+
         let user = await User.findOne({googleId})
+
         if(user){
-
-            return done(null,user); //user already exist
-               
-        }
-
-        user = await User.findOne({ email }); //check by email
-
-        //link google account to existing email
-        if(user)
-        {
-            user.googleId = googleId;
+         // update lastLogin 
+            user.lastLogin = new Date();
             await user.save();
-            return done(null, user);
+            return done(null, user);       
         }
 
-        user = new User({
+
+        //Try to find by email
+        if(email){
+        user = await User.findOne({ email }); 
+        //link google account to existing email
+            if(user)
+            {
+                user.googleId = googleId;
+                user.lastLogin = new Date();
+                await user.save();
+                return done(null, user);
+            }
+        }
+
+        const newUser = new User({
             name : name,
             email : email,
             googleId : googleId,
+            lastLogin: new Date()
             });
 
-        await user.save();
-    return done(null,user);
+        await newUser.save();
+    return done(null, newUser);
     }
     catch (error) { 
-
+        console.error('GoogleStrategy error:', err);
         return done(error,null);
 
     }
@@ -56,16 +64,16 @@ passport.use(new GoogleStrategy({
 ));
 
 passport.serializeUser((user,done)=>{
-    done(null,user.id)
+    done(null,user.id) //store user id in session
 });
 
-passport.deserializeUser((id,done)=>{
-    User.findById(id)
-    .then(user=>{ void
-            done(null,user)
-    }).catch(eer =>{
-        done(err,null)
-    })
-})
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user || null);
+  } catch (err) {
+    done(err, null);
+  }
+});
 
 module.exports=passport;
