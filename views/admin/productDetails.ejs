@@ -1,0 +1,165 @@
+<style>
+    .badge {
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+.table td {
+  vertical-align: middle;
+  font-size: 17px;
+}
+
+.table thead th {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.rounded-pill {
+  border-radius: 30px !important;
+}
+
+</style>
+<%- include('../../views/partials/admin/header.ejs') %>
+<!-- PAGE TITLE -->
+<div class="mb-4">
+  <h2 class="fw-semi-bold">Products</h2>
+  <small class="text-muted">Manage your product catalog</small>
+</div>
+
+<!-- SEARCH + FILTERS -->
+<div class="bg-white p-3 rounded-3 shadow-sm mb-3 d-flex flex-wrap align-items-center gap-3">
+
+  <!-- Search bar -->
+  <div class="flex-grow-1">
+    <input type="text" class="form-control rounded-pill"
+           placeholder="Search products..." />
+  </div>
+
+  <!-- Category Dropdown -->
+  <div>
+    <button class="btn btn-light border rounded-3 dropdown-toggle" data-bs-toggle="dropdown">
+      All Categories
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item">Moisturizers</a></li>
+      <li><a class="dropdown-item">Serums</a></li>
+      <li><a class="dropdown-item">Facewash</a></li>
+      <li><a class="dropdown-item">Sunscreen</a></li>
+    </ul>
+  </div>
+
+  <!-- Status Dropdown -->
+  <div>
+    <button class="btn btn-light border rounded-3 dropdown-toggle" data-bs-toggle="dropdown">
+      All Statuses
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item">Listed</a></li>
+      <li><a class="dropdown-item">Unlisted</a></li>
+      <li><a class="dropdown-item">Featured</a></li>
+    </ul>
+  </div>
+
+  <!-- Export Button -->
+  <button class="btn btn-outline-dark rounded-3">
+    <i class="bi bi-download me-1"></i>
+    Export
+  </button>
+
+  <!-- Add Product -->
+  <a href="/admin/products/add" class="btn btn-success rounded-3 ms-auto">
+    <i class="bi bi-plus-lg me-1"></i> Add Product
+  </a>
+
+</div>
+
+<!-- PRODUCTS TABLE -->
+<div class="table-responsive bg-white shadow-sm rounded-3 p-3">
+
+  <table class="table align-middle">
+    <thead>
+      <tr class="text-muted small">
+        <th>Product</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <!-- PRODUCT ROW -->
+      <tr>
+        <td class="d-flex align-items-center gap-3">
+          <img src="https://via.placeholder.com/45" class="rounded" width="45">
+          Hydrating Face Cream
+        </td>
+        <td>Moisturizers</td>
+        <td>$49.99</td>
+        <td>125</td>
+
+        <!-- Status -->
+        <td>
+          <span class="badge bg-success">Listed</span>
+          <span class="badge bg-primary">Featured</span>
+          <span class="badge bg-warning text-dark">20% Off</span>
+        </td>
+
+                <!-- Actions -->
+        <td>
+          <i class="bi bi-eye me-2"></i>
+          <i class="bi bi-pencil-square me-2"></i>
+          <i class="bi bi-trash"></i>
+        </td>
+      </tr>
+
+      <!-- COPY THIS BLOCK TO ADD MORE ROWS -->
+      <tr>
+        <td class="d-flex align-items-center gap-3">
+          <img src="https://via.placeholder.com/45" class="rounded" width="45">
+          Vitamin C Serum
+        </td>
+        <td>Serums</td>
+        <td>$65.00</td>
+        <td>83</td>
+        <td><span class="badge bg-success">Listed</span></td>
+        <td>
+          <i class="bi bi-eye me-2"></i>
+          <i class="bi bi-pencil-square me-2"></i>
+          <i class="bi bi-trash"></i>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>
+
+<!-- PAGINATION -->
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <small class="text-muted">Showing page 1 of 3</small>
+
+  <nav>
+    <ul class="pagination mb-0">
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>
+      <li class="page-item active">
+        <a class="page-link">1</a>
+      </li>
+      <li class="page-item"><a class="page-link">2</a></li>
+      <li class="page-item"><a class="page-link">3</a></li>
+      <li class="page-item">
+        <a class="page-link">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>

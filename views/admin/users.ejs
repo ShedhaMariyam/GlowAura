@@ -1,3 +1,6 @@
+
+
+
 <%- include('../../views/partials/admin/header.ejs') %>
 <main class="page-content">
 
@@ -21,7 +24,7 @@
 
           <div class="col-md-2 d-flex justify-content-end">
             <button class="btn btn-outline-secondary me-2"><i class="bi bi-download me-1"></i> Export</button>
-            <button class="btn btn-primary">Invite</button>
+            
           </div>
         </div>
       </div>
@@ -32,16 +35,16 @@
           <table class="table mb-0">
             <thead class="bg-transparent">
               <tr>
-                <th style="width:42%">User</th>
-                <!--<th style="width:8%">Orders</th>
-                <th style="width:12%">Spent</th>
-                <th style="width:10%">Wallet</th>-->
-                <th style="width:10%">Status</th>
-                <th style="width:10%">Last Login</th>
-                <th style="width:8%">Actions</th>
+                <th style="width:40%" class="fw-semibold fs-5">User</th>
+                <th style="width:8%" class="fw-semibold fs-5">Orders</th>
+                <th style="width:12%" class="fw-semibold fs-5">Spent</th>
+                <th style="width:10%" class="fw-semibold fs-5">Wallet</th>
+                <th style="width:10%" class="fw-semibold fs-5">Status</th>
+                <th style="width:12%" class="fw-semibold fs-5">Last Login</th>
+                <th style="width:8%" class="fw-semibold fs-5">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody style="font-size:20px;">
                  <% if (!data || data.length === 0) { %>
             <tr>
               <td colspan="4" class="text-center text-muted py-4">No users found</td>
@@ -51,20 +54,20 @@
                 <% for (let i = 0; i < data.length; i++) { %>
              
               <tr class="user-row">
-                <td>
+                <td >
                   <div class="d-flex align-items-center gap-3">
                     <div class="profile-circle rounded-circle bg-light d-flex align-items-center justify-content-center" style="width:44px;height:44px;font-weight:700;">
                         <%= (data[i].name || '').substring(0, 2).toUpperCase() %>
                     </div>
                     <div>
-                      <div class="fw-semibold"><%= data[i].name %></div>
-                      <div class="text-muted" style="font-size:.9rem"><%= data[i].email %></div>
+                      <div class="fw-semibold " style="font-size:1.5rem"><%= data[i].name %></div>
+                      <div class="text-muted" style="font-size:1.rem"><%= data[i].email %></div>
                     </div>
                   </div>
                 </td>
-              <!--  <td>8</td>
-                <td>$625.40</td>
-                <td>$125.50</td>-->
+              <td>-</td>
+                <td>-</td>
+                <td>-</td>
                 <% if (!data[i].is_Blocked) { %>
                         <td><span class="status-pill status-active">Active</span></td>
                 <% } else { %>   
@@ -84,21 +87,109 @@
     </a>
 
     
-    <% if (!data[i].is_Blocked) { %>
-      <a href="/admin/blockUser?id=<%= data[i]._id %>" class="btn btn-sm btn-light" title="Block" aria-label="Block">
+         <% if (!data[i].is_Blocked) { %>
+      <!-- Trigger Block Modal -->
+      <button 
+        type="button"
+        class="btn btn-sm btn-light"
+        title="Block"
+        aria-label="Block"
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmBlockModal<%= data[i]._id %>">
         <i class="bi bi-slash-circle fs-4"></i>
-      </a>
+      </button>
     <% } else { %>
-      <a href="/admin/unblockUser?id=<%= data[i]._id %>" class="btn btn-sm btn-light" title="Unblock" aria-label="Unblock">
+      <!-- Trigger Unblock Modal -->
+      <button 
+        type="button"
+        class="btn btn-sm btn-light"
+        title="Unblock"
+        aria-label="Unblock"
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmUnblockModal<%= data[i]._id %>">
         <i class="bi bi-check2-circle fs-4"></i>
-      </a>
-    <% } %>
-  </div>
-</td>
-
+      </button>
+                    <% } %>
+                  </div>
                 </td>
               </tr>
-              <%}%>
+
+<% if (!data[i].is_Blocked) { %>
+  <!-- Block Modal -->
+  <div class="modal fade" id="confirmBlockModal<%= data[i]._id %>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 12px;">
+        
+        <div class="modal-header" style="border-bottom: none;">
+          <h5 class="modal-title" style="font-weight: 600; color:#2b2b2b;">
+            Block User
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body" style="color:#6b6b6b;">
+          Are you sure you want to block 
+          <strong><%= data[i].name %></strong>? They will no longer be able to login or make purchases.
+        </div>
+
+        <div class="modal-footer" style="border-top: none;">
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+            style="border-radius: 8px;">
+            Cancel
+          </button>
+
+          <a href="/admin/blockUser?id=<%= data[i]._id %>" 
+            class="btn"
+            style="background-color:#d6b09c; color:#2b2b2b; border-radius: 8px;">
+            Yes, Block User
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <!-- Unblock Modal -->
+  <div class="modal fade" id="confirmUnblockModal<%= data[i]._id %>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 12px;">
+        
+        <div class="modal-header" style="border-bottom: none;">
+          <h5 class="modal-title" style="font-weight: 600; color:#2b2b2b;">
+            Unblock User
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body" style="color:#6b6b6b;">
+          Are you sure you want to unblock 
+          <strong><%= data[i].name %></strong>?
+        </div>
+
+        <div class="modal-footer" style="border-top: none;">
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+            style="border-radius: 8px;">
+            Cancel
+          </button>
+
+          <a href="/admin/unblockUser?id=<%= data[i]._id %>" 
+            class="btn"
+            style="background-color:#b7c7a5; color:#2b2b2b; border-radius: 8px;">
+            Yes, Unblock User
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% } %>
+
+
+             <%}%>
             <%}%>
             </tbody>
           </table>

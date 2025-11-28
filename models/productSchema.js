@@ -16,11 +16,11 @@ const productSchema = new Schema ({
         ref : "Category",
         required : true
      },
-     sale_price : {
-        type: Decimal128,
+     regular_price : {
+        type: Number,
         required : true,
      },
-      offer_percentage : {
+      sale_price : {
         type: Number,
         required : true,
         default : 0
@@ -60,6 +60,6 @@ const productSchema = new Schema ({
 
 },{timestamps : true});
 
-const Product = mongoose.model("Product".productScheam);
+const Product = mongoose.model("Product",productSchema);
 
 module.exports = Product;

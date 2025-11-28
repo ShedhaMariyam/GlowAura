@@ -19,8 +19,15 @@ const categorySchema = new Schema ({
     is_active :{
         type : Boolean,
         required : true,
-    }
-   
+    },
+    hasOffer: { 
+        type: Boolean, 
+        default: false },
+
+    offerPercent: { 
+        type: Number, 
+        default: 0 },
+
 })
 
 const Category = mongoose.model("Category",categorySchema)

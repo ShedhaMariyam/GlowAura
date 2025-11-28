@@ -8,7 +8,7 @@ const pageerror = (req,res)=>{
    try {
     res.render('admin-error');
   } catch (error) {
-    res.redirect('/pageerror');
+    res.redirect('/page-error');
   }
 }
 
@@ -46,7 +46,7 @@ const login = async (req,res)=>{
 
   } catch (error) {
     console.log("login error",error)
-    return res.redirect('/pageerror');
+    return res.redirect('/page-error');
   }
 }
 
@@ -58,7 +58,7 @@ const loadDashboard = async (req,res)=>{
         res.render('dashboard', { user: req.session.user || { name: 'Admin User' }, active: 'dashboard' });
     } catch (error) {
         console.log("load dashboard error",error)
-        res.redirect('/pageerror');
+        res.redirect('/page-error');
     }
  }
 }
@@ -69,7 +69,7 @@ const logout = async (req,res)=>{
         req.session.destroy(err =>{
           if(err){
             console.log("Error destroying session",err);
-            return res.redirect('/pageerror');
+            return res.redirect('/page-error');
             
           }
           res.redirect("/admin/login");
@@ -77,7 +77,7 @@ const logout = async (req,res)=>{
 
     } catch (error) {
         console.log("unexpected error during logout",error);
-        res.redirect("/pageerror");
+        res.redirect("/page-error");
     }
 };
 

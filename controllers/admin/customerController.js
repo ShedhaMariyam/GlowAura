@@ -43,7 +43,7 @@ const customerInfo = async(req,res)=>{
 
     } catch (error) {
         console.error('customerInfo error:', err);
-        res.redirect("/pageerror")
+        res.redirect("/page-error")
         
     }
 }
@@ -54,7 +54,7 @@ const userBlocked = async (req,res)=>{
         await User.updateOne({_id:id},{$set:{is_Blocked :true}})
         res.redirect('/admin/users')
     } catch (error) {
-       res.redirect('/pageerror')
+       res.redirect('/page-error')
     }
 }
 
@@ -64,7 +64,7 @@ const userUnblocked = async (req,res)=>{
         await User.updateOne({_id:id},{$set:{is_Blocked :false}})
         res.redirect('/admin/users')
     } catch (error) {
-       res.redirect('/pageerror')
+       res.redirect('/page-error')
     }
 }
 
