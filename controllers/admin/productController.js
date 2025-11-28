@@ -24,7 +24,8 @@ const productInfo = async (req,res)=>{
                 product:productData,
                 currentPage:page,
                 totalPages : totalPages,
-                totalProducts : totalProducts
+                totalProducts : totalProducts,
+                activePage: "productDetails"
             });
 
     } catch (error) {
@@ -34,8 +35,20 @@ const productInfo = async (req,res)=>{
 }
 
 
-const loadAddproduct= 
+const loadAddproduct= async(req,res)=>{
+
+    try {
+        const category = await Category.find({is_active:true});
+        res.render("addProducts",{ cat:category });
+
+    } catch (error) {
+
+        res.redirect('/pageerror');
+    }
+
+}
 
 module.exports={
-    productInfo
+    productInfo,
+    loadAddproduct
 }

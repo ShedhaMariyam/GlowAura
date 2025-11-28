@@ -55,7 +55,7 @@ const loadDashboard = async (req,res)=>{
  if(req.session.admin){
     try {
         
-        res.render('dashboard', { user: req.session.user || { name: 'Admin User' }, active: 'dashboard' });
+        res.render('dashboard', { user: req.session.user || { name: 'Admin User' }, activePage: 'dashboard' });
     } catch (error) {
         console.log("load dashboard error",error)
         res.redirect('/page-error');

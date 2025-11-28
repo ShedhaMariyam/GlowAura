@@ -19,8 +19,9 @@ const categoryInfo = async (req,res)=>{
                 cat:categoryData,
                 currentPage:page,
                 totalPages : totalPages,
-                totalCategories : totalCategories
-            });
+                totalCategories : totalCategories,
+                activePage: "categories"
+            },);
 
     } catch (error) {
         console.error(error)

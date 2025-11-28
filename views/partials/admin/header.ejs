@@ -201,20 +201,59 @@
 
     <!-- scrollable menu -->
     <nav class="nav flex-column" aria-label="Admin navigation">
-      <a href="/admin/dashboard" class="nav-link active"><i class="bi bi-grid-fill"></i> Dashboard</a>
-      <a href="/admin/products" class="nav-link"><i class="bi bi-box-seam"></i> Products</a>
-      <a href="/admin/categories" class="nav-link"><i class="bi bi-tags"></i> Categories</a>
-      <a href="/admin/orders" class="nav-link"><i class="bi bi-bag-check"></i> Orders</a>
 
-      
-        <a href="/admin/reports" class="nav-link"><i class="bi bi-bar-chart-line"></i> Sales Report</a>
-        <a href="/admin/users" class="nav-link"><i class="bi bi-people"></i> Users</a>
-        <a href="/admin/coupons" class="nav-link"><i class="bi bi-percent"></i> Coupons & Offers</a>
-        <a href="/admin/messages" class="nav-link"><i class="bi bi-chat-left-text"></i> Messages</a>
-        <a href="/admin/inventory" class="nav-link"><i class="bi bi-box"></i> Inventory</a>
-        <a href="/admin/settings" class="nav-link"><i class="bi bi-gear"></i> Settings</a>
-     
-    </nav>
+  <a href="/admin/dashboard"
+     class="nav-link <%= activePage === 'dashboard' ? 'active' : '' %>">
+     <i class="bi bi-grid-fill"></i> Dashboard
+  </a>
+
+  <a href="/admin/products"
+     class="nav-link <%= activePage === 'products' ? 'active' : '' %>">
+     <i class="bi bi-box-seam"></i> Products
+  </a>
+
+  <a href="/admin/categories"
+     class="nav-link <%= activePage === 'categories' ? 'active' : '' %>">
+     <i class="bi bi-tags"></i> Categories
+  </a>
+
+  <a href="/admin/orders"
+     class="nav-link <%= activePage === 'orders' ? 'active' : '' %>">
+     <i class="bi bi-bag-check"></i> Orders
+  </a>
+
+  <a href="/admin/reports"
+     class="nav-link <%= activePage === 'reports' ? 'active' : '' %>">
+     <i class="bi bi-bar-chart-line"></i> Sales Report
+  </a>
+
+  <a href="/admin/users"
+     class="nav-link <%= activePage === 'users' ? 'active' : '' %>">
+     <i class="bi bi-people"></i> Users
+  </a>
+
+  <a href="/admin/coupons"
+     class="nav-link <%= activePage === 'coupons' ? 'active' : '' %>">
+     <i class="bi bi-percent"></i> Coupons & Offers
+  </a>
+
+  <a href="/admin/messages"
+     class="nav-link <%= activePage === 'messages' ? 'active' : '' %>">
+     <i class="bi bi-chat-left-text"></i> Messages
+  </a>
+
+  <a href="/admin/inventory"
+     class="nav-link <%= activePage === 'inventory' ? 'active' : '' %>">
+     <i class="bi bi-box"></i> Inventory
+  </a>
+
+  <a href="/admin/settings"
+     class="nav-link <%= activePage === 'settings' ? 'active' : '' %>">
+     <i class="bi bi-gear"></i> Settings
+  </a>
+
+</nav>
+
 
     <!-- logout pinned at bottom using margin-top:auto -->
     <div class="logout-wrap">

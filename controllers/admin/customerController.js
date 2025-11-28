@@ -38,7 +38,8 @@ const customerInfo = async(req,res)=>{
                 totalPages:Math.ceil(count/limit),
                 currentPage:page,
                 resultsCount: count,
-                search
+                search,
+                activePage: "users"
             })
 
     } catch (error) {
