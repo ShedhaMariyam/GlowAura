@@ -34,8 +34,18 @@ const productInfo = async (req,res)=>{
 }
 
 
-const loadAddproduct= 
+const loadAddproduct= async (req,res)=>{
+    try {
+        
+        const category = await Category.find ({is_active : true});
+        res.render("addProducts",{cat:category});
+
+    } catch (error) {
+        res.redirect('/pageerror');
+    }
+}
 
 module.exports={
-    productInfo
+    productInfo,
+    loadAddproduct
 }

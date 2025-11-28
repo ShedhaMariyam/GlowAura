@@ -6,7 +6,7 @@ const customerController = require ('../controllers/admin/customerController');
 const productController = require ('../controllers/admin/productController')
 const {userAuth,adminAuth} = require('../middlewares/auth');
 const uploadCategoryImage = require('../middlewares/uploadCategoryImage');
-const productController = require('../controllers/admin/productController');
+
 
 
 router.get('/dashboard',adminAuth, adminController.loadDashboard);
@@ -26,7 +26,7 @@ router.get('/categories',adminAuth,categoryController.categoryInfo);
 router.post('/categories/add',adminAuth,uploadCategoryImage.single('image'),categoryController.addCategory)
 router.get('/categories/activate', adminAuth, categoryController.activateCategory);
 router.get('/categories/inactivate', adminAuth, categoryController.inActiveCategory);
-router.post('/categories/update',adminAuth,uploadCategoryImage.single('image'), categoryController.editCategory);
+router.put('/categories/update/:id',adminAuth,uploadCategoryImage.single('image'), categoryController.editCategory);
 router.post('/categories/offer', adminAuth, categoryController.categoryOffer);
 
 //Product Management

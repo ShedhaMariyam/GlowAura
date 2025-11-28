@@ -1,6 +1,6 @@
 <style>
     .form-label {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .border-dashed {
@@ -20,123 +20,169 @@
 </style>
 <%- include('../../views/partials/admin/header.ejs') %>
 
-<!-- PAGE TITLE -->
-<div class="d-flex align-items-center mb-4">
-  <a href="/admin/products" class="me-2 text-dark">
-    <i class="bi bi-arrow-left fs-4"></i>
-  </a>
-  <div>
-    <h3 class="fw-bold mb-0">Add New Product</h3>
-    <small class="text-muted">Create a new product</small>
+<form action="/admin/products/add" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+
+  <!-- PAGE HEADER -->
+  <div class="d-flex align-items-center mb-4 py-1 px-3">
+    <div>
+      <h3 class="fw-bold mb-0">Add New Product</h3>
+      <small class="text-muted">Create a new product</small>
+    </div>
+
+    <button type="submit" class="btn btn-success ms-auto px-4" style="background-color:#b8c9ae; border:none;">
+      <i class="bi bi-check2-circle me-1"></i> Save Product
+    </button>
   </div>
 
-  <button class="btn btn-success ms-auto px-4">
-    <i class="bi bi-check2-circle me-1"></i> Save Product
-  </button>
+
+  <div class="row py-2 px-3">
+
+    <!-- LEFT SECTION -->
+    <div class="col-lg-8 ">
+
+      <!-- BASIC INFORMATION -->
+      <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+        <h5 class="fw-semibold mb-3">Basic Information</h5>
+
+        <!-- Product Title -->
+        <div class="mb-3">
+          <label class="form-label fw-medium">Product Title <span class="text-danger">*</span></label>
+          <input type="text" name="productName" class="form-control" placeholder="Enter product title"  required>
+            <div id="nameError" class="error-message"></div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+          <textarea name="description" class="form-control" rows="4" placeholder="Enter product description" required></textarea>
+            <div id="descriptionError" class="error-message"></div>
+        </div>
+
+        <!-- Category + SKU -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+            <select name="category" class="form-select" required>
+                <option value="">Select a category</option>
+                <% for (let i=0;i<cat.length;i++) {%>
+              
+              <option value="<%=cat[i].name%>"><%=cat[i].name%></option>
+              <%}%>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-medium">SKU <span class="text-danger">*</span></label>
+            <input type="text" name="sku" class="form-control" placeholder="e.g., GA-00123" required>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRICING & INVENTORY -->
+      <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+        <h5 class="fw-semibold mb-3">Pricing and Inventory</h5>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-medium">Regular Price ($) <span class="text-danger">*</span></label>
+            <input type="number" name="regularPrice" step="0.01" class="form-control" placeholder="e.g. 39.99" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-medium">Stock Quantity <span class="text-danger">*</span></label>
+            <input type="number" name="quantity" class="form-control" placeholder="e.g. 150" required>
+          </div>
+        </div>
+
+        <!-- Optional variants -->
+        <div id="variantContainer">
+
+          <label class="form-label fw-semibold">Variants (Optional)</label>
+
+          <div class="d-flex gap-3 mb-3 variant-row">
+            <input type="text" name="variantName[]" class="form-control" placeholder="Size (e.g., 50ml)">
+            <input type="number" name="variantPrice[]" step="0.01" class="form-control" placeholder="Price ($)">
+            <input type="number" name="variantStock[]" class="form-control" placeholder="Stock">
+            <button type="button" class="btn btn-light border removeVariant"><i class="bi bi-x-lg"></i></button>
+          </div>
+
+        </div>
+
+        <button type="button" id="addVariantBtn" class="btn btn-outline-secondary rounded-pill mt-2">
+          <i class="bi bi-plus-lg me-1"></i> Add Variant
+        </button>
+
+      </div>
+    </div>
+
+
+    <!-- RIGHT SECTION -->
+    <div class="col-lg-4">
+
+      <!-- VISIBILITY -->
+      <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+        <h5 class="fw-semibold mb-3">Product Visibility</h5>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="fw-medium">Featured Product</span>
+          <div class="form-check form-switch">
+            <input class="form-check-input" name="featured" type="checkbox">
+          </div>
+        </div>
+
+        <label class="fw-medium">Product Status</label>
+        <select name="status" class="form-select">
+          <option value="Listed">Listed</option>
+          <option value="Unlisted">Unlisted</option>
+        </select>
+      </div>
+
+      <!-- PRODUCT IMAGES -->
+<div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+  <h5 class="fw-semibold mb-3">Product Images</h5>
+
+  <div class="border border-2 border-dashed rounded-3 p-4 text-center" style="border-style:dashed;">
+    <i class="bi bi-upload fs-2 text-muted"></i>
+    <p class="mb-0 mt-2 text-muted">Click to upload <br> or drag and drop</p>
+    <small class="text-muted">PNG, JPG, JPEG (MAX. 2MB)</small>
+
+ 
+    <input type="file"
+           name="images[]"
+           class="form-control mt-3"
+           multiple
+           accept="image/png, image/jpeg">
+  </div>
 </div>
 
-<div class="row">
 
-  <!-- LEFT SECTION -->
-  <div class="col-lg-8">
-
-    <!-- BASIC INFORMATION -->
-    <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-      <h5 class="fw-semibold mb-3">Basic Information</h5>
-
-      <div class="mb-3">
-        <label class="form-label fw-medium">Product Title <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" placeholder="Enter product title">
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label fw-medium">Description <span class="text-danger">*</span></label>
-        <textarea class="form-control" rows="4" placeholder="Enter product description"></textarea>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
-          <select class="form-select">
-            <option>Select a category</option>
-            <option>Moisturizers</option>
-            <option>Serums</option>
-            <option>Cleansers</option>
-            <option>Sunscreens</option>
-          </select>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label class="form-label fw-medium">SKU <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" placeholder="e.g., GA-00123">
-        </div>
-      </div>
-    </div>
-
-    <!-- PRICING & INVENTORY -->
-    <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-      <h5 class="fw-semibold mb-3">Pricing and Inventory</h5>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label fw-medium">Base Price ($) <span class="text-danger">*</span></label>
-          <input type="number" class="form-control" placeholder="e.g. 39.99">
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label class="form-label fw-medium">Stock Quantity <span class="text-danger">*</span></label>
-          <input type="number" class="form-control" placeholder="e.g. 150">
-        </div>
-      </div>
-
-      <!-- OPTIONAL VARIANTS -->
-      <label class="form-label fw-semibold">Variants (Optional)</label>
-
-      <div class="d-flex gap-3 mb-3">
-        <input type="text" class="form-control" placeholder="Size (e.g., 50ml)">
-        <input type="number" class="form-control" placeholder="Price ($)">
-        <input type="number" class="form-control" placeholder="Stock">
-        <button class="btn btn-light border"><i class="bi bi-x-lg"></i></button>
-      </div>
-
-      <button class="btn btn-outline-secondary rounded-pill mt-2">
-        <i class="bi bi-plus-lg me-1"></i> Add Variant
-      </button>
-    </div>
-  </div>
-
-  <!-- RIGHT SECTION -->
-  <div class="col-lg-4">
-
-    <!-- PRODUCT VISIBILITY -->
-    <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-      <h5 class="fw-semibold mb-3">Product Visibility</h5>
-
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="fw-medium">Featured Product</span>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox">
-        </div>
-      </div>
-
-      <label class="fw-medium">Product Status</label>
-      <select class="form-select">
-        <option>Listed</option>
-        <option>Unlisted</option>
-      </select>
-    </div>
-
-    <!-- PRODUCT IMAGES -->
-    <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-      <h5 class="fw-semibold mb-3">Product Images</h5>
-
-      <div class="border border-2 border-dashed rounded-3 p-4 text-center" style="border-style:dashed;">
-        <i class="bi bi-upload fs-2 text-muted"></i>
-        <p class="mb-0 mt-2 text-muted">Click to upload <br> or drag and drop</p>
-        <small class="text-muted">PNG, JPG, JPEG (MAX. 2MB)</small>
-      </div>
     </div>
 
   </div>
 
-</div>
+</form>
+
+
+<script>
+    function validateAndSubmit(){
+        if(validateForm()){
+            document.forms[0].submit();
+
+        }
+    }
+
+    function validateForm(){
+        clearErrorMessages();
+
+        const name=document.getElementsByName("productName")[0].value;
+        const description= document.getElementsByName ("description").value;
+        const category=document.getElementsByName("category")[0].value;
+        const sku = document.getElementsByName("sku")[0].value;
+        const price = document.getElementsByName('regularPrice')[0].value;
+        const quantity = document.getElementsByName('quantity').value;
+    }
+
+</script>
+
+
