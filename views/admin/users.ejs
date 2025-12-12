@@ -18,7 +18,13 @@
           <div class="col-md-8">
             <div class="input-group">
               <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
-              <input class="form-control border-0" type="search" placeholder="Search users..." aria-label="Search users">
+              <form method="GET" action="/admin/users" class="flex-grow-1">
+    <input type="text" 
+           name="search" 
+           class="form-control rounded-pill"
+           placeholder="Search products..."
+           value="<%= typeof search !== 'undefined' ? search : '' %>">
+</form>
             </div>
           </div>
 

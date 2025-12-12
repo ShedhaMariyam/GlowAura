@@ -31,14 +31,14 @@
                         </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('/images/moisturizer.jpg')"></div>
+                    <div class="category-card" style="background-image: url('/images/moisturizer2.jpg')"></div>
                     <div class="category-title mt-3">
                         <span>Moisturizer</span>
                         <i class="bi bi-arrow-right"></i>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./images/sunscreen.png')"></div>
+                    <div class="category-card" style="background-image: url('./images/sunscreen2.jpg')"></div>
                     <div class="category-title mt-3">
                         <span>Sunscreen</span>
                         <i class="bi bi-arrow-right"></i>
@@ -51,65 +51,26 @@
     <!-- Featured Products -->
     <section class="py-5 bg-white">
         <div class="container">
+            
             <h2 class="section-title mb-5">Featured Products</h2>
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
+                 <%for(let i=0;i<products.length;i++){%>
+                <div class="col-lg-3 col-md-6">       
                     <div class="card product-card">
-                        <img src="./images/facewash.jpg" class="product-img" alt="Radiance Facewash">
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <img src="<%= products[i].images[0] %>" class="product-img" 
+                                      alt="<%= products[i].productName %>">
+                        </a>
                         <div class="card-body">
-                            <h5 class="product-title">Radiance Facewash</h5>
+                            <h5 class="product-title"><%=products[i].productName%></h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$24.99</span>
                                 <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                    <i class="bi bi-heart me-1"></i>Add to Wishlist
                                 </button>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="/images/moisturizer.jpg" class="product-img" alt="Hydra-Boost Moisturizer">
-                        <div class="card-body">
-                            <h5 class="product-title">Hydra-Boost Moisturizer</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$34.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="./images/sunscreen.jpg" class="product-img" alt="UV Shield Sunscreen">
-                        <div class="card-body">
-                            <h5 class="product-title">UV Shield Sunscreen</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$29.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="/images/moisturizer.jpg" class="product-img" alt="Overnight Repair Serum">
-                        <div class="card-body">
-                            <h5 class="product-title">Overnight Repair Serum</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$49.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </div><%}%>          
         </div>
     </section>
 
@@ -119,7 +80,7 @@
             <h2 class="section-title mb-5">Why GlowAura</h2>
             <div class="row g-5">
                 <div class="col-lg-6">
-                    <img src="./images/why.avif" alt="Why GlowAura" class="why-image">
+                    <img src="./images/why.jpg" alt="Why GlowAura" class="why-image">
                 </div>
                 <div class="col-lg-6 d-flex flex-column justify-content-center">
                     <div class="mb-4">

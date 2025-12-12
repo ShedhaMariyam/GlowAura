@@ -7,6 +7,31 @@
   color: #6b6b6b;                    /* muted gray text */
   border-bottom: 1px solid #e9dfd1;  /* light border */
 }
+.status-pill {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-active {
+    background: #b8c9ae;
+    color: white;
+}
+
+.status-blocked {
+    background: #d9dde4;
+    color: #6b6b6b;
+}
+
+.toggle-status:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
 
 .category-card {
   border-radius: 18px;
@@ -57,6 +82,8 @@
 
 </style>
 
+
+
 <%- include('../../views/partials/admin/header.ejs') %>
 
 <!-- PAGE CONTENT -->
@@ -73,29 +100,45 @@
           Manage product categories
         </p>
       </div>
+</div>
+      <div class="bg-white p-3 rounded-3 shadow-sm mb-3 d-flex flex-wrap align-items-center gap-3">
 
-      <button type="button"
-        class="btn d-inline-flex align-items-center btn-add-category"
-        style="background-color:#b8c9ae; border:none;"
-        data-bs-toggle="modal"
-        data-bs-target="#addCategoryModal">
-        <span class="me-2 fw-bold">+</span>
-        <span>Add Category</span>
-        </button>
-    </div>
+  <!-- Search bar -->
+  <div class="flex-grow-1">
+    <input 
+      type="text" 
+      id="categorySearch" 
+      class="form-control rounded-pill category-search-input" 
+      placeholder="Search categories..." 
+      value="<%= search || '' %>"
+    >
+  </div>
+
+  <!-- Add Category Button -->
+  <button type="button"
+    class="btn d-inline-flex align-items-center btn-add-category"
+    style="background-color:#b8c9ae; border:none;"
+    data-bs-toggle="modal"
+    data-bs-target="#addCategoryModal">
+      <span class="me-2 fw-bold">+</span>
+      <span>Add Category</span>
+  </button>
+
+</div>
+    
 
         <!-- Add New Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content" style="border-radius:14px; overflow:hidden;">
 
-      <!-- Header -->
+
       <div class="modal-header border-0 px-4 pt-4 pb-2">
         <h5 class="modal-title fw-semibold">Add New Category</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <!-- Body -->
+   
       <form action="/admin/categories/add" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
         <div class="modal-body px-4">
 
@@ -160,6 +203,7 @@
         <table class="table mb-0 align-middle">
             <thead class="category-thead ">
             <tr >
+                
                 <th class="py-3 ps-4 fw-bold text-muted" >Name</th>
                 <th class="py-3 fw-bold text-muted">Description</th>
                 <th class="py-3 fw-bold text-muted">Status</th>
@@ -178,24 +222,31 @@
             <% } else { %>
                 <% for(let i=0 ; i< cat.length; i++){ %>
         <tr>
-        
-            <td class="ps-4"><%= cat[i].name %></td>  <!-- Category Name -->
-            <td><%= cat[i].description || '-' %></td>  <!-- Category Descripiton -->
+            <td class="d-flex align-items-center gap-3">
+          <img src="<%= cat[i].image %>" class="rounded" width="45">
+          <%= cat[i].name %>
+        </td>
+            
+            <td><%= cat[i].description || '-' %></td>  
             
             <!-- Category Status -->
-            <td>
-             <% if (cat[i].is_active) { %>
-                <a href="/admin/categories/inactivate?id=<%= cat[i]._id %>" 
-                class="status-pill status-active"
-                style="cursor:pointer; text-decoration: none;">
-                Active</a>
-            <% } else { %>
-                <a href="/admin/categories/activate?id=<%= cat[i]._id %>"
-                class="status-pill status-blocked"
-                style="cursor:pointer;text-decoration: none;">
-                Inactive</a>
-            <% } %>
-            </td>
+       
+          <td>
+    <% if (cat[i].is_active) { %>
+        <button class="status-pill status-active toggle-status" 
+                data-id="<%= cat[i]._id %>"
+                data-action="inactivate">
+            Active
+        </button>
+    <% } else { %>
+        <button class="status-pill status-blocked toggle-status" 
+                data-id="<%= cat[i]._id %>"
+                data-action="activate">
+            Inactive
+        </button>
+    <% } %>
+</td>
+
 
          <!-- Category Offer -->
 
@@ -213,104 +264,103 @@
         </label>
         </td>
 
-            <!-- Edit Category  -->
-            <!-- Edit Category Button -->
+        
+           
+<!-- Edit Category  -->
 <td class="text-end pe-4">
-  <button class="btn btn-link p-0 me-2 text-secondary"
-    data-bs-toggle="modal"
-    data-bs-target="#editCategoryModal-<%= cat[i]._id %>">
+  <button class="btn btn-link p-0 me-2 text-secondary btn-edit-category"
+          data-id="<%= cat[i]._id %>"
+          data-name="<%= cat[i].name %>"
+          data-description="<%= cat[i].description || '' %>"
+          data-image="<%= cat[i].image || '' %>">
     <i class="bi bi-pencil-square fs-4"></i>
   </button>
 </td>
 
-<!-- Edit Category Modal -->
-<div class="modal fade" id="editCategoryModal-<%= cat[i]._id %>" tabindex="-1" aria-hidden="true">
+
+
+
+    <% } %>
+
+  <% } %>
+  
+  <!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content" style="border-radius:14px; overflow:hidden;">
 
       <div class="modal-header border-0 px-4 pt-4 pb-2">
         <h5 class="modal-title fw-semibold">Edit Category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form id="edit-form-<%= cat[i]._id %>"
-            action="/admin/categories/update/<id>"
-            enctype="multipart/form-data"
-            onsubmit="return handleEditFormSubmit(event)">
-
+      <form id="editCategoryForm" enctype="multipart/form-data" onsubmit="return handleEditFormSubmit(event)">
+        <input type="hidden" id="editCategoryId" name="id">
+        
         <div class="modal-body px-4">
-          <input type="hidden" name="id" value="<%= cat[i]._id %>">
 
-          <!-- Name -->
+          <!-- Category Name -->
           <div class="mb-3">
             <label class="form-label mb-1">Category Name <span class="text-danger">*</span></label>
-
             <input type="text"
-              name="name"
-              id="edit-name-<%= cat[i]._id %>"
-              class="form-control"
-              value="<%= cat[i].name %>">
-
-            <div id="edit-nameError-<%= cat[i]._id %>" class="text-danger small mt-1"></div>
+                   name="name"
+                   class="form-control"
+                   id="editName">
+            <div id="editNameError" class="text-danger small mt-1"></div>
           </div>
 
           <!-- Description -->
           <div class="mb-3">
             <label class="form-label mb-1">Description</label>
-
             <textarea name="description"
-              id="edit-description-<%= cat[i]._id %>"
-              class="form-control"
-              rows="3"><%= cat[i].description %></textarea>
-
-            <div id="edit-descriptionError-<%= cat[i]._id %>" class="text-danger small mt-1"></div>
+                      class="form-control"
+                      rows="3"
+                      id="editDescription"
+                      placeholder="Brief description of this category"></textarea>
+            <div id="editDescriptionError" class="text-danger small mt-1"></div>
           </div>
 
-          <!-- Image -->
+          <!-- Current Image Preview -->
+          <div class="mb-3" id="currentImagePreview" style="display:none;">
+            <label class="form-label mb-1">Current Image</label>
+            <div>
+              <img id="editCurrentImage" src="" alt="Current category image" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+            </div>
+          </div>
+
+          <!-- Category Image -->
           <div class="mb-3">
-            <label class="form-label mb-1">Category Image</label>
-
+            <label class="form-label mb-1">Category Image (optional)</label>
             <input type="file"
-              name="image"
-              id="edit-image-<%= cat[i]._id %>"
-              class="form-control"
-              accept="image/*">
-
-            <small class="text-muted d-block mb-1">
-              Leave empty to keep existing image.
-            </small>
-
-            <% if (cat[i].image) { %>
-              <img src="<%= cat[i].image %>" alt="<%= cat[i].name %>"
-                   style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
-            <% } %>
-
-            <div id="edit-imageError-<%= cat[i]._id %>" class="text-danger small mt-1"></div>
+                   name="image"
+                   class="form-control"
+                   id="editImage"
+                   accept="image/*">
+            <small class="text-muted">Leave empty to keep current image. Recommended: square image, good resolution (e.g., 800×800).</small>
+            <div id="editImageError" class="text-danger small mt-1"></div>
           </div>
 
         </div>
 
+        <!-- Footer -->
         <div class="modal-footer border-0 px-4 py-3" style="background:#f5eee4;">
-          <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">
+          <button type="button"
+                  class="btn btn-link text-muted"
+                  data-bs-dismiss="modal">
             Cancel
           </button>
 
-          <button type="submit" class="btn px-4" style="background:#b8c9ae; color:#fff; border-radius:999px;">
-            Save Changes
+          <button type="submit"
+                  class="btn px-4"
+                  style="background:#b8c9ae; color:#fff; border-radius:999px;">
+            Update Category
           </button>
         </div>
-
       </form>
 
     </div>
   </div>
 </div>
-
-
-      </tr>
-
-    <% } %>
-
 
 
 
@@ -344,7 +394,6 @@
     </div>
   </div>
 </div>
-  <% } %>
 
 </tbody>
 
@@ -353,10 +402,13 @@
     </div>
 </div>
 
-
+<%- include('../../views/partials/admin/footer.ejs') %>
 
 </main>        
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
 <script>
   async function handleFormSubmit(event) {
     event.preventDefault();
@@ -417,7 +469,6 @@
     const nameInput = document.getElementsByName("name")[0];
     const descriptionInput = document.getElementsByName("description")[0];
     const imageInput = document.getElementsByName("image")[0];
-
     const name = nameInput.value.trim();
     const description = descriptionInput.value.trim();
 
@@ -440,28 +491,28 @@
       document.getElementById("descriptionError").textContent = "Please write a description.";
       isValid = false;
     } else if (description.length < 5) {
-      document.getElementById("descriptionError").textContent =
-        "Description should be at least 5 characters.";
+      document.getElementById("descriptionError").textContent = "Description should be at least 5 characters.";
       isValid = false;
     }
 
-    // IMAGE VALIDATION (optional)
-    if (imageInput && imageInput.files.length > 0) {
-      const file = imageInput.files[0];
-      const maxSize = 2 * 1024 * 1024; // 2MB
+    // IMAGE VALIDATION 
+    if (!imageInput || imageInput.files.length === 0) {
+    document.getElementById("imageError").textContent = "Category image is required.";
+    isValid = false;
+  } else {
+    const file = imageInput.files[0];
+    const maxSize = 2 * 1024 * 1024; // 2MB
 
-      if (!file.type.startsWith("image/")) {
-        document.getElementById("imageError").textContent = "Please upload a valid image file.";
-        isValid = false;
-      } else if (file.size > maxSize) {
-        document.getElementById("imageError").textContent = "Image size should be less than 2MB.";
-        isValid = false;
-      }
+    if (!file.type.startsWith("image/")) {
+      document.getElementById("imageError").textContent = "Please upload a valid image file.";
+      isValid = false;
+    } else if (file.size > maxSize) {
+      document.getElementById("imageError").textContent = "Image size should be less than 2MB.";
+      isValid = false;
     }
-
-    return isValid;
   }
-
+     return isValid;
+  }
   function clearErrorMessages() {
     document.getElementById("nameError").textContent = "";
     document.getElementById("descriptionError").textContent = "";
@@ -469,83 +520,155 @@
   }
 </script>
 
-
 <script>
+// Open Edit Modal with category data
+function openEditModal(categoryId, categoryName, categoryDescription, categoryImage) {
+  const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+  
+  // Populate form fields
+  document.getElementById('editCategoryId').value = categoryId;
+  document.getElementById('editName').value = categoryName;
+  document.getElementById('editDescription').value = categoryDescription || '';
+  
+  // Show current image if exists
+  if (categoryImage) {
+    document.getElementById('currentImagePreview').style.display = 'block';
+    document.getElementById('editCurrentImage').src = categoryImage;
+  } else {
+    document.getElementById('currentImagePreview').style.display = 'none';
+  }
+  
+  // Clear any previous errors
+  clearEditErrorMessages();
+  
+  // Reset file input
+  document.getElementById('editImage').value = '';
+  
+  modal.show();
+}
+
+// Handle Edit Form Submit
 async function handleEditFormSubmit(event) {
   event.preventDefault();
 
-  const form = event.target;                      
-  const formId = form.id;                          // edit-form-<id>
-  const categoryId = form.querySelector('input[name="id"]').value;
-
-
-  const nameInput = document.getElementById(`edit-name-${categoryId}`);
-  const descInput = document.getElementById(`edit-description-${categoryId}`);
-  const imageInput = document.getElementById(`edit-image-${categoryId}`);
-
-  const nameError = document.getElementById(`edit-nameError-${categoryId}`);
-  const descError = document.getElementById(`edit-descriptionError-${categoryId}`);
-  const imageError = document.getElementById(`edit-imageError-${categoryId}`);
-
-  // Clear previous errors
-  nameError.textContent = "";
-  descError.textContent = "";
-  imageError.textContent = "";
-
-  // Basic validation
-  if (!nameInput.value.trim()) {
-    nameError.textContent = "Category name is required.";
+  if (!validateEditForm()) {
     return false;
   }
 
-  // Prepare FormData for file upload
+  const form = event.target;
   const formData = new FormData(form);
+  const categoryId = document.getElementById('editCategoryId').value;
+
+  clearEditErrorMessages();
 
   try {
-    const response = await fetch(`/admin/categories/update/${categoryId}`, {
-      method: "PUT",
-      body: formData,
+    const response = await fetch(`/admin/categories/edit/${categoryId}`, {
+      method: 'PUT',
+      body: formData
     });
 
-    const result = await response.json();
+    const data = await response.json();
 
     if (!response.ok) {
-      // Show backend errors
-      if (result.error.includes("name")) {
-        nameError.textContent = result.error;
+      if (data.error) {
+        document.getElementById("editNameError").textContent = data.error;
       } else {
-        Swal.fire("Error", result.error, "error");
+        document.getElementById("editNameError").textContent =
+          "Something went wrong. Please try again.";
       }
       return false;
     }
 
-    // SUCCESS
-    Swal.fire({
-      icon: "success",
-      title: "Updated!",
-      text: "Category updated successfully",
-      timer: 1500,
-      showConfirmButton: false
-    });
 
     // Close modal
-    const modal = bootstrap.Modal.getInstance(
-      document.getElementById(`editCategoryModal-${categoryId}`)
-    );
+    const modalEl = document.getElementById('editCategoryModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
     modal.hide();
 
-    // Reload table to show updated details
-    setTimeout(() => location.reload(), 500);
+
+    window.location.reload();
+
+    return true;
 
   } catch (err) {
-    console.error("Edit request failed:", err);
-    Swal.fire("Error", "Something went wrong!", "error");
+    console.error(err);
+    document.getElementById("editNameError").textContent =
+      "Something went wrong. Please try again.";
+    return false;
+  }
+}
+
+// Validate Edit Form
+function validateEditForm() {
+  clearEditErrorMessages();
+
+  const nameInput = document.getElementById("editName");
+  const descriptionInput = document.getElementById("editDescription");
+  const imageInput = document.getElementById("editImage");
+  const name = nameInput.value.trim();
+  const description = descriptionInput.value.trim();
+
+  let isValid = true;
+
+  // NAME VALIDATION
+  if (!name) {
+    document.getElementById("editNameError").textContent = "Category name is required.";
+    isValid = false;
+  } else if (name.length < 3) {
+    document.getElementById("editNameError").textContent = "Category name should be at least 3 characters.";
+    isValid = false;
+  } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    document.getElementById("editNameError").textContent = "Category name should contain only alphabetic characters.";
+    isValid = false;
   }
 
-  return false;
-}
-</script>
+  // DESCRIPTION VALIDATION
+  if (!description) {
+    document.getElementById("editDescriptionError").textContent = "Please write a description.";
+    isValid = false;
+  } else if (description.length < 5) {
+    document.getElementById("editDescriptionError").textContent = "Description should be at least 5 characters.";
+    isValid = false;
+  }
 
+  // IMAGE VALIDATION (only if a new file is selected)
+  if (imageInput && imageInput.files.length > 0) {
+    const file = imageInput.files[0];
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    if (!file.type.startsWith("image/")) {
+      document.getElementById("editImageError").textContent = "Please upload a valid image file.";
+      isValid = false;
+    } else if (file.size > maxSize) {
+      document.getElementById("editImageError").textContent = "Image size should be less than 2MB.";
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
+
+// Clear Edit Error Messages
+function clearEditErrorMessages() {
+  document.getElementById("editNameError").textContent = "";
+  document.getElementById("editDescriptionError").textContent = "";
+  document.getElementById("editImageError").textContent = "";
+}
+
+// Attach click handlers to edit buttons
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.btn-edit-category').forEach(button => {
+    button.addEventListener('click', function() {
+      const categoryId = this.dataset.id;
+      const categoryName = this.dataset.name;
+      const categoryDescription = this.dataset.description;
+      const categoryImage = this.dataset.image;
+      
+      openEditModal(categoryId, categoryName, categoryDescription, categoryImage);
+    });
+  });
+});
+</script>
 
 <script>
 let selectedCategoryId = null;
@@ -559,15 +682,33 @@ document.querySelectorAll(".offer-toggle input").forEach(checkbox => {
     const currentOffer = wrapper.dataset.offer || 0;
 
     if (this.checked) {
-      // TOGGLE ON - OPEN MODAL
-      selectedCategoryId = id;
+     
+     const modalEl = document.getElementById("categoryOfferModal");
+      modalEl.dataset.id = id;
 
-      document.getElementById("offerCategoryTitle").textContent =
-        `Add offer for: ${name}`;
+    document.getElementById("offerCategoryTitle").textContent =
+    `Add offer for: ${name}`;
+  document.getElementById("categoryOfferValue").value = currentOffer;
+
+ 
+  const modal = new bootstrap.Modal(modalEl);
+
+ 
+  const checkbox = this;
+
+  const onHide = () => {
+    
+    const offer = Number(wrapper.dataset.offer || 0);
+    if (offer === 0) {
+      checkbox.checked = false;
+    }
+    modalEl.removeEventListener("hidden.bs.modal", onHide);
+  };
+
+  modalEl.addEventListener("hidden.bs.modal", onHide);
+  modal.show();
+
       
-      document.getElementById("categoryOfferValue").value = currentOffer;
-
-      new bootstrap.Modal(document.getElementById("categoryOfferModal")).show();
     } else {
       //TOGGLE OFF -Remove offer immediately
       removeOffer(id, wrapper, this);
@@ -579,8 +720,8 @@ document.querySelectorAll(".offer-toggle input").forEach(checkbox => {
 //Toggle OFF logic
 async function removeOffer(categoryId, wrapper, checkbox) {
   try {
-    const res = await fetch(`/admin/categories/offer?id=${categoryId}`, {
-      method: "POST",
+    const res = await fetch(`/admin/categories/${categoryId}/offer`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ percent: 0 })  // reset everything
     });
@@ -607,10 +748,17 @@ async function removeOffer(categoryId, wrapper, checkbox) {
 // SAVE OFFER BUTTON
 document.getElementById("saveCategoryOfferBtn").addEventListener("click", async () => {
   const percent = Number(document.getElementById("categoryOfferValue").value) || 0;
+  const modalEl = document.getElementById("categoryOfferModal");
+  const categoryId = modalEl.dataset.id;    
+
+  if (!categoryId) {
+    alert("Category not selected");
+    return;
+  }
 
   try {
-    const res = await fetch(`/admin/categories/offer?id=${selectedCategoryId}`, {
-      method: "POST",
+    const res = await fetch(`/admin/categories/${categoryId}/offer`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ percent })
     });
@@ -618,25 +766,62 @@ document.getElementById("saveCategoryOfferBtn").addEventListener("click", async 
     const data = await res.json();
 
     if (!data.success) {
-      alert(data.message);
+      alert(data.message || "Server error");
       return;
     }
 
-    // Update label text
-    const wrapper = document.querySelector(`.offer-toggle[data-id="${selectedCategoryId}"]`);
+    const wrapper = document.querySelector(`.offer-toggle[data-id="${categoryId}"]`);
     wrapper.dataset.offer = percent;
-    wrapper.querySelector(".offer-label").textContent = percent > 0 ? `${percent}% off` : "";
+    wrapper.querySelector(".offer-label").textContent =
+      percent > 0 ? `${percent}% off` : "";
 
-    bootstrap.Modal.getInstance(document.getElementById("categoryOfferModal")).hide();
-
+    bootstrap.Modal.getInstance(modalEl).hide();
     window.location.reload();
-
   } catch (err) {
-    console.error(err);
-    alert("Error saving offer");
+    console.error("Offer save error:", err);
+    alert("Server error");
   }
 });
+
 </script>
 
+
+<script>document.querySelectorAll('.toggle-status').forEach(button => {
+  button.addEventListener('click', async function () {
+    const id = this.dataset.id;
+    const action = this.dataset.action;
+
+    try {
+      const res = await fetch(`/admin/categories/${id}/${action}`, {
+        method: 'PATCH'
+      });
+
+      if (!res.ok) {
+        alert('Failed to update status');
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.success) {
+        alert(data.message || 'Failed to update status');
+        return;
+      }
+
+      window.location.reload();
+    } catch (err) {
+      console.error('Status toggle failed:', err);
+      alert('Network error. Please try again.');
+    }
+  });
+});
+
+
+document.getElementById("categorySearch").addEventListener("keyup", function(e) {
+    if (e.key === "Enter") {
+        const query = e.target.value.trim();
+        window.location.href = `/admin/categories?search=${query}`;
+    }
+});
+</script>
 
 

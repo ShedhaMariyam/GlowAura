@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/userSchema');
+const Category = require ('../../models/categorySchema');
+const Product = require ('../../models/productSchema');
 const Otp = require('../../models/otpSchema'); 
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
@@ -19,13 +21,21 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
   try {
     const userId = req.session.user;
+    const categories = await Category.find({is_active:true});
+    let productData = await Product.find({status:'Listed',category:{$in:categories.map(category=>category._id)},stock:{$gt:0},featured : true}).sort({ createdAt: -1 }).limit(4);
+    
+    
     if (userId) {
       const userData = await User.findById(userId);
-     return res.render('home', { user: userData });
+     return res.render('home', 
+      { 
+        user: userData, 
+        products : productData
+       });
     }
 
     else{
-      return res.render('home');
+      return res.render('home',{products : productData});
     }
      
   } catch (error) {
@@ -134,11 +144,12 @@ const securePassword = async (password) => {
 // Signup Function
 const signup = async (req, res) => {
   try {
-    const { name, email, password, confirmpassword } = req.body;
-
-    if (!name || !email || !password || !confirmpassword) {
+    const { name, email, phone, password, confirmpassword } = req.body;
+    
+    if (!name || !email || !password || !phone || !confirmpassword) {
       return res.status(400).render("signup", { message: 'All fields are required' });
     }
+    console.log(phone);
 
     if (password !== confirmpassword) {
       return res.status(400).render("signup", { message: 'Passwords do not match' });
@@ -164,7 +175,7 @@ const signup = async (req, res) => {
     );
 
    
-    req.session.userData = { name, email, password};
+    req.session.userData = { name, email, password,phone};
 
     res.status(200).json({ success: true, redirectUrl:'/verify-otp' });
     console.log("OTP sent to:", email, "=>", otp);
@@ -189,7 +200,7 @@ const loadVerifyOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
-    const { email, name, password } = req.session.userData || {};
+    const { email, name, phone, password } = req.session.userData || {};
 
     if (!email) {
       return res.status(400).json({ success: false, message: "Session expired. Please sign up again." });
@@ -211,6 +222,7 @@ const verifyOtp = async (req, res) => {
     const newUser = new User({
       name,
       email,
+      phone,
       password: passwordHash,
     });
 

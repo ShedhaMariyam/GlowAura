@@ -1,0 +1,43 @@
+<style>
+  #global-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 260px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: #4caf50;
+    color: white;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transition: opacity .3s ease;
+  }
+
+  #global-toast.error { background: #e74c3c; }
+  #global-toast.show { display: block; opacity: 1; }
+</style>
+
+<div id="global-toast"></div>
+
+<script>
+  function showToast(message, type = "success") {
+    const toast = document.getElementById("global-toast");
+
+    toast.className = "";
+    toast.classList.add(type);
+    toast.innerText = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  }
+</script>
+
+<% if (toastMessage) { %>
+<script>
+  showToast("<%= toastMessage %>", "<%= toastType || 'success' %>");
+</script>
+<% } %>

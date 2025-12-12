@@ -17,8 +17,8 @@ const customerInfo = async(req,res)=>{
             const userData = await User.find({
                 is_admin : false,
                 $or : [
-                    {name:{$regex :".*"+search+".*"}},
-                    {email: {$regex:".*"+search+".*"}}
+                    {name:{$regex :".*"+search+".*",$options: "i"}},
+                    {email: {$regex:".*"+search+".*",$options: "i"}}
                 ],
             })
             .limit(limit*1)

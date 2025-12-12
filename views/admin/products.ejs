@@ -1,0 +1,132 @@
+<style>
+    .badge {
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+.table td {
+  vertical-align: middle;
+  font-size: 17px;
+}
+
+.table thead th {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.rounded-pill {
+  border-radius: 30px !important;
+}
+
+</style>
+<%- include('../../views/partials/admin/header.ejs') %>
+<!-- PAGE TITLE -->
+<div class="product-page-wrapper py-4 px-4">
+
+<div class="d-flex justify-content-between align-items-start mb-3 ">
+      <div>
+        <h4 class="fw-semibold mb-1">Products</h4>
+        <p class="text-muted mb-0" style="font-size: 1.2rem;">
+          Manage your product catalog
+        </p>
+      </div>
+</div>
+
+<!-- SEARCH + FILTERS -->
+<div class="bg-white p-3 rounded-3 shadow-sm mb-3 d-flex flex-wrap align-items-center gap-3">
+
+  <!-- Search bar -->
+  <div class="flex-grow-1">
+    <form method="GET" action="/admin/products" class="flex-grow-1">
+    <input type="text" 
+           name="search" 
+           class="form-control rounded-pill"
+           placeholder="Search products..."
+           value="<%= typeof search !== 'undefined' ? search : '' %>">
+</form>
+
+  </div>
+
+
+ 
+
+  <!-- Export Button -->
+  <button class="btn btn-outline-dark rounded-3">
+    <i class="bi bi-download me-1"></i>
+    Export
+  </button>
+
+  <!-- Add Product -->
+  <a href="/admin/products/add" class="btn  rounded-3 ms-auto" style="background-color:#b8c9ae; border:none;">
+    <i class="bi bi-plus-lg me-1"></i> Add Product
+  </a>
+
+</div>
+
+<!-- PRODUCTS TABLE -->
+<div class="table-responsive bg-white shadow-sm rounded-3 p-3">
+
+  <table class="table align-middle">
+    <thead>
+      <tr class="text-muted small">
+        <th>Product</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody style="font-size:20px;"> 
+       <% if (!data || data.length === 0) { %>
+            <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+                 No products found
+            </td>
+            </tr>
+            <% } else { %> 
+     
+      <%for(let i=0;i<data.length;i++){%>
+      <!-- PRODUCT ROW -->
+      <tr>
+        <td class="d-flex align-items-center gap-3">
+          <img src="<%= data[i].images[0] %>"  class="rounded" width="45">
+          <%=data[i].productName%>
+        </td>
+        <td><%=data[i].category.name%></td>
+        <td><%=data[i].variants[0].regular_price%></td>
+        <td><%=data[i].stock%></td>
+
+        <!-- Status -->
+        <td><%if(data[i].status==='Listed'){%>
+          <span class="badge bg-success">Listed</span><%}%>
+          <%if(data[i].featured===true){%>
+          <span class="badge bg-primary">Featured</span><%}%>
+          <%if(data[i].category.hasOffer=== true){%>
+          <span class="badge bg-warning text-dark"><%=data[i].category.offerPercent%>%</span>
+            <%}%>
+        </td>
+
+                <!-- Actions -->
+        <td>
+          <i class="bi bi-pencil-square me-2"></i>
+          <i class="bi bi-trash"></i>
+        </td>
+      </tr>
+
+     
+      <%}}%>
+
+    </tbody>
+  </table>
+
+</div>
+<%- include('../../views/partials/admin/footer.ejs') %>
+

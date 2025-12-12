@@ -16,47 +16,47 @@ const productSchema = new Schema ({
         ref : "Category",
         required : true
      },
-     regular_price : {
-        type: Number,
-        required : true,
-     },
-      sale_price : {
-        type: Number,
-        required : true,
-        default : 0
-     },
-     quantity: {
-        type : Number,
-        required : true,
-     },
-     images :{
+        images :{
         type: [String],
         required : true,
      },
-     varients : [{
+     stock:{
+        type : Number,
+        required : true,
+        default :0,
+     },
+     variants : [{
         size : {
             type: String,
-            enum : ("30 ml","50 ml","100 ml"),
             required : true,
         },
         sku_code : {
             type : String,
             required : true,
         },
-        stock : {
+        quantity : {
             type : Number,
             required : true,
         },
-        price : {
+        regular_price : {
             type : Number,
             required : true,
-        }
-
-     }],
-     is_unlisted : {
-        type : Boolean,
-        default : false,
+        },
+        sale_price : {
+        type: Number,
+        required : true,
+        default : 0
      }
+     }],
+     status: {
+        type: String,
+        enum: ['Listed', 'Unlisted'],
+        default: 'Listed'
+    },
+      featured: {
+        type: Boolean,
+        default: false
+    },
 
 },{timestamps : true});
 

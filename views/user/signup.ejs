@@ -126,6 +126,16 @@
                         </div>
                         <div id="error2" class="error-message"></div>
                     </div>
+                    
+                    <!-- Phone -->
+                    <div class="mb-3">
+                        <label for="signupPhone" class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <input type="tel" class="form-control" placeholder="10 digits" id="phone" name="phone" >    
+                        </div>
+                        <div id="error5" class="error-message"></div>
+                    </div>
+
 
                     <!-- Password -->
                     <div class="mb-2">
@@ -183,12 +193,14 @@
     // Elements
     const name = document.getElementById("name");
     const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
     const password = document.getElementById("password");
     const confirmpassword = document.getElementById("confirmpassword");
     const error1 = document.getElementById ("error1");
     const error2 = document.getElementById ("error2");
     const error3 = document.getElementById ("error3");
     const error4 = document.getElementById ("error4");
+    const error5 = document.getElementById ("error5");
     const signform = document.getElementById("signform");
     const referralCode = document.getElementById("referralCode");
     const submitBtn = document.getElementById("submitBtn");
@@ -272,6 +284,24 @@
         }
     }
 
+    function phoneValidateChecking() {
+    const phoneval = (phone.value || "").trim();
+    const phonepattern = /^[6-9]\d{9}$/;   // Indian mobile: starts 6–9 + 10 digits
+
+    if (phoneval === "") {
+        error5.style.display = "block";
+        error5.innerHTML = "Phone number is mandatory";
+        return false;
+    } else if (!phonepattern.test(phoneval)) {
+        error5.style.display = "block";
+        error5.innerHTML = "Enter a valid 10-digit phone number";
+        return false;
+    } else {
+        error5.style.display = "none";
+        error5.innerHTML = "";
+        return true;
+    }
+}
    
 
     
@@ -282,12 +312,13 @@
         const okName = nameValidateChecking();
         const okEmail = emailValidateChecking();
         const okPass = passwordValidateChecking();
+        const okPhone = phoneValidateChecking();
 
-        if (!okName || !okEmail || !okPass) {
-            return; // don't submit if client validation fails
+        if (!okName || !okEmail || !okPass || !okPhone) {
+            return;
         }
 
-        // prevent double submits
+     
         submitBtn.disabled = true;
         submitBtn.textContent = "Submitting...";
 
@@ -295,6 +326,7 @@
         const payload = {
             name: name.value.trim(),
             email: email.value.trim(),
+            phone:phone.value.trim(),
             password: password.value,
             confirmpassword: confirmpassword.value,
             referralCode: referralCode.value ? referralCode.value.trim() : undefined
@@ -327,6 +359,9 @@
                 submitBtn.textContent = "Create Account";
                 return;
             }
+
+            const data = response.data;
+            console.log(data);
 
           
             if (respUrl && respUrl.includes('/verify-otp')) {

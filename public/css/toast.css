@@ -1,0 +1,127 @@
+.custom-toast {
+  background: white;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.custom-toast.success {
+  background: #f0f7f0;
+  border: 1px solid #b8c9ae;
+}
+
+.custom-toast.error {
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+}
+
+.custom-toast.warning {
+  background: #fffaf0;
+  border: 1px solid #f6ad55;
+}
+
+.custom-toast.info {
+  background: #ebf8ff;
+  border: 1px solid #63b3ed;
+}
+
+.custom-toast-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.custom-toast.success .custom-toast-icon {
+  background: #b8c9ae;
+  color: white;
+}
+
+.custom-toast.error .custom-toast-icon {
+  background: #fc8181;
+  color: white;
+}
+
+.custom-toast.warning .custom-toast-icon {
+  background: #f6ad55;
+  color: white;
+}
+
+.custom-toast.info .custom-toast-icon {
+  background: #63b3ed;
+  color: white;
+}
+
+.custom-toast-content {
+  flex: 1;
+}
+
+.custom-toast-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d3748;
+  margin: 0;
+}
+
+.custom-toast-message {
+  font-size: 13px;
+  color: #4a5568;
+  margin: 2px 0 0 0;
+}
+
+.custom-toast-close {
+  background: none;
+  border: none;
+  color: #718096;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.custom-toast-close:hover {
+  color: #2d3748;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+.custom-toast.hiding {
+  animation: slideOut 0.3s ease-out forwards;
+}
