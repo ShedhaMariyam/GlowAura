@@ -138,7 +138,8 @@ const addProducts = async (req, res) => {
                 size: variant.size,
                 sku_code: `${productName.substring(0, 3).toUpperCase()}-${variant.size.replace(/\s/g, '')}-${Date.now()}-${index}`,
                 quantity: variant.quantity,
-                regular_price: variant.price
+                regular_price: variant.price,
+                sale_price: variant.price
             };
         });
 
@@ -147,14 +148,13 @@ const addProducts = async (req, res) => {
         const totalStock = processedVariants.reduce((sum, v) => sum + v.quantity, 0);
 
      
-        const salePrice = Math.min(...processedVariants.map(v => v.regular_price));
+        
 
         // Create new product
         const newProduct = new Product({
             productName: productName.trim(),
             description: description.trim(),
             category: categoryDoc._id,
-            sale_price: salePrice,
             images: imagePaths,
             variants: processedVariants,
             stock: totalStock,

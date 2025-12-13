@@ -12,15 +12,19 @@ const categoryInfo = async (req,res)=>{
 
             const categoryData = await Category.find({
                 name: { $regex: search, $options: "i" }}) 
-                .sort({createdAt:-1})
+                .sort({ _id: -1 })
                 .skip(skip)
                 .limit(limit);
 
             
            
 
-            const totalCategories = await Category.countDocuments();
+            const totalCategories = await Category.countDocuments({
+                name: { $regex: search, $options: "i" }});
+
+
             const totalPages = Math.ceil(totalCategories/limit);
+
             res.render("category",{
                 cat:categoryData,
                 search,
@@ -115,7 +119,7 @@ const categoryOffer = async (req, res) => {
 
     for (const product of products) {
       if (hasOffer) {
-  product.variants = product.variants.map(v => {
+    product.variants = product.variants.map(v => {
     const discount = (v.regular_price * percent) / 100;
 
     return {

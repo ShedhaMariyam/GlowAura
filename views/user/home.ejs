@@ -51,7 +51,7 @@
     <!-- Featured Products -->
     <section class="py-5 bg-white">
         <div class="container">
-            
+
             <h2 class="section-title mb-5">Featured Products</h2>
             <div class="row g-4">
                  <%for(let i=0;i<products.length;i++){%>
@@ -64,9 +64,24 @@
                         <div class="card-body">
                             <h5 class="product-title"><%=products[i].productName%></h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <button class="btn btn-add-cart">
+
+                                <div class="product-price">
+                               <% if (products[i].variants && products[i].variants.length > 0) { %>
+                                <% const v = products[i].variants[0]; %>
+
+                                <% if (v.sale_price < v.regular_price) { %>
+                                   <span class="sale-price">₹<%= v.sale_price %></span>
+                                      <span class="old-price text-muted" style="text-decoration: line-through; font-size:14px;">
+                                         ₹<%= v.regular_price %>
+                                        </span>
+                                            <% } else { %>
+                                    <span class="regular-price">₹<%= v.regular_price %></span>
+                                  <% } %>
+                                 <% } %>
+                            </div>
+                                <a href="/addToWishlist?id=<%products[i]._id%>" class="btn btn-add-cart">
                                     <i class="bi bi-heart me-1"></i>Add to Wishlist
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

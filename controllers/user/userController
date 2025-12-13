@@ -62,7 +62,7 @@ const loadProducts = async (req, res) => {
     return res.render('Products');
   } catch (error) {
     console.log("Product page not loading", error);
-    res.status(500).send('Server Error');
+    res.redirect('/pageNotFound');
   }
 };
 

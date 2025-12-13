@@ -316,3 +316,19 @@
     background-color:#e9bba2 ;   
 }
 
+.sale-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #b55a00;   /* warm sale color */
+  margin-right: 6px;
+}
+
+.old-price {
+  color: #888;
+}
+
+.regular-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
