@@ -195,41 +195,90 @@ const addProducts = async (req, res) => {
 
 
 
-const deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const product = await Product.findById(id);
+const loadEditProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
 
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: 'Product not found'
-            });
-        }
+    const product = await Product.findById(productId)
+      .populate('category');
 
-        // Delete product images
-        for (const imagePath of product.images) {
-            const fullPath = path.join(__dirname, '../public', imagePath);
-            await fs.unlink(fullPath).catch(err => console.error(err));
-        }
+    const categories = await Category.find({ is_active: true });
 
-        await Product.findByIdAndDelete(id);
-
-        res.json({
-            success: true,
-            message: 'Product deleted successfully'
-        });
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting product'
-        });
+    if (!product) {
+      return res.redirect('/admin/products');
     }
+
+    res.render('editProduct', {
+      product,
+      cat: categories,
+      activePage: "products"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.redirect('/page-error');
+  }
 };
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { productName, description, category, status, featured, variants } = req.body;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ success: false });
+    }
+
+    const categoryDoc = await Category.findOne({ name: category });
+
+    // Update basic fields
+    product.productName = productName;
+    product.description = description;
+    product.category = categoryDoc._id;
+    product.status = status;
+    product.featured = featured === 'true' || featured === true;
+
+    // Update variants
+    const parsedVariants = JSON.parse(variants);
+    product.variants = parsedVariants.map(v => ({
+      size: v.size,
+      quantity: v.quantity,
+      regular_price: v.price,
+      sale_price: v.price
+    }));
+
+    product.stock = parsedVariants.reduce((sum, v) => sum + v.quantity, 0);
+
+    // Handle image removal
+    if (req.body.removeImages) {
+      const removeImages = Array.isArray(req.body.removeImages)
+        ? req.body.removeImages
+        : [req.body.removeImages];
+
+      product.images = product.images.filter(img => !removeImages.includes(img));
+    }
+
+    // Add new images
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(f => `/uploads/products/${f.filename}`);
+      product.images.push(...newImages);
+    }
+
+    await product.save();
+
+    res.json({ success: true, message: 'Product updated successfully' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+};
+
 
 module.exports={
     productInfo,
     loadAddproduct,
-    addProducts
+    addProducts,
+    loadEditProduct,
+    updateProduct
 }

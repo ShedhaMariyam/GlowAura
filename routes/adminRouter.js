@@ -35,5 +35,6 @@ router.patch('/categories/:id/offer', adminAuth, categoryController.categoryOffe
 router.get('/products',adminAuth,productController.productInfo);
 router.get('/products/add',adminAuth,productController.loadAddproduct);
 router.post('/products/add', uploadProductImages.array('images', 3),productController.addProducts);
-
+router.get('/products/edit/:id', productController.loadEditProduct);
+router.put('/products/edit/:id', uploadProductImages.array('images', 5), productController.updateProduct);
 module.exports = router

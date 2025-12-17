@@ -220,6 +220,10 @@
             error1.style.display = "block";
             error1.innerHTML = "Name must contain alphabets only";
             return false;
+        }else if(nameval.length>20){
+            error1.style.display = "block";
+            error1.innerHTML = "Name must not exceed 20 characters";
+            return false;
         } else {
             error1.style.display = "none";
             error1.innerHTML = "";

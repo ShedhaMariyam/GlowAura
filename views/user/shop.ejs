@@ -1,0 +1,165 @@
+<%- include('../../views/partials/user/header.ejs') %>
+
+<div class="container py-4">
+
+    <!-- PAGE TITLE -->
+    <h4 class="fw-semibold mb-3">All Products</h4>
+
+    <!-- SEARCH BAR -->
+    <div class="mb-4">
+        <form method="GET" action="/products">
+
+  <!-- SEARCH BAR -->
+  <div class="mb-4">
+    <input
+      type="text"
+      name="search"
+      class="form-control rounded-pill"
+      placeholder="Search products..."
+      value="<%= search %>"
+    >
+  </div>
+
+  <div class="row">
+
+    <!-- FILTER SIDEBAR -->
+    <div class="col-md-3">
+
+      <!-- CATEGORY FILTER -->
+      <div class="mb-4">
+        <h6 class="fw-semibold">Category</h6>
+
+        <!-- ALL -->
+        <div class="form-check">
+          <input class="form-check-input"
+                 type="radio"
+                 name="cat"
+                 value=""
+                 onchange="this.form.submit()"
+                 <%= !selectedCategory ? 'checked' : '' %>>
+          <label class="form-check-label">All</label>
+        </div>
+
+        <% category.forEach(cat => { %>
+          <div class="form-check">
+            <input class="form-check-input"
+                   type="radio"
+                   name="cat"
+                   value="<%= cat._id %>"
+                   onchange="this.form.submit()"
+                   <%= selectedCategory == cat._id ? 'checked' : '' %>>
+            <label class="form-check-label"><%= cat.name %></label>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- SORT BY -->
+      <div class="mb-4">
+        <h6 class="fw-semibold">Sort By</h6>
+        <select class="form-select"
+                name="sort"
+                onchange="this.form.submit()">
+          <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>
+            Latest
+          </option>
+          <option value="low" <%= sort === 'low' ? 'selected' : '' %>>
+            Price: Low to High
+          </option>
+          <option value="high" <%= sort === 'high' ? 'selected' : '' %>>
+            Price: High to Low
+          </option>
+        </select>
+      </div>
+
+    </div>
+</form>
+        <!-- ===========================
+            PRODUCT LISTING GRID
+        ============================ -->
+        <div class="col-md-9">
+
+            <div class="row g-4">
+                <% if (!products || products.length === 0) { %>
+            <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+                 No products found
+            </td>
+            </tr>
+            <% } else { %> 
+                 <%for(let i=0;i<products.length;i++){%>
+                <!-- PRODUCT CARD -->
+                <div class="col-md-4">
+                   
+                    
+                    <div class="card border-0 shadow-sm">
+                    <a href="/product/<%= products[i]._id %>" class="text-decoration-none text-dark">
+                        <div class="position-relative">
+                            <img src="<%=products[i].images[0]%>" 
+                                 class="card-img-top" alt="<%=products[i].productName%>">
+                            <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="fw-semibold mb-1"><%=products[i].productName%></h6></a>
+                            <p class="text-muted mb-1">   <% if (products[i].variants && products[i].variants.length > 0) { %>
+                                <% const v = products[i].variants[0]; %>
+
+                                <% if (v.sale_price < v.regular_price) { %>
+                                   <span class="sale-price">₹<%= v.sale_price %></span>
+                                      <span class="old-price text-muted" style="text-decoration: line-through; font-size:14px;">
+                                         ₹<%= v.regular_price %>
+                                        </span>
+                                            <% } else { %>
+                                    <span class="regular-price">₹<%= v.regular_price %></span>
+                                  <% } %>
+                                 <% } %></p>
+
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-dark btn-sm">Buy Now</button>
+                                <button class="btn btn-outline-secondary btn-sm">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+ <%}}%>
+            </div>
+            <!-- PAGINATION -->
+           <div class="d-flex justify-content-center mt-4">
+  <div class="pagination">
+
+    <!-- PREV -->
+    <% if (currentPage > 1) { %>
+      <a class="btn"
+         href="/products?page=<%= currentPage - 1 %>&search=<%= search %>&cat=<%= selectedCategory %>&sort=<%= sort %>">
+        Prev
+      </a>
+    <% } %>
+
+    <!-- PAGE NUMBERS -->
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a class="btn <%= currentPage === i ? 'active' : '' %>"
+         href="/products?page=<%= i %>&search=<%= search %>&cat=<%= selectedCategory %>&sort=<%= sort %>">
+        <%= i %>
+      </a>
+    <% } %>
+
+    <!-- NEXT -->
+    <% if (currentPage < totalPages) { %>
+      <a class="btn"
+         href="/products?page=<%= currentPage + 1 %>&search=<%= search %>&cat=<%= selectedCategory %>&sort=<%= sort %>">
+        Next
+      </a>
+    <% } %>
+
+  </div>
+</div>
+</div>
+
+
+        </div>
+    </div>
+
+</div>
+<%- include('../../views/partials/user/footer.ejs') %>

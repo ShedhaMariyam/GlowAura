@@ -96,10 +96,12 @@
       <%for(let i=0;i<data.length;i++){%>
       <!-- PRODUCT ROW -->
       <tr>
+       
         <td class="d-flex align-items-center gap-3">
           <img src="<%= data[i].images[0] %>"  class="rounded" width="45">
           <%=data[i].productName%>
         </td>
+        
         <td><%=data[i].category.name%></td>
         <td><%=data[i].variants[0].regular_price%></td>
         <td><%=data[i].stock%></td>
@@ -116,8 +118,11 @@
 
                 <!-- Actions -->
         <td>
-          <i class="bi bi-pencil-square me-2"></i>
-          <i class="bi bi-trash"></i>
+          <!-- Edit -->
+  <a href="/admin/products/edit/<%= data[i]._id %>" class="text-primary me-3">
+    <i class="bi bi-pencil-square"></i>
+  </a>
+          
         </td>
       </tr>
 

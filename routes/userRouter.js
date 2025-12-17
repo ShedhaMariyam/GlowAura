@@ -10,7 +10,8 @@ router.get('/pageNotFound',userController.pageNotFound);
 router.get('/',userController.loadHomepage);
 
 
-router.get('/products',userAuth,userController.loadProducts);
+router.get('/products',userController.loadProducts);
+router.get('/product/:id',userController.loadProductDetails);
 
 
 router.get('/signup',userController.loadSignup);
@@ -27,6 +28,7 @@ router.get('/forgot-password', userController.loadForgotPassword);
 router.post('/forgot-password', userController.sendResetOtp);
 router.get('/reset-password', userController.loadResetPassword);
 router.post('/reset-password', userController.resetPassword);
+
 
 
 router.get('/logout',userController.logout);
