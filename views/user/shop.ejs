@@ -1,0 +1,244 @@
+<%- include('../../views/partials/user/header.ejs') %>
+
+<style>
+    /* Layout: Remove large side gutters */
+    .main-wrapper {
+        padding: 0 40px;
+    }
+
+    /* Typography: Premium Ecommerce Sizing */
+    .filter-title {
+        font-size: 1.5rem; 
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-label {
+        font-size: 1.2rem;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .product-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c2c2c;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+    }
+
+    /* Price Styling matched to reference image */
+    .price-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .sale-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #c23b48;
+        letter-spacing: 0;
+    }
+
+   
+
+    /* Wishlist Heart Overlay */
+    .wishlist-btn-box {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 5;
+    }
+
+    .btn-heart {
+        background: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-heart:hover i {
+  color: #e63946; /* red */
+  transform: scale(1.1);
+}
+
+/* Change outline heart to filled heart on hover */
+.btn-heart:hover i::before {
+  content: "\f415"; /* Bootstrap icon: bi-heart-fill */
+  font-family: "Bootstrap-icons";
+}
+    
+
+    .product-card-img {
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 8px;
+        background-color: #f4f4f4;
+    }
+
+    .btn-buy {
+        background-color: #f5d5c1;
+        color: #333;
+        border: none;
+        font-weight: 600;
+        padding: 10px 25px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-buy:hover {
+        background-color: #f0c9b0;
+    }
+
+    .btn-add-cart {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        padding: 10px 12px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #f5f5f5;
+    }
+
+    .pagination .page-link {
+        color: #5a4a3a;
+        border-color: #e0e0e0;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #f5d5c1;
+        border-color: #f5d5c1;
+        color: #333;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #f5d5c1;
+        border-color: #f5d5c1;
+        color: #333;
+    }
+</style>
+
+<div class="container-fluid main-wrapper py-4">
+    <form method="GET" action="/products" id="filterForm">
+        
+        <div class="mb-5">
+            <input type="text" name="search" class="form-control rounded-pill border-0 bg-light px-4 py-3 fs-5" 
+                   placeholder="Search products..." value="<%= search %>">
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 pe-md-5">
+                <div class="mb-5">
+                    <h5 class="filter-title">Category</h5>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="cat" id="catAll" value="" 
+                               onchange="this.form.submit()" <%= !selectedCategory ? 'checked' : '' %>>
+                        <label class="form-check-label filter-label" for="catAll">All</label>
+                    </div>
+                    <% for(let i=0; i < category.length; i++) { %>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="cat" id="cat<%= category[i]._id %>" 
+                                   value="<%= category[i]._id %>" onchange="this.form.submit()"
+                                   <%= selectedCategory == category[i]._id.toString() ? 'checked' : '' %>>
+                            <label class="form-check-label filter-label" for="cat<%= category[i]._id %>">
+                                <%= category[i].name %>
+                            </label>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="mb-5">
+                    <h5 class="filter-title">Sort By</h5>
+                    <select class="form-select border-0 bg-light py-2 fs-6" name="sort" onchange="this.form.submit()">
+                        <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>Latest</option>
+                        <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
+                        <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row g-4">
+                    <% if (products && products.length > 0) { %>
+                        <% for(let i=0; i < products.length; i++) { %>
+                            <div class="col-md-4">
+                                <div class="card border-0 h-100 position-relative">
+                                    
+                                    <div class="wishlist-btn-box">
+                                        <button type="button" class="btn-heart">
+                                            <i class="bi bi-heart fs-5"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="position-relative">
+                                        <a href="/product/<%= products[i]._id %>">
+                                            <img src="<%= products[i].images[0] %>" class="product-card-img w-100" alt="<%= products[i].productName %>">
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="card-body px-0">
+                                        <a href="/product/<%= products[i]._id %>" class="text-decoration-none">
+                                            <h3 class="product-name"><%= products[i].productName %></h3>
+                                        </a>
+                                        
+                                        <div class="price-container">
+                                            <% if (products[i].variants && products[i].variants.length > 0) { 
+                                                const v = products[i].variants[0]; 
+                                                if (v.sale_price < v.regular_price) { %>
+                                                    <span class="sale-price">₹<%= v.sale_price %></span>
+                                                    <span class="old-price text-muted" style="text-decoration: line-through; font-size:18px;">₹<%= v.regular_price %></span>
+                                                <% } else { %>
+                                                    <span class="regular-price">₹<%= v.regular_price %></span>
+                                                <% } 
+                                            } %>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center pb-3">
+                                        <button class="btn btn-buy">Buy Now</button>
+                                        <button class="btn btn-add-cart">
+                                            <i class="bi bi-cart-plus fs-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted fs-4">No products found.</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <% if (totalPages > 1) { %>
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <% for(let i=1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link shadow-sm" href="/products?page=<%= i %>&search=<%= search %>&cat=<%= selectedCategory %>&sort=<%= sort %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+                <% } %>
+            </div>
+        </div>
+    </form>
+</div>
+
+<%- include('../../views/partials/user/footer.ejs') %>

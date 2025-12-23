@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - GlowAura</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <%- include('../../views/partials/user/header.ejs') %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
@@ -19,17 +14,6 @@
             color: var(--text-dark);
         }
         
-        .navbar-brand {
-            font-size: 20.4px;
-            font-weight: 600;
-            color: var(--text-dark) !important;
-        }
-        
-        .nav-link {
-            font-size: 13.6px;
-            color: var(--text-dark) !important;
-        }
-        
         .cart-badge {
             position: absolute;
             top: -4px;
@@ -39,7 +23,7 @@
             border-radius: 50%;
             width: 16px;
             height: 16px;
-            font-size: 10.2px;
+            font-size: 14.2px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -65,63 +49,35 @@
         }
         
         .error-title {
-            font-size: 20.4px;
+            font-size: 23.4px;
             font-weight: 500;
             color: var(--text-dark);
             line-height: 32px;
         }
         
         .error-text {
-            font-size: 13.6px;
+            font-size: 16.6px;
             color: var(--text-gray);
             line-height: 24px;
         }
         
         .btn-home {
-            background-color: var(--bg-beige);
+            background-color: #e9bba2;
             color: var(--text-dark);
             border: none;
             padding: 14px 32px;
-            font-size: 13.6px;
+            font-size: 16.6px;
             border-radius: 8px;
         }
         
         .btn-home:hover {
-            background-color: #d4b8a8;
+            background-color: #ddb095;
             color: var(--text-dark);
         }
         
-        .footer-section {
-            background-color: var(--bg-cream);
-            padding: 48px 0;
-        }
         
-        .footer-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
         
-        .footer-link {
-            color: var(--text-gray);
-            text-decoration: none;
-            font-size: 13.6px;
-        }
-        
-        .footer-link:hover {
-            color: var(--text-dark);
-        }
-        
-        .footer-brand {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-        
-        .footer-tagline {
-            font-size: 11.9px;
-            color: var(--text-gray);
-        }
+       
         
         .copyright {
             border-top: 1px solid #e5e7eb;
@@ -144,37 +100,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">GlowAura</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact Us</a>
-                    </li>
-                </ul>
-                <div class="d-flex gap-3 align-items-center">
-                    <div class="icon-wrapper">
-                        <i class="bi bi-cart3 fs-5"></i>
-                        <span class="cart-badge">2</span>
-                    </div>
-                    <i class="bi bi-search fs-5"></i>
-                    <i class="bi bi-person fs-5"></i>
-                </div>
-            </div>
-        </div>
-    </nav>
-
+    
     <!-- 404 Error Section -->
     <section class="error-section">
         <div class="container">
@@ -184,59 +110,11 @@
                     <h2 class="error-title mb-3">Page Not Found</h2>
                     <p class="error-text mb-2">The page you are looking for might have been removed,</p>
                     <p class="error-text mb-4">had its name changed, or is temporarily unavailable.</p>
-                    <a href="index.html" class="btn btn-home">Back to Home</a>
+                    <a href="/" class="btn btn-home">Back to Home</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer-section" id="contact">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-brand mb-3">GlowAura</h5>
-                    <p class="footer-tagline mb-3">Luxury skincare for your natural radiance.</p>
-                    <div class="d-flex gap-3">
-                        <i class="bi bi-facebook fs-5"></i>
-                        <i class="bi bi-instagram fs-5"></i>
-                        <i class="bi bi-twitter fs-5"></i>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-title mb-3">Shop</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="footer-link">All Products</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Facewash</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Moisturizer</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Sunscreen</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-title mb-3">Account</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="footer-link">My Account</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Orders</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Wishlist</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Referral</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-title mb-3">Information</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="footer-link">About Us</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Contact Us</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Shipping &amp; Returns</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; 2025 GlowAura. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+   
+<%- include('../../views/partials/user/footer.ejs') %>

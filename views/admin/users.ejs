@@ -1,0 +1,240 @@
+
+
+
+<%- include('../../views/partials/admin/header.ejs') %>
+<main class="page-content">
+
+    <div class="d-flex justify-content-between align-items-start mb-3 ">
+      <div>
+        <h4 class="fw-semibold mb-1">Users</h4>
+        <p class="text-muted mb-0" style="font-size: 1.2rem;">
+          Manage users
+        </p>
+      </div>
+</div>
+      <!-- Search / Filter -->
+      <div class="search-card">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+              <form method="GET" action="/admin/users" class="flex-grow-1">
+    <input type="text" 
+           name="search" 
+           class="form-control rounded-pill"
+           placeholder="Search products..."
+           value="<%= typeof search !== 'undefined' ? search : '' %>">
+</form>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <select class="form-select">
+              <option>All Users</option>
+              <option>Active</option>
+              <option>Blocked</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 d-flex justify-content-end">
+            <button class="btn btn-outline-secondary me-2"><i class="bi bi-download me-1"></i> Export</button>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead class="bg-transparent">
+              <tr>
+                <th style="width:40%" class="fw-semibold fs-5">User</th>
+                <th style="width:8%" class="fw-semibold fs-5">Orders</th>
+                <th style="width:12%" class="fw-semibold fs-5">Spent</th>
+                <th style="width:10%" class="fw-semibold fs-5">Wallet</th>
+                <th style="width:10%" class="fw-semibold fs-5">Status</th>
+                <th style="width:12%" class="fw-semibold fs-5">Last Login</th>
+                <th style="width:8%" class="fw-semibold fs-5">Actions</th>
+              </tr>
+            </thead>
+            <tbody style="font-size:20px;">
+                 <% if (!data || data.length === 0) { %>
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">No users found</td>
+            </tr>
+            <% } else { %>
+
+                <% for (let i = 0; i < data.length; i++) { %>
+             
+              <tr class="user-row">
+                <td >
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="profile-circle rounded-circle bg-light d-flex align-items-center justify-content-center" style="width:44px;height:44px;font-weight:700;">
+                        <%= (data[i].name || '').substring(0, 2).toUpperCase() %>
+                    </div>
+                    <div>
+                      <div class="fw-semibold " style="font-size:1.5rem"><%= data[i].name %></div>
+                      <div class="text-muted" style="font-size:1.rem"><%= data[i].email %></div>
+                    </div>
+                  </div>
+                </td>
+              <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <% if (!data[i].is_Blocked) { %>
+                        <td><span class="status-pill status-active">Active</span></td>
+                <% } else { %>   
+                    <td><span class="status-pill status-blocked">Blocked</span></td>
+                <% } %>
+                
+                <td> <%= data[i].lastLogin 
+                    ? data[i].lastLogin.toLocaleString("en-IN", {  dateStyle: "medium", timeStyle: "short" }) 
+                    : "Never" %>
+                </td>
+                
+                <td>
+                <div class="d-flex gap-2 justify-content-end align-items-center">
+   
+                    <a href="/admin/user/view?id=<%= data[i]._id %>" class="btn btn-sm btn-light" title="View" aria-label="View">
+      <i class="bi bi-eye-fill fs-4"></i>
+    </a>
+         <% if (!data[i].is_Blocked) { %>
+      <button 
+        type="button"
+        class="btn btn-sm btn-light"
+        title="Block"
+        aria-label="Block"
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmBlockModal<%= data[i]._id %>">
+        <i class="bi bi-slash-circle fs-4"></i>
+      </button>
+    <% } else { %>
+     
+      <button 
+        type="button"
+        class="btn btn-sm btn-light"
+        title="Unblock"
+        aria-label="Unblock"
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmUnblockModal<%= data[i]._id %>">
+        <i class="bi bi-check2-circle fs-4"></i>
+      </button>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+
+<% if (!data[i].is_Blocked) { %>
+  <!-- Block Modal -->
+  <div class="modal fade" id="confirmBlockModal<%= data[i]._id %>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 12px;">
+        
+        <div class="modal-header" style="border-bottom: none;">
+          <h5 class="modal-title" style="font-weight: 600; color:#2b2b2b;">
+            Block User
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body" style="color:#6b6b6b;">
+          Are you sure you want to block 
+          <strong><%= data[i].name %></strong>? They will no longer be able to login or make purchases.
+        </div>
+
+        <div class="modal-footer" style="border-top: none;">
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+            style="border-radius: 8px;">
+            Cancel
+          </button>
+
+          <a href="/admin/blockUser?id=<%= data[i]._id %>" 
+            class="btn"
+            style="background-color:#d6b09c; color:#2b2b2b; border-radius: 8px;">
+            Yes, Block User
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <!-- Unblock Modal -->
+  <div class="modal fade" id="confirmUnblockModal<%= data[i]._id %>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 12px;">
+        
+        <div class="modal-header" style="border-bottom: none;">
+          <h5 class="modal-title" style="font-weight: 600; color:#2b2b2b;">
+            Unblock User
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body" style="color:#6b6b6b;">
+          Are you sure you want to unblock 
+          <strong><%= data[i].name %></strong>?
+        </div>
+
+        <div class="modal-footer" style="border-top: none;">
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+            style="border-radius: 8px;">
+            Cancel
+          </button>
+
+          <a href="/admin/unblockUser?id=<%= data[i]._id %>" 
+            class="btn"
+            style="background-color:#b7c7a5; color:#2b2b2b; border-radius: 8px;">
+            Yes, Unblock User
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% } %>
+
+
+             <%}%>
+            <%}%>
+            </tbody>
+          </table>
+        </div>
+    <%- include('../../views/partials/admin/footer.ejs') %>
+</main>
+
+</div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Mobile sidebar toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuBtn?.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+    overlay.classList.toggle('show');
+  });
+  overlay?.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+  });
+
+  // Example: wire search input to console (replace with real behavior)
+  document.querySelector('.search-card input[type="search"]')?.addEventListener('input', (e) => {
+    // debounce / fetch filtered results in production
+    console.log('search:', e.target.value);
+  });
+</script>
+
+</body>
+</html>

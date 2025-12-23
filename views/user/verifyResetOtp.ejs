@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Verification - GlowAura</title>
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <style>
+    :root {
+      --bg-cream: #f6efe7;
+      --bg-beige: #f6efe7;
+      --text-dark: #2b2b2b;
+      --text-gray: #4b5563;
+      --brand-border: #090b0e;
+    }
+    body { background: #ffffff; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    .verification-card {
+      background: #faf8f8;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+      padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .btn-verify {
+      background: #e5c8b8;
+      color: var(--text-dark);
+      border-radius: 8px;
+      font-size: 13.6px;
+      border: none;
+      width: 100%;
+      padding: 14px 0;
+      font-weight: 500;
+    }
+    .btn-verify:hover { background: #ecc6b1; }
+    .code-input {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      border: 1px solid #a39281;
+      text-align: center;
+      font-size: 24px;
+      background: #fff;
+    }
+    .back-link {
+      color: #b9c8b0 !important;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .circle-icon {
+      background: #e5c8b8;
+      border-radius: 50%;
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem auto;
+    }
+    .circle-icon i {
+      font-size: 2rem;
+      color: var(--bg-beige);
+    }
+    .text-secondary { color: #4b5563 !important; }
+    .text-brand { color: var(--text-dark); }
+    .resend-btn {
+      background: none;
+      border: none;
+      color: #a39281;
+      font-weight: 500;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 13.6px;
+      margin-left: 5px;
+    }
+    .resend-btn:disabled {
+      color: #e0e0e0;
+      text-decoration: none;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container min-vh-100 d-flex justify-content-center align-items-center" style="background:var(--bg-cream)">
+    <div class="col-lg-5 col-md-7 col-12">
+      <div class="verification-card shadow">
+        <div class="mb-4 text-center">
+          <span class="fw-bold fs-4 text-brand">GlowAura</span>
+        </div>
+        <div class="circle-icon mb-3">
+          <i class="bi bi-envelope-check"></i>
+        </div>
+        <h2 class="fs-5 fw-semibold text-center text-brand mb-2" style="font-size:17px;">Verify your email</h2>
+        <div class="mb-4 text-center">
+          <div class="text-secondary" style="font-size:13.6px;">We've sent a verification code to your email.</div>
+          <div class="text-secondary" style="font-size:13.6px;">Please enter the code below.</div>
+        </div>
+
+        <!-- OTP Form -->
+        <form id="otpForm" onsubmit="validateOTPForm(event)">
+          <label class="form-label fw-medium mb-2" style="color:#374151;">Verification Code</label>
+          <div class="d-flex justify-content-center gap-3 mb-3">
+            <input type="text" maxlength="1" class="code-input" required name="otp" inputmode="numeric">
+            <input type="text" maxlength="1" class="code-input" required name="otp" inputmode="numeric">
+            <input type="text" maxlength="1" class="code-input" required name="otp" inputmode="numeric">
+            <input type="text" maxlength="1" class="code-input" required name="otp" inputmode="numeric">
+          </div>
+          <div class="d-flex justify-content-center align-items-center mb-2" style="font-size:10.2px; color:#6b7280;">
+            <span>Didn't receive the code?</span>
+            <span class="ms-2" id="resendSection">
+              Resend in <strong id="timervalue">59</strong> seconds
+            </span>
+            <button type="button" class="resend-btn ms-2" id="resendBtn" disabled>Resend OTP</button>
+          </div>
+          <button type="submit" class="btn btn-verify mt-3">Verify Email</button>
+        </form>
+
+        <div class="text-center mt-4 pb-2">
+          <a href="#" class="back-link">Back to Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    // Auto cursor and paste support
+    document.querySelectorAll('.code-input').forEach((input, idx, arr) => {
+      input.addEventListener('input', () => {
+        if(input.value && idx < arr.length - 1) arr[idx + 1].focus();
+      });
+      input.addEventListener('keydown', (e) => {
+        if((e.key === "Backspace" || e.key === "Delete") && !input.value && idx > 0) arr[idx - 1].focus();
+        if(e.key === "ArrowLeft" && idx > 0) arr[idx - 1].focus();
+        if(e.key === "ArrowRight" && idx < arr.length - 1) arr[idx + 1].focus();
+      });
+      input.addEventListener('paste', (e) => {
+        const data = (e.clipboardData || window.clipboardData).getData('text');
+        if(data.length === arr.length) {
+          e.preventDefault();
+          arr.forEach((el, i) => el.value = data[i] || '');
+          arr[arr.length - 1].focus();
+        }
+      });
+    });
+
+    // Timer Logic
+    let timeLeft = 59;
+    let timer;
+    const timerDisplay = document.getElementById("timervalue");
+    const resendBtn = document.getElementById("resendBtn");
+    const resendSection = document.getElementById("resendSection");
+
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 59;
+      resendSection.style.display = 'inline';
+      resendBtn.disabled = true;
+      resendBtn.style.display = 'none';
+      timer = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+        } else {
+          clearInterval(timer);
+          resendSection.style.display = 'none';
+          resendBtn.disabled = false;
+          resendBtn.style.display = 'inline';
+        }
+      }, 1000);
+    }
+    startTimer();
+
+    // Resend OTP
+    resendBtn.addEventListener('click', async () => {
+      try {
+        const res = await axios.get('/resend-otp');
+        Swal.fire({
+          icon: 'info',
+          title: 'OTP Resent',
+          text: res.data.message || 'A new verification code has been sent to your email.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        startTimer();
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to resend',
+          text: err.response?.data?.message || 'Something went wrong, please try again.'
+        });
+      }
+    });
+
+</script>

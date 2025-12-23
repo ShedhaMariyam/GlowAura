@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GlowAura Admin Dashboard</title>
+
+  <!-- Bootstrap CSS + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-cream: #f6efe7;
+      --panel: #fff;
+      --accent: #e5c8b8;
+      --muted: #6b7280;
+      --text-dark: #2b2b2b;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg-cream);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+    }
+
+    /* layout */
+    .admin-root { display: flex; min-height: 100vh; }
+
+ .sidebar {
+      display: flex;
+      flex-direction: column;
+      width: 320px;
+      background: var(--panel);
+      border-right: 1px solid #eee;
+      padding: 18px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 70;
+      background: var(--panel); /* Ensure background covers scroll when sticky */
+      padding-bottom: 8px;
+    }
+
+    /* FIX: Scrollable Navigation Area */
+    .sidebar-menu-wrapper {
+      flex: 1;               /* Take up remaining vertical space */
+      overflow-y: auto;      /* Enable vertical scroll */
+      overflow-x: hidden;    /* Disable horizontal scroll */
+      display: flex;
+      flex-direction: column; /* Force items to stack vertically */
+      margin-bottom: 8px;
+      padding-right: 4px;    /* Space for scrollbar */
+    }
+
+    .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .75rem .9rem;
+      border-radius: 10px;
+      color: var(--text-dark);
+      margin-bottom: 7px;
+      font-size: 20px;
+      font-weight: 500;
+      width: 100%; /* Ensure link takes full width */
+      white-space: nowrap; /* Prevent text wrapping awkwardly */
+    }
+
+    .sidebar .nav-link i { font-size: 1.15rem; color: #5d645f; min-width: 1.2rem; text-align: center; }
+    .sidebar .nav-link.active,
+    .sidebar .nav-link:hover { background: #f3e9e2; text-decoration: none; }
+
+    /* Logout pinned bottom */
+    .logout-wrap {
+      margin-top: auto; /* Pushes to bottom if flex container allows, but sidebar is flex-col */
+      padding-top: 10px;
+      border-top: 1px solid #f0edea;
+      z-index: 70;
+      background: var(--panel);
+    }
+
+    /* Custom Scrollbar for Sidebar */
+    .sidebar-menu-wrapper::-webkit-scrollbar { width: 6px; }
+    .sidebar-menu-wrapper::-webkit-scrollbar-thumb { background: #eee; border-radius: 8px; }
+    .sidebar-menu-wrapper::-webkit-scrollbar-thumb:hover { background: #dcdcdc; }
+
+    /* main area */
+    .main { flex: 1; display:flex; flex-direction: column; min-height: 100vh; }
+
+    /* topbar */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid #eee;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .notif { position:relative; cursor:pointer; margin-right:8px; }
+    .notif .badge {
+      position:absolute; top:-6px; right:-8px; width:18px; height:18px; border-radius:50%;
+      background:#28a745; color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center;
+    }
+
+    .search-card { background:var(--panel); border-radius:12px; padding:18px; box-shadow:0 6px 18px rgba(15,15,15,0.04); margin-bottom:18px; }
+.table thead th {
+  border-bottom: none;
+  color: #6b6b6b; 
+  font-weight:600;
+}
+
+.user-row .avatar {  
+  border-radius:50%; 
+  object-fit:cover; 
+}
+
+.status-active { 
+  background:#ecf8ef; 
+  color:#0b7a3a; 
+}
+
+.status-blocked { 
+  background:#fdecef; 
+  color:#b91c1c; 
+}
+
+/* Row height increased */
+.table tbody tr {
+  height: 95px; /* set row height to show 3 rows in good spacing */
+}
+
+/* Your existing TD style */
+.table tbody tr td { 
+  vertical-align: middle; 
+  border-top:1px solid #f1ece8; 
+}
+
+/* Icon scaling */
+.table .btn .bi {
+  transform: scale(1.08);
+  transition: transform .12s ease;
+}
+
+.table .btn:hover .bi {
+  transform: scale(1.12);
+}
+
+.table .btn .bi {
+  color: #2b2b2b;
+}
+
+
+    .pager-wrap { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:8px; }
+    /* page content */
+    .page-content { padding: 28px; }
+
+    .dashboard-card {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(15,15,15,0.04);
+    }
+    .chart-box { background: var(--panel); border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(15,15,15,0.04); height:320px; }
+
+    .quick-links .btn { border-radius: 12px; padding: 12px 16px; justify-content: flex-start; }
+
+    /* responsive mobile behavior: off-canvas sidebar */
+    @media (max-width: 992px) {
+      .sidebar { position: fixed; left: -100%; top: 0; width: 260px; transition: left .18s ease; z-index: 1050; height: 100vh; }
+      .sidebar.show { left: 0; }
+      .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 1040; display: none; }
+      .overlay.show { display: block; }
+      .logout-wrap { position: absolute; left: 18px; right: 18px; bottom: 18px; z-index: 1100; }
+    }
+
+    
+
+  </style>
+</head>
+<body>
+
+<div class="admin-root">
+
+  <aside id="sidebar" class="sidebar" aria-label="Primary Sidebar">
+    <div class="brand" aria-label="GlowAura brand">
+      <div>
+        <div class="fw-bold fs-2">GlowAura</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrapper" aria-label="Admin navigation">
+      
+      <a href="/admin/dashboard" class="nav-link <%= activePage === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-grid-fill"></i> Dashboard
+      </a>
+
+      <a href="/admin/products" class="nav-link <%= activePage === 'products' ? 'active' : '' %>">
+        <i class="bi bi-box-seam"></i> Products
+      </a>
+
+      <a href="/admin/categories" class="nav-link <%= activePage === 'categories' ? 'active' : '' %>">
+        <i class="bi bi-tags"></i> Categories
+      </a>
+
+      <a href="/admin/orders" class="nav-link <%= activePage === 'orders' ? 'active' : '' %>">
+        <i class="bi bi-bag-check"></i> Orders
+      </a>
+
+      <a href="/admin/reports" class="nav-link <%= activePage === 'reports' ? 'active' : '' %>">
+        <i class="bi bi-bar-chart-line"></i> Sales Report
+      </a>
+
+      <a href="/admin/users" class="nav-link <%= activePage === 'users' ? 'active' : '' %>">
+        <i class="bi bi-people"></i> Users
+      </a>
+
+      <a href="/admin/coupons" class="nav-link <%= activePage === 'coupons' ? 'active' : '' %>">
+        <i class="bi bi-percent"></i> Coupons & Offers
+      </a>
+
+      <a href="/admin/messages" class="nav-link <%= activePage === 'messages' ? 'active' : '' %>">
+        <i class="bi bi-chat-left-text"></i> Messages
+      </a>
+
+      <a href="/admin/inventory" class="nav-link <%= activePage === 'inventory' ? 'active' : '' %>">
+        <i class="bi bi-box"></i> Inventory
+      </a>
+
+      <a href="/admin/banner" class="nav-link <%= activePage === 'banner' ? 'active' : '' %>">
+        <i class="bi bi-box-seam"></i> Banner
+      </a>
+
+      <a href="/admin/settings" class="nav-link <%= activePage === 'settings' ? 'active' : '' %>">
+        <i class="bi bi-gear"></i> Settings
+      </a>
+
+    </div>
+
+    <div class="logout-wrap">
+      <a href="/admin/logout" class="nav-link text-danger" aria-label="Logout">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- overlay for mobile menu -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="d-flex align-items-center gap-3">
+        <button id="menuBtn" class="btn btn-light d-lg-none" aria-label="Open menu"><i class="bi bi-list"></i></button>
+        
+      </div>
+
+      <div class="d-flex align-items-center">
+        <div class="notif me-3" title="Notifications">
+          <i class="bi bi-bell fs-4" aria-hidden="true"></i>
+          <span class="badge" aria-hidden="true">3</span>
+        </div>
+
+          <div class="dropdown">
+          <button class="btn dropdown-toggle d-flex align-items-center"
+            type="button"
+            id="adminMenu"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="background: none; border: none;">
+            
+            <img src="https://ui-avatars.com/api/?name=Admin&background=E5C8B8&color=2B2B2B"
+                 width="44" height="44"
+                 class="rounded-circle me-2"
+                 alt="Admin">
+            
+            <span class="fw-semibold d-none d-md-block">Admin User</span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="adminMenu">
+            <li><a class="dropdown-item" href="/admin/profile"><i class="bi bi-person me-2"></i> Profile</a></li>
+            <li><a class="dropdown-item" href="/admin/settings"><i class="bi bi-gear me-2"></i> Settings</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li><a class="dropdown-item text-danger" href="/admin/logout">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a></li>
+          </ul>
+        </div>
+
+
+      </div>
+    </div>
+    

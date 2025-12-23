@@ -1,16 +1,18 @@
 <%- include('../../views/partials/user/header.ejs') %>
 
+    <!-- Hero Section -->
     <section class="hero-section">
-        <div class="container hero-content">
+        <div class="container-fluid hero-content p-0 ps-5">
+
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h1 class="hero-title mb-4">Illuminate Your Aura</h1>
                     <p class="hero-text mb-2">Glow Naturally. Feel the Aura. Discover luxury</p>
                     <p class="hero-text mb-4">skincare that enhances your natural radiance.</p>
-                    <button class="btn btn-shop">Shop All</button>
+                    <button class="btn btn-shop">Shop Now</button>
                 </div>
                 <div class="col-lg-6">
-                    <img src="/hero.jpg" alt="Hero Image" class="img-fluid rounded shadow">
+                    <img src="./images/heroimage.png" alt="Hero Image" class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
@@ -22,21 +24,21 @@
             <h2 class="section-title mb-5">Shop by Category</h2>
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image.png')"></div>
-                    <div class="category-title mt-3">
-                        <span>Facewash</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
+                    <div class="category-card" style="background-image: url('/images/facewash.jpg');"></div>
+                        <div class="category-title mt-3">
+                            <span>Facewash</span>
+                             <i class="bi bi-arrow-right"></i>
+                        </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image-2.png')"></div>
+                    <div class="category-card" style="background-image: url('/images/moisturizer2.jpg')"></div>
                     <div class="category-title mt-3">
                         <span>Moisturizer</span>
                         <i class="bi bi-arrow-right"></i>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./img/image-4.png')"></div>
+                    <div class="category-card" style="background-image: url('./images/sunscreen2.jpg')"></div>
                     <div class="category-title mt-3">
                         <span>Sunscreen</span>
                         <i class="bi bi-arrow-right"></i>
@@ -49,65 +51,41 @@
     <!-- Featured Products -->
     <section class="py-5 bg-white">
         <div class="container">
+
             <h2 class="section-title mb-5">Featured Products</h2>
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
+                 <%for(let i=0;i<products.length;i++){%>
+                <div class="col-lg-3 col-md-6">       
                     <div class="card product-card">
-                        <img src="img/container-4.svg" class="product-img" alt="Radiance Facewash">
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <img src="<%= products[i].images[0] %>" class="product-img" 
+                                      alt="<%= products[i].productName %>">
+                        </a>
                         <div class="card-body">
-                            <h5 class="product-title">Radiance Facewash</h5>
+                            <h5 class="product-title"><%=products[i].productName%></h5>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$24.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
+
+                                <div class="product-price">
+                               <% if (products[i].variants && products[i].variants.length > 0) { %>
+                                <% const v = products[i].variants[0]; %>
+
+                                <% if (v.sale_price < v.regular_price) { %>
+                                   <span class="sale-price">₹<%= v.sale_price %></span>
+                                      <span class="old-price text-muted" style="text-decoration: line-through; font-size:14px;">
+                                         ₹<%= v.regular_price %>
+                                        </span>
+                                            <% } else { %>
+                                    <span class="regular-price">₹<%= v.regular_price %></span>
+                                  <% } %>
+                                 <% } %>
+                            </div>
+                                <a href="/addToWishlist?id=<%products[i]._id%>" class="btn btn-add-cart">
+                                    <i class="bi bi-heart me-1"></i>Add to Wishlist
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="img/container-5.svg" class="product-img" alt="Hydra-Boost Moisturizer">
-                        <div class="card-body">
-                            <h5 class="product-title">Hydra-Boost Moisturizer</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$34.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="img/container-2.svg" class="product-img" alt="UV Shield Sunscreen">
-                        <div class="card-body">
-                            <h5 class="product-title">UV Shield Sunscreen</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$29.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card product-card">
-                        <img src="img/container-6.svg" class="product-img" alt="Overnight Repair Serum">
-                        <div class="card-body">
-                            <h5 class="product-title">Overnight Repair Serum</h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="product-price">$49.99</span>
-                                <button class="btn btn-add-cart">
-                                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </div><%}%>          
         </div>
     </section>
 
@@ -117,7 +95,7 @@
             <h2 class="section-title mb-5">Why GlowAura</h2>
             <div class="row g-5">
                 <div class="col-lg-6">
-                    <img src="./img/image-3.png" alt="Why GlowAura" class="why-image">
+                    <img src="./images/why.jpg" alt="Why GlowAura" class="why-image">
                 </div>
                 <div class="col-lg-6 d-flex flex-column justify-content-center">
                     <div class="mb-4">
@@ -173,5 +151,6 @@
             </div>
         </div>
     </section>
+
 
   <%- include('../../views/partials/user/footer.ejs') %>

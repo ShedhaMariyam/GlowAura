@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign In - GlowAura</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --bg-cream: #f6efe7;
+      --bg-beige: #e5c8b8;
+      --text-dark: #2b2b2b;
+      --text-gray: #4b5563;
+      --primary-border: #d1d5db;
+    }
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background-color:#f6efe7;
+    }
+    .signin-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+      padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .form-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #374151;
+    }
+    .input-group-text {
+      background: transparent;
+      border: none;
+    }
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid var(--primary-border);
+      background: #fff;
+      color: #2b2b2b;
+      font-size: 19px;
+    }
+    .form-control::placeholder {
+      color: #cccccc;
+    }
+    .btn-signin {
+      background-color: var(--bg-beige);
+      color: var(--text-dark);
+      border-radius: 8px;
+      padding: 14px 0;
+      font-size: 16.6px;
+      border: none;
+      width: 100%;
+    }
+    .btn-signin:hover {
+      background-color: #d4b8a8;
+      color: var(--text-dark);
+    }
+    .divider {
+      text-align: center;
+      position: relative;
+      margin: 18px 0;
+    }
+    .divider:before, .divider:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: #e5e7eb;
+    }
+    .divider:before { left: 0; }
+    .divider:after { right: 0; }
+    .divider span {
+      background: #fff;
+      padding: 0 10px;
+      color: #6b7280;
+      font-size: 15px;
+    }
+    .forgot-link, .signup-link {
+      color: #b9c8b0 !important;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .forgot-link:hover, .signup-link:hover { text-decoration: underline; }
+    .form-check-input {
+      border-radius: 2px;
+      border-width: 1px;
+    }
+     .error-message{
+            color: red;
+            font-size: 0.75rem;
+            display: none;
+        }
+
+    .alert-danger {
+      background-color: #fbeae7;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      font-size: 16px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="col-lg-5 col-md-7 col-12">
+      <div class="signin-card shadow">
+        <div class="mb-4 text-center">
+          <span class="fw-bold fs-4" style="color:var(--text-dark)">GlowAura</span>
+          <div class="fs-5 fw-medium mt-2" style="color:var(--text-dark)">Sign in to your account</div>
+        </div>
+
+        <% if (typeof message !== 'undefined' && message) { %>
+  <div class="alert alert-danger text-center" role="alert">
+    <%= message %>
+  </div>
+<% } %>
+
+        <form method="post" action="/signin">
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="signinEmail" class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control" placeholder="you@example.com" id="email" name="email" required>
+            </div>
+            <div id="error1" class="error-message"></div>
+          </div>
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="signinPassword" class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input type="password" class="form-control" placeholder="••••••••" id="password" name="password" required>
+               
+            </div>
+            <div id="error2" class="error-message"></div>
+          </div>
+          <!-- Remember Me / Forgot -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check d-flex align-items-center">
+              <input class="form-check-input me-2" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe" style="color:#374151;font-size:12px;">Remember me</label>
+            </div>
+            <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-signin">Sign In</button>
+        </form>
+        <!-- Don't have account -->
+        <div class="text-center mt-3 mb-2">
+          <span style="color:#4b5563;font-size:12px;">Don't have an account?</span>
+          <a href="/signup" class="signup-link ms-1">Sign up now</a>
+        </div>
+          <div class="divider"><span>Or signin with</span></div>
+
+                <!-- Social -->
+                <div class="d-flex justify-content-center">
+                    <a href="/auth/google" class="btn btn-outline-secondary w-50 me-2"><i class="bi bi-google me-1"></i> Google</a>
+                </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+     
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    const emailEl = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const error1 = document.getElementById('error1');
+    const error2 = document.getElementById('error2');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // reset previous errors
+      error1.style.display = 'none';
+      error2.style.display = 'none';
+
+      const email = emailEl.value.trim();
+      const password = passwordEl.value.trim();
+      let isValid = true;
+
+      // Email validation
+      if (email === '') {
+        error1.style.display = 'block';
+        error1.innerHTML = 'Email is mandatory';
+        isValid = false;
+      } else if (!emailPattern.test(email)) {
+        error1.style.display = 'block';
+        error1.innerHTML = 'Enter a valid email address';
+        isValid = false;
+      }
+
+      // Password validation
+      if (password === '') {
+        error2.style.display = 'block';
+        error2.innerHTML = 'Password is mandatory';
+        isValid = false;
+      } else if (password.length < 8) {
+        error2.style.display = 'block';
+        error2.innerHTML = 'Password should contain at least 8 characters';
+        isValid = false;
+      }
+
+      // Submit if valid
+      if (isValid) {
+        form.submit();
+      }
+    });
+  });
+</script>
+
+
+</body>
+</html>
