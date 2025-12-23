@@ -18,7 +18,7 @@ const wishlistSchema = new Schema({
             type : Date,
             default :Date.now
         }
-    }]
+    },(time)]
 
 })
 

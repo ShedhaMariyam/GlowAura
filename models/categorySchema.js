@@ -19,6 +19,12 @@ const categorySchema = new Schema ({
     is_active :{
         type : Boolean,
         required : true,
+        default : true
+    },
+    is_deleted:{
+        type: Boolean,
+        required:true,
+        default:false
     },
     hasOffer: { 
         type: Boolean, 

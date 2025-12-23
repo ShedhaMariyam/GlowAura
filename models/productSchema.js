@@ -57,6 +57,10 @@ const productSchema = new Schema ({
         type: Boolean,
         default: false
     },
+    is_deleted:{
+        type: Boolean,
+        default : false
+    }
 
 },{timestamps : true});
 

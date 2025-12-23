@@ -64,24 +64,25 @@
 </head>
 <body>
 
-<div class="container py-5">
+<div class="container px-2 py-4">
+
 
   <!-- PRODUCT SECTION -->
   <div class="row g-5 bg-white p-4 rounded-4 shadow-sm">
 
     <!-- LEFT: IMAGES -->
     <div class="col-lg-6">
-      <img src="https://via.placeholder.com/600x700"
+      <img src="<%=product.images[0]%>"
            class="img-fluid product-img mb-3" id="mainImage">
 
       <div class="d-flex gap-2">
-        <img src="https://via.placeholder.com/600x700"
+        <img src="<%=product.images[0]%>"
              class="thumb-img active"
              onclick="changeImage(this)">
-        <img src="https://via.placeholder.com/600x700/ddd"
+        <img src="<%=product.images[1]%>"
              class="thumb-img"
              onclick="changeImage(this)">
-        <img src="https://via.placeholder.com/600x700/ccc"
+        <img src="<%=product.images[2]%>"
              class="thumb-img"
              onclick="changeImage(this)">
       </div>
@@ -89,27 +90,33 @@
 
     <!-- RIGHT: DETAILS -->
     <div class="col-lg-6">
-      <h4 class="fw-bold">Radiance Facewash</h4>
+      <h4 class="fw-bold"><%=product.productName%></h4>
 
-      <div class="d-flex align-items-center mb-2">
-        <div class="text-warning me-2">
+      <!--<<div class="d-flex align-items-center mb-2">
+        div class="text-warning me-2">
           ★★★★☆
         </div>
         <small class="text-muted">(24 reviews)</small>
-      </div>
+      </div>-->
 
       <div class="mb-3">
-        <span class="price">$19.99</span>
-        <span class="old-price ms-2">$24.99</span>
-        <span class="badge bg-warning text-dark ms-2">20% OFF</span>
+        <% if(product.variants[0].sale_price!==product.variants[0].regular_price){%>
+        <span class="price"><%=product.variants[0].sale_price%></span>
+        <span class="old-price ms-2"><%=product.variants[0].regular_price%></span>
+        <span class="badge bg-warning text-dark ms-2"><%=cat.offerPercent%>%</span>
+        <%}else {%>
+        <span class="price"><%=product.variants[0].regular_price%></span>
+        <%}%>
       </div>
+      
+
 
       <!-- SIZE -->
       <div class="mb-3">
         <label class="fw-semibold mb-2 d-block">Size</label>
-        <button class="btn btn-outline-secondary size-btn me-2">50ml</button>
-        <button class="btn btn-outline-secondary size-btn me-2">100ml</button>
-        <button class="btn btn-outline-secondary size-btn">150ml</button>
+        <%for(let i=0;i<product.variants.length;i++){ %>
+        <button class="btn btn-outline-secondary size-btn me-2"><%=product.variants[i].size%></button><%}%>
+        
       </div>
 
       <!-- QUANTITY -->
@@ -134,8 +141,7 @@
       <div>
         <h6 class="fw-semibold">Description</h6>
         <p class="text-muted">
-          A gentle, foaming cleanser that removes impurities while maintaining skin’s
-          natural moisture balance. Leaves skin fresh, soft, and radiant.
+        <%=product.description%>
         </p>
       </div>
     </div>
@@ -187,3 +193,10 @@
 
 </div>
 <%- include('../../views/partials/user/footer.ejs') %>
+<script>
+  function changeImage(el) {
+    document.getElementById("mainImage").src = el.src;
+    document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
+    el.classList.add("active");
+  }
+</script>

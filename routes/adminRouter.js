@@ -29,6 +29,7 @@ router.patch('/categories/:id/activate', adminAuth, categoryController.activateC
 router.patch('/categories/:id/inactivate', adminAuth, categoryController.inActiveCategory);
 router.put('/categories/edit/:id',adminAuth,uploadCategoryImage.single('image'),categoryController.editCategory);
 router.patch('/categories/:id/offer', adminAuth, categoryController.categoryOffer);
+router.delete('/categories/:id', adminAuth, categoryController.deleteCategory);
 
 
 //Product Management
@@ -37,4 +38,5 @@ router.get('/products/add',adminAuth,productController.loadAddproduct);
 router.post('/products/add', uploadProductImages.array('images', 3),productController.addProducts);
 router.get('/products/edit/:id', productController.loadEditProduct);
 router.put('/products/edit/:id', uploadProductImages.array('images', 5), productController.updateProduct);
+router.delete('/products/:id', adminAuth, productController.deleteProduct);
 module.exports = router

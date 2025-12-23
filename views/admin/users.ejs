@@ -99,10 +99,7 @@
                     <a href="/admin/user/view?id=<%= data[i]._id %>" class="btn btn-sm btn-light" title="View" aria-label="View">
       <i class="bi bi-eye-fill fs-4"></i>
     </a>
-
-    
          <% if (!data[i].is_Blocked) { %>
-      <!-- Trigger Block Modal -->
       <button 
         type="button"
         class="btn btn-sm btn-light"
@@ -113,7 +110,7 @@
         <i class="bi bi-slash-circle fs-4"></i>
       </button>
     <% } else { %>
-      <!-- Trigger Unblock Modal -->
+     
       <button 
         type="button"
         class="btn btn-sm btn-light"

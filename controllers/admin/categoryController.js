@@ -11,6 +11,7 @@ const categoryInfo = async (req,res)=>{
 
 
             const categoryData = await Category.find({
+                is_deleted: { $ne: true },
                 name: { $regex: search, $options: "i" }}) 
                 .sort({ _id: -1 })
                 .skip(skip)
@@ -20,7 +21,7 @@ const categoryInfo = async (req,res)=>{
            
 
             const totalCategories = await Category.countDocuments({
-                name: { $regex: search, $options: "i" }});
+               is_deleted: { $ne: true },name: { $regex: search, $options: "i" }});
 
 
             const totalPages = Math.ceil(totalCategories/limit);
@@ -40,10 +41,19 @@ const categoryInfo = async (req,res)=>{
     }
 }
 
+function formattedName(string)
+{
+    splitted=string.split(" ");
+    edited=splitted.map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase());
+    return edited=edited.join(" ");
+}
+
 const addCategory = async (req,res)=>{
   const {name,description} = req.body;
   try {
-    const existingCategory = await Category.findOne({name});
+    const CategoryName=formattedName(name);
+    const existingCategory = await Category.findOne({name: CategoryName,is_deleted: { $ne: true }});
+
     if(existingCategory){
       return res.status(400).json({error : "Category already exists"});
     }
@@ -56,7 +66,7 @@ const addCategory = async (req,res)=>{
     const imagePath = '/uploads/categories/' + req.file.filename;
 
     const newCategory = new Category({
-      name,
+      name:CategoryName,
       description,
       image: imagePath,
       is_active : true
@@ -160,12 +170,14 @@ const editCategory = async (req, res) => {
       return res.status(400).json({ error: "Category name is required" });
     }
 
-    const trimmedName = name.trim();
+    const trimmedName = formattedName(name).trim();
 
     const existingCategory = await Category.findOne({
-      _id: { $ne: id },
-      name: trimmedName
+     _id: { $ne: id },
+      name: formatted,
+      is_deleted: { $ne: true }
     });
+
 
     if (existingCategory) {
       return res.status(400).json({ error: "Category with this name already exists" });
@@ -187,11 +199,27 @@ const editCategory = async (req, res) => {
   }
 };
 
+const deleteCategory = async (req, res) => {
+  try {
+   const {id} = req.params;
+
+    await Category.findByIdAndUpdate(id,{is_active : false,is_deleted : true})
+    return res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
 module.exports={
     categoryInfo,
     addCategory,
     activateCategory,
     inActiveCategory,
     categoryOffer,
-    editCategory
+    editCategory,
+    deleteCategory
 }
+

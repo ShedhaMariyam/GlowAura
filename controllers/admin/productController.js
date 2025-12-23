@@ -8,46 +8,54 @@ const { equal } = require('assert');
 
 
 
-const productInfo = async (req,res)=>{
-    try {
-            const search = req.query.search || "";
-            const page = req.query.page || 1;
-            const limit = 4;
-            const skip = (page-1)*limit;
+const productInfo = async (req, res) => {
+  try {
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
 
-            const productData = await Product.find({
-                    productName:{$regex:new RegExp(".*"+search+".*","i")}
-                   })
-            .sort({createdAt:-1})
-            .skip(skip)
-            .limit(limit).populate('category').exec();
-            const count = await Product.find({
-                    productName:{$regex:new RegExp(".*"+search+".*","i")},
-            }).countDocuments();
+  
+    const activeCategories = await Category.find({ is_active: true }).select('_id');
+    const activeCategoryIds = activeCategories.map(cat => cat._id);
 
-            const category = await Category.find({is_active:true});
-            const totalPages = Math.ceil(count/limit);
-            if(category){
-                res.render("products",{
-                data:productData,
-                currentPage:page,
-                totalPages : totalPages,
-                resultsCount : count,
-                cat:category,
-                search,
-                activePage: "products"
-            });
-            }
-            else{
-                res.rendert('page-404')
-            }
-            
+    
+    const filter = {
+    is_deleted: false,
+    category: { $in: activeCategoryIds }
+    };
 
-    } catch (error) {
-        console.error(error)
-        res.redirect('/page-error')
+    if (search) {
+    filter.productName = { $regex: search, $options: "i" };
     }
-}
+
+
+    const productData = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('category')
+      .exec();
+
+    const count = await Product.countDocuments(filter);
+
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.render("products", {
+      data: productData,
+      currentPage: page,
+      totalPages,
+      resultsCount: count,
+      search,
+      activePage: "products"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.redirect('/page-error');
+  }
+};
 
 
 
@@ -55,7 +63,11 @@ const productInfo = async (req,res)=>{
 const loadAddproduct= async (req,res)=>{
 
     try {
-        const category = await Category.find({is_active:true});
+        const category = await Category.find({
+            is_active: true,
+            is_deleted: { $ne: true }
+        });
+
         res.render("addProducts",{cat:category,activePage: "products"});
 
     } catch (error) {
@@ -66,7 +78,12 @@ const loadAddproduct= async (req,res)=>{
 
 
 
-
+function formattedName(string)
+{
+    splitted=string.split(" ");
+    edited=splitted.map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase());
+    return edited=edited.join(" ");
+}
 
 const addProducts = async (req, res) => {
     try {
@@ -78,11 +95,14 @@ const addProducts = async (req, res) => {
                 message: 'Product name, description, and category are required'
             });
         }
+        const name=formattedName(productName);
+        
 
-        // Check if product already exists
         const productExists = await Product.findOne({
-            productName: { $regex: new RegExp(`^${productName}$`, 'i') }
+        productName: { $regex: new RegExp(`^${name}$`, 'i') },
+        is_deleted: false
         });
+
 
         if (productExists) {
             // Delete uploaded files if product exists
@@ -120,7 +140,12 @@ const addProducts = async (req, res) => {
             });
         }
       
-        const categoryDoc = await Category.findOne({ name: category });
+        const categoryDoc = await Category.findOne({
+                name: category,
+                is_active: true,
+                is_deleted: { $ne: true }
+            });
+
         if (!categoryDoc) {
             return res.status(400).json({
                 success: false,
@@ -152,7 +177,7 @@ const addProducts = async (req, res) => {
 
         // Create new product
         const newProduct = new Product({
-            productName: productName.trim(),
+            productName: name.trim(),
             description: description.trim(),
             category: categoryDoc._id,
             images: imagePaths,
@@ -199,10 +224,12 @@ const loadEditProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
-    const product = await Product.findById(productId)
-      .populate('category');
+    const product = await Product.findOne({
+    _id: productId,
+    is_deleted: false
+    }).populate('category');
 
-    const categories = await Category.find({ is_active: true });
+    const categories = await Category.find({ is_active: true,is_deleted: { $ne: true } });
 
     if (!product) {
       return res.redirect('/admin/products');
@@ -219,12 +246,15 @@ const loadEditProduct = async (req, res) => {
     res.redirect('/page-error');
   }
 };
+
+
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { productName, description, category, status, featured, variants } = req.body;
 
-    const product = await Product.findById(id);
+    const product = await Product.findOne({_id: id,is_deleted: false});
+
     if (!product) {
       return res.status(404).json({ success: false });
     }
@@ -274,11 +304,30 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Product.findByIdAndUpdate(id, {
+      is_deleted: true,
+      status: "Unlisted"
+    });
+
+    return res.json({ success: true });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Delete failed" });
+  }
+};
+
+
 
 module.exports={
     productInfo,
     loadAddproduct,
     addProducts,
     loadEditProduct,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }
