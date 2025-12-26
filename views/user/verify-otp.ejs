@@ -196,49 +196,61 @@
       }
     });
 
+    
     // OTP Validation (Axios POST)
-    async function validateOTPForm(event) {
-      event.preventDefault();
-      const otpInputs = document.querySelectorAll(".code-input");
-      let otpValue = Array.from(otpInputs).map(input => input.value.trim()).join('');
+async function validateOTPForm(event) {
+  event.preventDefault();
+  const otpInputs = document.querySelectorAll(".code-input");
+  let otpValue = Array.from(otpInputs).map(input => input.value.trim()).join('');
 
-      if (otpValue.length !== otpInputs.length) {
-        Swal.fire({
-          icon: "warning",
-          title: "Incomplete OTP",
-          text: "Please fill all the fields for verification."
-        });
-        return;
-      }
+  if (otpValue.length !== otpInputs.length) {
+    Swal.fire({
+      icon: "warning",
+      title: "Incomplete OTP",
+      text: "Please fill all the fields for verification."
+    });
+    return;
+  }
 
-      try {
-        const response = await axios.post('/verify-otp', { otp: otpValue });
+  try {
+    const response = await axios.post('/verify-otp', { otp: otpValue });
 
-        if (response.data.success) {
-          Swal.fire({
-            icon: "success",
-            title: "OTP Verified Successfully!",
-            text: "Account Created!",
-            showConfirmButton: false,
-            timer: 1500,
-          }).then(() => {
-            window.location.href = response.data.redirectUrl;
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: response.data.message || "Invalid OTP, please try again.",
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Server Error",
-          text: "Please try again later."
-        });
-      }
+    if (response.data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "OTP Verified Successfully!",
+        text: "Account Created!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        window.location.href = response.data.redirectUrl;
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: response.data.message || "Invalid OTP, please try again.",
+      });
     }
+  } catch (error) {
+   
+    if (error.response && error.response.data) {
+     
+      Swal.fire({
+        icon: "error",
+        title: "Verification Failed",
+        text: error.response.data.message || "Invalid OTP, please try again."
+      });
+    } else {
+      
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Please try again later."
+      });
+    }
+  }
+}
   </script>
 </body>
 </html>

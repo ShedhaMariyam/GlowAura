@@ -10,8 +10,8 @@ router.get('/pageNotFound',userController.pageNotFound);
 router.get('/',userController.loadHomepage);
 
 
-router.get('/products',userController.loadProducts);
-router.get('/product/:id',userController.loadProductDetails);
+router.get('/products',userAuth,userController.loadProducts);
+router.get('/product/:id',userAuth,userController.loadProductDetails);
 
 
 router.get('/signup',userController.loadSignup);

@@ -52,12 +52,39 @@ const addCategory = async (req,res)=>{
   const {name,description} = req.body;
   try {
     const CategoryName=formattedName(name);
-    const existingCategory = await Category.findOne({name: CategoryName,is_deleted: { $ne: true }});
+    const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${CategoryName}$`, 'i') },
+      is_deleted: { $ne: true }
+    });
 
     if(existingCategory){
       return res.status(400).json({error : "Category already exists"});
     }
 
+    const deletedCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${CategoryName}$`, 'i') },
+      is_deleted: true
+    });
+
+
+    // Reactivate the deleted category
+
+     if (deletedCategory) {
+     
+      deletedCategory.name = CategoryName;
+      deletedCategory.description = description;
+      deletedCategory.image = '/uploads/categories/' + req.file.filename;
+      deletedCategory.is_deleted = false;
+      deletedCategory.is_active = true;
+      deletedCategory.deletedAt = null;
+      
+      await deletedCategory.save();
+      
+      return res.status(200).json({ 
+        success: true,
+        message: "Category reactivated successfully" 
+      });
+    }
  
     if (!req.file) {
       return res.status(400).json({ error: "Category image is required" });
@@ -74,7 +101,7 @@ const addCategory = async (req,res)=>{
 
     await newCategory.save();
 
-    return res.status(201).json({ message: "Category Added" });
+    return res.status(201).json({success: true, message: "Category Added Successfully" });
   } catch (error) {
     console.error("Add Category Error:", error);
     return res.status(500).json({error: "Internal server error"});
@@ -170,7 +197,7 @@ const editCategory = async (req, res) => {
       return res.status(400).json({ error: "Category name is required" });
     }
 
-    const trimmedName = formattedName(name).trim();
+    const formatted = formattedName(name).trim();
 
     const existingCategory = await Category.findOne({
      _id: { $ne: id },
@@ -183,7 +210,7 @@ const editCategory = async (req, res) => {
       return res.status(400).json({ error: "Category with this name already exists" });
     }
 
-    const update = { name: trimmedName, description };
+    const update = { name: formatted, description };
 
     if (req.file) {
       update.image = '/uploads/categories/' + req.file.filename;
@@ -195,7 +222,7 @@ const editCategory = async (req, res) => {
 
   } catch (error) {
     console.error("Edit Category Error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.json({ error: "Internal server error" });
   }
 };
 
@@ -204,7 +231,10 @@ const deleteCategory = async (req, res) => {
    const {id} = req.params;
 
     await Category.findByIdAndUpdate(id,{is_active : false,is_deleted : true})
-    return res.json({ success: true });
+    return res.status(200).json({ 
+      success: true,
+      message: "Category deleted successfully" 
+    });
 
   } catch (err) {
     console.error(err);

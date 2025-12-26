@@ -189,7 +189,7 @@ const loadVerifyOtp = async (req, res) => {
 // Verify OTP Function
 const verifyOtp = async (req, res) => {
   try {
-    const { otp } = req.body;
+    let { otp } = req.body;
     const { email, name, phone, password } = req.session.userData || {};
 
     if (!email) {
@@ -197,16 +197,28 @@ const verifyOtp = async (req, res) => {
     }
 
     //  Find OTP record for email
-    const otpRecord = await Otp.findOne({ email });
+    let otpRecord = await Otp.findOne({ email });
 
     if (!otpRecord) {
       return res.status(400).json({ success: false, message: "OTP expired or not found" });
     }
 
-    if (otpRecord.otp !== otp) {
+    if(Date.now() - otpRecord.createdAt.getTime() > 60 * 1000){
+      await Otp.deleteOne({ email });
+      return res.status(400).json({ success: false, message: "OTP Expired. Please request a new one" });
+    }
+
+    
+
+    otpRecord = otpRecord.otp.toString().trim();
+    otp = otp.toString().trim();
+
+
+    if (otpRecord !== otp) {
       return res.status(400).json({ success: false, message: "Invalid OTP. Please try again." });
     }
 
+    
     //  If OTP matches, register the user
     const passwordHash = await securePassword(password);
     const newUser = new User({
@@ -218,7 +230,6 @@ const verifyOtp = async (req, res) => {
 
     await newUser.save();
 
-    //  Delete OTP after successful verification
     await Otp.deleteOne({ email });
 
     // Clear session and set login
@@ -297,7 +308,7 @@ const signin = async (req, res) => {
     
     // if user blocked
     if(findUser.is_Blocked){
-      return res.render('signin',{message :'User is blocket by admin'});
+      return res.render('signin',{message :'User is blocked by admin'});
     }
     
     //Checking password
@@ -454,7 +465,7 @@ const loadProducts = async (req, res) => {
     if (sort === "low") sortStage = { "variants.sale_price": 1 };
     if (sort === "high") sortStage = { "variants.sale_price": -1 };
 
-    
+
     const products = await Product.find(filter)
       .sort(sortStage)
       .skip(skip)
@@ -484,24 +495,32 @@ const loadProducts = async (req, res) => {
 
 
 
-const loadProductDetails = async(req,res)=>{
+
+const loadProductDetails = async (req, res) => {
   try {
-    const id= req.params.id
+    const id = req.params.id;
+
     const product = await Product.findById(id).populate('category');
-    res.render('productDetails',
-      {product:product,
-        cat:product.category
-      }
-    )
-    
+    if (!product) return res.redirect('/pageNotFound');
+
+  
+    const featuredProducts = await Product.find({
+      featured: true,
+      _id: { $ne: id }
+    })
+      .sort({ createdAt: -1 })   
+      .limit(4);               
+
+    res.render('productDetails', {
+      product,
+      cat: product.category,
+      featuredProducts
+    });
   } catch (error) {
-    console.log("Product Details page not found");
+    console.log("Product Details page not found", error);
     res.redirect('/pageNotFound');
   }
-
-
-
-}
+};
 
 
 

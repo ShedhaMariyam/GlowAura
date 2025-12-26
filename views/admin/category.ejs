@@ -525,15 +525,19 @@
       // Optional: clear form
       form.reset();
 
-      // reload to show new category
-      window.location.reload();
+
+      showToast('success', data.message || 'Category added successfully');
+
+      // reload after short delay so user can see toast
+      setTimeout(() => {
+        window.location.reload();
+    }, 1000);
 
       return true;
 
     } catch (err) {
       console.error(err);
-      document.getElementById("nameError").textContent =
-        "Something went wrong. Please try again.";
+       showToast('error', 'Something went wrong. Please try again.');
       return false;
     }
   }
@@ -647,9 +651,11 @@ async function handleEditFormSubmit(event) {
     if (!response.ok) {
       if (data.error) {
         document.getElementById("editNameError").textContent = data.error;
+        showToast('error', data.error)
       } else {
-        document.getElementById("editNameError").textContent =
-          "Something went wrong. Please try again.";
+        const msg = "Something went wrong. Please try again.";
+      document.getElementById("editNameError").textContent = msg;
+      showToast('error', msg);
       }
       return false;
     }
@@ -661,15 +667,19 @@ async function handleEditFormSubmit(event) {
     modal.hide();
 
 
-    window.location.reload();
+    showToast('success', data.message || 'Category updated');
+
+// reload
+    setTimeout(() => {window.location.reload();}, 1000);
 
     return true;
 
   } catch (err) {
-    console.error(err);
-    document.getElementById("editNameError").textContent =
-      "Something went wrong. Please try again.";
-    return false;
+  console.error(err);
+  const msg = "Something went wrong. Please try again.";
+  document.getElementById("editNameError").textContent = msg;
+  showToast('error', msg);
+  return false;
   }
 }
 
@@ -804,7 +814,7 @@ async function removeOffer(categoryId, wrapper, checkbox) {
     const data = await res.json();
 
     if (!data.success) {
-      alert(data.message);
+      showToast('error', data.message || 'Failed to remove offer');
       checkbox.checked = true; // revert on failure
       return;
     }
@@ -812,9 +822,11 @@ async function removeOffer(categoryId, wrapper, checkbox) {
     wrapper.querySelector(".offer-label").textContent = "";
     wrapper.dataset.offer = 0;
 
+    showToast('success', 'Category offer removed');
+
   } catch (err) {
     console.error(err);
-    alert("Error removing offer");
+    showToast('error', 'Error removing offer');
     checkbox.checked = true;
   }
 }
@@ -824,10 +836,11 @@ async function removeOffer(categoryId, wrapper, checkbox) {
 document.getElementById("saveCategoryOfferBtn").addEventListener("click", async () => {
   const percent = Number(document.getElementById("categoryOfferValue").value) || 0;
   const modalEl = document.getElementById("categoryOfferModal");
-  const categoryId = modalEl.dataset.id;    
+  const categoryId = modalEl.dataset.id;   
+ 
 
   if (!categoryId) {
-    alert("Category not selected");
+    showToast('error',"Category not selected");
     return;
   }
 
@@ -841,20 +854,20 @@ document.getElementById("saveCategoryOfferBtn").addEventListener("click", async 
     const data = await res.json();
 
     if (!data.success) {
-      alert(data.message || "Server error");
+      showToast('error', data.message || 'Server error');
       return;
     }
 
-    const wrapper = document.querySelector(`.offer-toggle[data-id="${categoryId}"]`);
-    wrapper.dataset.offer = percent;
-    wrapper.querySelector(".offer-label").textContent =
-      percent > 0 ? `${percent}% off` : "";
+    const msg = percent > 0 ? 'Offer added to category ' : 'Offer removed from category';
+    showToast('success', msg);
 
     bootstrap.Modal.getInstance(modalEl).hide();
-    window.location.reload();
+
+    setTimeout(() => {
+    window.location.reload();}, 1000);
   } catch (err) {
     console.error("Offer save error:", err);
-    alert("Server error");
+    showToast('error', 'Server error');
   }
 });
 
@@ -897,7 +910,7 @@ document.getElementById('statusConfirmForm').addEventListener('submit', async fu
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      alert(data.message || 'Failed to update status');
+      showToast('error', data.message || 'Failed to update status');
       return;
     }
 
@@ -905,11 +918,19 @@ document.getElementById('statusConfirmForm').addEventListener('submit', async fu
       document.getElementById('statusConfirmModal')
     ).hide();
 
-    window.location.reload();
+    const msg = selectedAction === 'inactivate'
+  ? 'Category deactivated'
+  : 'Category activated';
+
+showToast('success', msg);
+
+setTimeout(() => {
+  window.location.reload();
+}, 1000);
 
   } catch (err) {
     console.error(err);
-    alert('Network error. Please try again.');
+  showToast('error', 'Network error. Please try again.');
   }
 });
 </script>
@@ -943,7 +964,8 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async func
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      alert(data.message || 'Failed to delete category');
+      showToast('Failed to delete category');
+      
       return;
     }
 
@@ -951,11 +973,15 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async func
       document.getElementById('deleteConfirmModal')
     ).hide();
 
-    window.location.reload();
+  showToast('success', 'Category deleted');
+
+setTimeout(() => {
+  window.location.reload();
+}, 1000);
 
   } catch (err) {
     console.error(err);
-    alert('Network error. Please try again.');
+    showToast('Network error. Please try again.');
   }
 });
 </script>
