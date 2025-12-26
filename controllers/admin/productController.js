@@ -263,6 +263,8 @@ const updateProduct = async (req, res) => {
 
     const product = await Product.findOne({ _id: id, is_deleted: false });
 
+
+
     if (!product) {
       return res.status(404).json({ 
         success: false, 
@@ -270,6 +272,26 @@ const updateProduct = async (req, res) => {
       });
     }
 
+
+     const productExists = await Product.findOne({
+    productName: { $regex: new RegExp(`^${productName}$`, 'i') },
+    is_deleted: false,
+    _id: { $ne: id }  
+});
+
+if (productExists) {
+    
+    if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+            await fs.unlink(file.path).catch(err => console.error(err));
+        }
+    }
+    return res.status(400).json({
+        success: false,
+        message: 'Product with this name already exists'
+    });
+}
+    
     const categoryDoc = await Category.findOne({ 
       name: category,
       is_active: true,
@@ -282,6 +304,7 @@ const updateProduct = async (req, res) => {
         message: 'Invalid category' 
       });
     }
+
 
     // Update basic fields
     product.productName = productName.trim();
