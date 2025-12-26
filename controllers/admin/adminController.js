@@ -39,8 +39,8 @@ const login = async (req,res)=>{
       return res.status(401).render("admin-login", { message: "Invalid credentials — Admin access denied" });
     }
 
-    // success: set admin session flag and redirect to dashboard
-    req.session.admin = true;
+    
+    req.session.admin = admin._id;
    
     return res.redirect("/admin/dashboard");  
 

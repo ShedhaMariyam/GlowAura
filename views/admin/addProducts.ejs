@@ -235,9 +235,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
 <script>
-// Product Form Validation & Image Handling Script
-// Product Form Validation & Image Handling Script
-let selectedImages = []; // Store selected image files
+
+let selectedImages = []; 
 let cropper = null;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -551,7 +550,7 @@ function validateForm() {
         }
     });
 
-    // Validate Images - only check on form submit
+
     if (!selectedImages || selectedImages.length === 0) {
         showError('imageError', 'Please select product images');
         isValid = false;
@@ -588,66 +587,67 @@ function validateForm() {
 
 // Submit Form with Axios
 async function submitForm() {
-    const formData = new FormData();
+  const formData = new FormData();
 
-    // Show loading state
-    const submitBtn = document.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+  const submitBtn = document.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
 
-    // Basic fields
-    formData.append('productName', document.querySelector('[name="productName"]').value.trim());
-    formData.append('description', document.querySelector('[name="description"]').value.trim());
-    formData.append('category', document.querySelector('[name="category"]').value);
-    formData.append('status', document.querySelector('[name="status"]').value);
-    formData.append('featured', document.querySelector('[name="featured"]').checked);
+  // Basic fields
+  formData.append('productName', document.querySelector('[name="productName"]').value.trim());
+  formData.append('description', document.querySelector('[name="description"]').value.trim());
+  formData.append('category', document.querySelector('[name="category"]').value);
+  formData.append('status', document.querySelector('[name="status"]').value);
+  formData.append('featured', document.querySelector('[name="featured"]').checked);
 
-    // Variants
-    const variantNames = document.querySelectorAll('[name="variantName[]"]');
-    const variantPrices = document.querySelectorAll('[name="variantPrice[]"]');
-    const variantStocks = document.querySelectorAll('[name="variantStock[]"]');
+  // Variants
+  const variantNames = document.querySelectorAll('[name="variantName[]"]');
+  const variantPrices = document.querySelectorAll('[name="variantPrice[]"]');
+  const variantStocks = document.querySelectorAll('[name="variantStock[]"]');
 
-    const variants = [];
-    variantNames.forEach((input, index) => {
-        variants.push({
-            size: input.value.trim(),
-            price: parseFloat(variantPrices[index].value),
-            quantity: parseInt(variantStocks[index].value)
-        });
+  const variants = [];
+  variantNames.forEach((input, index) => {
+    variants.push({
+      size: input.value.trim(),
+      price: parseFloat(variantPrices[index].value),
+      quantity: parseInt(variantStocks[index].value)
     });
-    formData.append('variants', JSON.stringify(variants));
+  });
+  formData.append('variants', JSON.stringify(variants));
 
-    // Images - use selectedImages array
-    selectedImages.forEach((img, index) => {
-        if (img) {
-            formData.append('images', img);
-        }
-    });
-
-    try {
-        const response = await axios.post('/admin/products/add', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
-
-        if (response.data.success) {
-            // Show success message
-            alert('Product added successfully!');
-            window.location.href = '/admin/products';
-        } else {
-            alert(response.data.message || 'Failed to add product');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert(error.response?.data?.message || 'An error occurred while adding the product');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+  // Images
+  selectedImages.forEach((img) => {
+    if (img) {
+      formData.append('images', img);
     }
+  });
+
+  try {
+    const response = await axios.post('/admin/products/add', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    if (response.data.success) {
+      showToast('success', response.data.message || 'Product added successfully');
+
+      setTimeout(() => {
+        window.location.href = '/admin/products';
+      }, 800);
+    } else {
+      showToast('error', response.data.message || 'Failed to add product');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    const msg = error.response?.data?.message || 'An error occurred while adding the product';
+    showToast('error', msg);
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
+  }
 }
+
 
 function showError(id, message) {
     const errorElement = document.getElementById(id);

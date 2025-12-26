@@ -253,31 +253,105 @@ const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { productName, description, category, status, featured, variants } = req.body;
 
-    const product = await Product.findOne({_id: id,is_deleted: false});
-
-    if (!product) {
-      return res.status(404).json({ success: false });
+    // Validation
+    if (!productName || !description || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product name, description, and category are required'
+      });
     }
 
-    const categoryDoc = await Category.findOne({ name: category });
+    const product = await Product.findOne({ _id: id, is_deleted: false });
+
+
+
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
+    }
+
+
+     const productExists = await Product.findOne({
+    productName: { $regex: new RegExp(`^${productName}$`, 'i') },
+    is_deleted: false,
+    _id: { $ne: id }  
+});
+
+if (productExists) {
+    
+    if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+            await fs.unlink(file.path).catch(err => console.error(err));
+        }
+    }
+    return res.status(400).json({
+        success: false,
+        message: 'Product with this name already exists'
+    });
+}
+    
+    const categoryDoc = await Category.findOne({ 
+      name: category,
+      is_active: true,
+      is_deleted: { $ne: true }
+    });
+
+    if (!categoryDoc) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid category' 
+      });
+    }
+
 
     // Update basic fields
-    product.productName = productName;
-    product.description = description;
+    product.productName = productName.trim();
+    product.description = description.trim();
     product.category = categoryDoc._id;
     product.status = status;
     product.featured = featured === 'true' || featured === true;
 
-    // Update variants
-    const parsedVariants = JSON.parse(variants);
-    product.variants = parsedVariants.map(v => ({
-      size: v.size,
-      quantity: v.quantity,
-      regular_price: v.price,
-      sale_price: v.price
-    }));
+    // Parse and validate variants
+    let parsedVariants;
+    try {
+      parsedVariants = JSON.parse(variants);
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid variants data'
+      });
+    }
 
-    product.stock = parsedVariants.reduce((sum, v) => sum + v.quantity, 0);
+    if (!parsedVariants || parsedVariants.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'At least one variant is required'
+      });
+    }
+
+    // Update variants with SKU code preservation
+    product.variants = parsedVariants.map((v, index) => {
+      if (!v.size || !v.price || v.quantity === undefined) {
+        throw new Error('All variant fields are required');
+      }
+
+      const existingVariant = product.variants.find(
+        existing => existing.size === v.size
+      );
+
+      return {
+        size: v.size,
+        quantity: parseInt(v.quantity),
+        regular_price: parseFloat(v.price),
+        sale_price: parseFloat(v.price),
+        sku_code: existingVariant?.sku_code || 
+                  `${productName.substring(0, 3).toUpperCase()}-${v.size.replace(/\s/g, '')}-${Date.now()}-${index}`
+      };
+    });
+
+    product.stock = parsedVariants.reduce((sum, v) => sum + parseInt(v.quantity), 0);
 
     // Handle image removal
     if (req.body.removeImages) {
@@ -294,21 +368,60 @@ const updateProduct = async (req, res) => {
       product.images.push(...newImages);
     }
 
+    // Validate EXACTLY 3 images
+    if (product.images.length !== 3) {
+      // Delete newly uploaded files if validation fails
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          try {
+            await fs.unlink(path.join(__dirname, '../../public/uploads/products', file.filename));
+          } catch (err) {
+            console.error('Failed to delete uploaded image:', err);
+          }
+        }
+      }
+      
+      return res.status(400).json({
+        success: false,
+        message: `Exactly 3 images required. Current count: ${product.images.length}`
+      });
+    }
+
     await product.save();
 
-    res.json({ success: true, message: 'Product updated successfully' });
+    res.json({ 
+      success: true, 
+      message: 'Product updated successfully' 
+    });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false });
+    console.error('Error updating product:', error);
+    
+    // Clean up uploaded files on error
+    if (req.files && Array.isArray(req.files)) {
+      for (const file of req.files) {
+        try {
+          await fs.unlink(path.join(__dirname, '../../public/uploads/products', file.filename));
+        } catch (err) {
+          console.error('Failed to delete uploaded image:', err);
+        }
+      }
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Failed to update product'
+    });
   }
 };
+
 
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
     await Product.findByIdAndUpdate(id, {
+
       is_deleted: true,
       status: "Unlisted"
     });

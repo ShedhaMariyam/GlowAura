@@ -108,7 +108,8 @@
 
         <!-- Status -->
         <td><%if(data[i].status==='Listed'){%>
-          <span class="badge bg-success">Listed</span><%}%>
+          <span class="badge bg-success">Listed</span><%}else{%>
+            <span class="badge bg-danger">Unisted</span><%}%>
           <%if(data[i].featured===true){%>
           <span class="badge bg-primary">Featured</span><%}%>
           <%if(data[i].category.hasOffer=== true){%>
@@ -135,6 +136,12 @@
      
       <%}}%>
 
+
+
+
+
+    </tbody>
+  </table>
 <!-- Delete Product Confirmation Modal -->
 <div class="modal fade" id="deleteProductModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -162,59 +169,65 @@
     </div>
   </div>
 </div>
-
-
-
-    </tbody>
-  </table>
-
 </div>
 <%- include('../../views/partials/admin/footer.ejs') %>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <script>
-let deleteProductId = null;
+document.addEventListener("DOMContentLoaded", () => {
+  let deleteProductId = null;
 
-// Open delete modal
-document.querySelectorAll('.btn-delete-product').forEach(btn => {
-  btn.addEventListener('click', function () {
-    deleteProductId = this.dataset.id;
-    const name = this.dataset.name;
+  // Open delete modal
+  document.querySelectorAll('.btn-delete-product').forEach(btn => {
+    btn.addEventListener('click', function () {
+      deleteProductId = this.dataset.id;
+      const name = this.dataset.name;
 
-    document.getElementById('deleteProductText').textContent =
-      `Are you sure you want to delete the product "${name}"? This action will unlist the product.`;
+      document.getElementById('deleteProductText').textContent =
+        `Are you sure you want to delete the product "${name}"? This will unlist the product.`;
 
-    new bootstrap.Modal(
-      document.getElementById('deleteProductModal')
-    ).show();
-  });
-});
-
-// Confirm delete
-document.getElementById('confirmDeleteProductBtn').addEventListener('click', async function () {
-  if (!deleteProductId) return;
-
-  try {
-    const res = await fetch(`/admin/products/${deleteProductId}`, {
-      method: 'DELETE'
+      new bootstrap.Modal(
+        document.getElementById('deleteProductModal')
+      ).show();
     });
+  });
 
-    const data = await res.json();
+  // Confirm delete
+  document.getElementById('confirmDeleteProductBtn')
+    .addEventListener('click', async () => {
 
-    if (!res.ok || !data.success) {
-      alert(data.message || 'Failed to delete product');
-      return;
-    }
+      if (!deleteProductId) return;
 
-    bootstrap.Modal.getInstance(
-      document.getElementById('deleteProductModal')
-    ).hide();
+      try {
+        const res = await fetch(`/admin/products/${deleteProductId}`, {
+          method: 'DELETE'
+        });
 
-    window.location.reload();
+        const data = await res.json();
 
-  } catch (err) {
-    console.error(err);
-    alert('Network error. Please try again.');
-  }
+        if (!res.ok || !data.success) {
+          showToast('error', data.message || 'Failed to delete product');
+          return;
+        }
+
+        bootstrap.Modal.getInstance(
+          document.getElementById('deleteProductModal')
+        ).hide();
+
+        showToast('success', data.message || 'Product deleted');
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+
+      } catch (err) {
+        console.error(err);
+        showToast('error', 'Network error. Please try again.');
+      }
+    });
 });
+
 </script>
+

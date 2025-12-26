@@ -1,138 +1,103 @@
 <%- include('../../views/partials/user/header.ejs') %>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
-  <style>
-    body {
-      background: #faf7f3;
-      font-family: 'Inter', sans-serif;
-    }
+<style>
+  body { background: #faf7f3; font-family: 'Inter', sans-serif; }
+  .product-img { border-radius: 14px; object-fit: cover; }
+  .thumb-img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: .2s; }
+  .thumb-img.active { border-color: #b8c9ae; }
+  .size-btn { border-radius: 999px; padding: 6px 14px; font-size: 14px; }
+  .size-btn.active { background:#b8c9ae; color:#fff; border-color:#b8c9ae; }
+  .price { font-size: 22px; font-weight: 700; }
+  .old-price { text-decoration: line-through; color: #9ca3af; font-size: 14px; }
+  .stock-info { font-size: 14px; color:#16a34a; }
+  .stock-out { color:#dc2626; }
+  .btn-buy { background: #e5c8b8; border: none; border-radius: 10px; padding: 12px; }
+  .btn-cart { border-radius: 10px; padding: 12px; }
+  .btn-cart:disabled,.btn-buy:disabled { opacity:.5; cursor:not-allowed; }
+  .routine-card img { border-radius: 12px; height: 150px; object-fit: cover; }
+</style>
 
-    .product-img {
-      border-radius: 14px;
-      object-fit: cover;
-    }
-
-    .thumb-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      object-fit: cover;
-      cursor: pointer;
-      border: 2px solid transparent;
-    }
-
-    .thumb-img.active {
-      border-color: #b8c9ae;
-    }
-
-    .size-btn {
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 14px;
-    }
-
-    .price {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .old-price {
-      text-decoration: line-through;
-      color: #9ca3af;
-      font-size: 14px;
-    }
-
-    .btn-buy {
-      background: #e5c8b8;
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .btn-cart {
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .routine-card img {
-      border-radius: 12px;
-      height: 150px;
-      object-fit: cover;
-    }
-  </style>
 </head>
 <body>
-
-<div class="container px-2 py-4">
-
+<div class="container px-2 py-4" id="mainContainer" data-variants='<%- JSON.stringify(product.variants) %>'>
 
   <!-- PRODUCT SECTION -->
   <div class="row g-5 bg-white p-4 rounded-4 shadow-sm">
 
     <!-- LEFT: IMAGES -->
     <div class="col-lg-6">
-      <img src="<%=product.images[0]%>"
-           class="img-fluid product-img mb-3" id="mainImage">
+      <img src="<%= product.images[0] %>" class="img-fluid product-img mb-3" id="mainImage">
 
       <div class="d-flex gap-2">
-        <img src="<%=product.images[0]%>"
-             class="thumb-img active"
-             onclick="changeImage(this)">
-        <img src="<%=product.images[1]%>"
-             class="thumb-img"
-             onclick="changeImage(this)">
-        <img src="<%=product.images[2]%>"
-             class="thumb-img"
-             onclick="changeImage(this)">
+        <% product.images.forEach((img, idx) => { %>
+          <img src="<%= img %>"
+               class="thumb-img <%= idx === 0 ? 'active' : '' %>"
+               onclick="changeImage(this)">
+        <% }) %>
       </div>
     </div>
 
     <!-- RIGHT: DETAILS -->
     <div class="col-lg-6">
-      <h4 class="fw-bold"><%=product.productName%></h4>
+      <h4 class="fw-bold"><%= product.productName %></h4>
 
-      <!--<<div class="d-flex align-items-center mb-2">
-        div class="text-warning me-2">
-          ★★★★☆
-        </div>
-        <small class="text-muted">(24 reviews)</small>
-      </div>-->
+      <!-- PRICE + STOCK (dynamic) -->
+      <% const v0 = product.variants[0]; %>
+      <div class="mb-2" id="priceWrapper">
+        <% if (v0.sale_price !== v0.regular_price) { %>
+          <span class="price" id="priceNow"><%= v0.sale_price %></span>
+          <span class="old-price ms-2 text-danger" id="priceOld"><%= v0.regular_price %></span>
+          <span class="badge bg-warning text-dark ms-2" id="offerBadge"><%= cat.offerPercent %>%</span>
+        <% } else { %>
+          <span class="price" id="priceNow"><%= v0.regular_price %></span>
+          <span class="old-price ms-2 text-danger d-none" id="priceOld"></span>
+          <span class="badge bg-warning text-dark ms-2 d-none" id="offerBadge"><%= cat.offerPercent %>%</span>
+        <% } %>
+      </div>
 
       <div class="mb-3">
-        <% if(product.variants[0].sale_price!==product.variants[0].regular_price){%>
-        <span class="price"><%=product.variants[0].sale_price%></span>
-        <span class="old-price ms-2"><%=product.variants[0].regular_price%></span>
-        <span class="badge bg-warning text-dark ms-2"><%=cat.offerPercent%>%</span>
-        <%}else {%>
-        <span class="price"><%=product.variants[0].regular_price%></span>
-        <%}%>
-      </div>
-      
-
+        <span id="stockInfo" class="stock-info">
+          <% if (v0.quantity > 0) { %>
+            In stock: <%= v0.quantity %>
+          <% } else { %>
+            <span class="stock-out">Out of stock</span>
+          <% } %>
+        </span>
+      </div> 
 
       <!-- SIZE -->
       <div class="mb-3">
         <label class="fw-semibold mb-2 d-block">Size</label>
-        <%for(let i=0;i<product.variants.length;i++){ %>
-        <button class="btn btn-outline-secondary size-btn me-2"><%=product.variants[i].size%></button><%}%>
-        
+        <% product.variants.forEach((v, i) => { %>
+          <button
+            class="btn btn-outline-secondary size-btn me-2 <%= i === 0 ? 'active' : '' %>"
+            data-index="<%= i %>"
+            data-regular="<%= v.regular_price %>"
+            data-sale="<%= v.sale_price %>"
+            data-qty="<%= v.quantity %>">
+            <%= v.size %>
+          </button>
+        <% }) %>
       </div>
 
       <!-- QUANTITY -->
       <div class="mb-3 d-flex align-items-center">
         <label class="fw-semibold me-3">Quantity</label>
         <div class="input-group" style="width:130px;">
-          <button class="btn btn-outline-secondary">-</button>
-          <input type="text" class="form-control text-center" value="1">
-          <button class="btn btn-outline-secondary">+</button>
+          <button class="btn btn-outline-secondary" id="qtyMinus">-</button>
+          <input type="text" class="form-control text-center" id="qtyInput" value="1">
+          <button class="btn btn-outline-secondary" id="qtyPlus">+</button>
         </div>
+        <small class="text-danger ms-2 d-none" id="qtyError">Max stock reached</small>
       </div>
 
       <!-- BUTTONS -->
       <div class="d-flex gap-3 mb-4">
-        <button class="btn btn-buy w-50">Buy Now</button>
-        <button class="btn btn-outline-dark btn-cart w-50">
+        <button class="btn btn-buy w-50" id="buyNowBtn">Buy Now</button>
+        <button class="btn btn-outline-dark btn-cart w-50" id="addToCartBtn">
           <i class="bi bi-cart me-1"></i> Add to Cart
         </button>
       </div>
@@ -140,63 +105,146 @@
       <!-- DESCRIPTION -->
       <div>
         <h6 class="fw-semibold">Description</h6>
-        <p class="text-muted">
-        <%=product.description%>
-        </p>
+        <p class="text-muted"><%= product.description %></p>
       </div>
     </div>
 
   </div>
 
-  <!-- COMPLETE YOUR ROUTINE -->
+  <!-- FEATURED / ROUTINE PRODUCTS -->
   <div class="mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="fw-semibold">Complete Your Skincare Routine</h5>
-      <a href="#" class="text-muted small">View all</a>
+      <a href="/shop" class="text-muted small">View all</a>
     </div>
 
     <div class="row g-4">
-      <!-- CARD -->
-      <div class="col-md-3 col-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
-          <img src="https://via.placeholder.com/300x200" class="img-fluid mb-2">
-          <h6 class="small fw-semibold">Vitamin C Toner</h6>
-          <div class="fw-bold">$18.99</div>
-        </div>
-      </div>
+      <% featuredProducts.forEach(fp => { %>
+        <div class="col-md-3 col-6">
+          <a href="/product/<%= fp._id %>" class="text-decoration-none text-dark">
+            <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
+              <img src="<%= fp.images[0] %>" class="img-fluid mb-2">
+              <h6 class="small fw-semibold"><%= fp.productName %></h6>
 
-      <div class="col-md-3 col-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
-          <img src="https://via.placeholder.com/300x200" class="img-fluid mb-2">
-          <h6 class="small fw-semibold">Hydra Boost Moisturizer</h6>
-          <div class="fw-bold">$22.50</div>
+              <% const fv = fp.variants[0]; %>
+              <% if (fv.sale_price !== fv.regular_price) { %>
+                <div class="fw-bold">
+                  <%= fv.sale_price %>
+                  <span class="old-price ms-1">
+                    <%= fv.regular_price %>
+                  </span>
+                </div>
+              <% } else { %>
+                <div class="fw-bold"><%= fv.regular_price %></div>
+              <% } %>
+            </div>
+          </a>
         </div>
-      </div>
-
-      <div class="col-md-3 col-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
-          <img src="https://via.placeholder.com/300x200" class="img-fluid mb-2">
-          <h6 class="small fw-semibold">Overnight Repair Serum</h6>
-          <div class="fw-bold">$31.99</div>
-        </div>
-      </div>
-
-      <div class="col-md-3 col-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
-          <img src="https://via.placeholder.com/300x200" class="img-fluid mb-2">
-          <h6 class="small fw-semibold">UV Shield Sunscreen</h6>
-          <div class="fw-bold">$15.99</div>
-        </div>
-      </div>
+      <% }) %>
     </div>
   </div>
 
 </div>
+
 <%- include('../../views/partials/user/footer.ejs') %>
+
 <script>
+  // IMAGE GALLERY
   function changeImage(el) {
     document.getElementById("mainImage").src = el.src;
     document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
     el.classList.add("active");
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get variants from data attribute
+    const container = document.getElementById('mainContainer');
+    const variants = JSON.parse(container.getAttribute('data-variants'));
+
+    let currentIndex = 0;
+    const priceNow = document.getElementById('priceNow');
+    const priceOld = document.getElementById('priceOld');
+    const offerBadge = document.getElementById('offerBadge');
+    const stockInfo = document.getElementById('stockInfo');
+    const qtyInput = document.getElementById('qtyInput');
+    const qtyMinus = document.getElementById('qtyMinus');
+    const qtyPlus = document.getElementById('qtyPlus');
+    const qtyError = document.getElementById('qtyError');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const buyNowBtn = document.getElementById('buyNowBtn');
+
+    function updateUI() {
+      const v = variants[currentIndex];
+
+      // price
+      if (v.sale_price !== v.regular_price) {
+        priceNow.textContent = v.sale_price;
+        priceOld.textContent = v.regular_price;
+        priceOld.classList.remove('d-none');
+        offerBadge.classList.remove('d-none');
+      } else {
+        priceNow.textContent = v.regular_price;
+        priceOld.classList.add('d-none');
+      }
+
+      // stock
+      if (v.quantity > 0) {
+        stockInfo.innerHTML = 'In stock: ' + v.quantity;
+        stockInfo.classList.remove('stock-out');
+      } else {
+        stockInfo.innerHTML = '<span class="stock-out">Out of stock</span>';
+        stockInfo.classList.add('stock-out');
+      }
+
+      // quantity limits
+      let q = parseInt(qtyInput.value) || 1;
+      if (q > v.quantity) q = v.quantity || 1;
+      if (q < 1) q = 1;
+      qtyInput.value = q;
+
+      qtyMinus.disabled = q <= 1;
+      qtyPlus.disabled = q >= v.quantity || v.quantity === 0;
+
+      qtyError.classList.toggle('d-none', q < v.quantity);
+
+      const disabled = v.quantity === 0;
+      addToCartBtn.disabled = disabled;
+      buyNowBtn.disabled = disabled;
+    }
+
+    // size click
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentIndex = parseInt(btn.dataset.index);
+        updateUI();
+      });
+    });
+
+    // quantity controls
+    qtyMinus.addEventListener('click', () => {
+      let q = parseInt(qtyInput.value) || 1;
+      if (q > 1) {
+        qtyInput.value = q - 1;
+        updateUI();
+      }
+    });
+
+    qtyPlus.addEventListener('click', () => {
+      let q = parseInt(qtyInput.value) || 1;
+      const max = variants[currentIndex].quantity;
+      if (q < max) {
+        qtyInput.value = q + 1;
+        updateUI();
+      }
+    });
+
+    qtyInput.addEventListener('input', () => {
+      updateUI();
+    });
+
+    // initial state
+    updateUI();
+  });
 </script>
