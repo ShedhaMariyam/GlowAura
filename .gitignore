@@ -2,3 +2,4 @@
 node_modules
 /public/uploads/
 /public/uploads/**
+views/user/test.ejs

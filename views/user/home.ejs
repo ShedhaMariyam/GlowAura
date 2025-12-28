@@ -1,156 +1,326 @@
 <%- include('../../views/partials/user/header.ejs') %>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container-fluid hero-content p-0 ps-5">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="hero-title mb-4">Illuminate Your Aura</h1>
+<style>
+    :root {
+        --primary-brand: #b8c9ae; 
+        --card-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        --card-hover-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        --accent-red: #d7373d;
+        --text-dark: #1a1a1a;
+        --hero-bg: #f8f6f3; /* Defined for consistent blending */
+    }
+
+    body {
+        font-size: 1.1rem;
+        font-family: 'Inter', sans-serif;
+        color: var(--text-dark);
+    }
+
+    .custom-container {
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+
+    /* Hero Section with Blending Mask */
+    .hero-fluid {
+        background-color: var(--hero-bg);
+        overflow: hidden;
+    }
+    .hero-content-area {
+        padding: 80px 5%;
+    }
+    .hero-title { 
+        font-weight: 800; 
+        font-size: 4rem; 
+        color: var(--text-dark); 
+        line-height: 1.1; 
+    }
+    .hero-text { font-size: 1.25rem; color: #555; }
+
+    .btn-shop { 
+        background-color: var(--primary-brand); 
+        color: #fff; 
+        padding: 16px 45px; 
+        border: none;
+        border-radius: 4px; 
+        font-weight: 700; 
+        font-size: 1.1rem;
+        transition: 0.3s ease;
+    }
+    .btn-shop:hover { 
+        background-color: var(--text-dark); 
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .hero-image-wrap {
+        height: 100%;
+        min-height: 500px;
+        background-color: var(--hero-bg);
+    }
+    .hero-img-fluid {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        /* Linear Gradient Mask for Blending */
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%);
+        mask-image: linear-gradient(to right, transparent 0%, black 20%);
+    }
+
+    /* Category Slider - Centered Styling */
+    .category-slider-container { position: relative; padding: 0 10px; }
+    .category-card {
+        width: 100%;
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+        transition: transform 0.4s ease;
+    }
+    .category-card:hover { transform: scale(1.02); }
+    
+    .category-title {
+        display: block;
+        text-align: center; /* Centered Name */
+        font-weight: 600;
+        margin-top: 15px;
+        font-size: 1.2rem;
+    }
+
+    .swiper-nav-btn {
+        width: 45px;
+        height: 45px;
+        background: white !important;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        color: #333 !important;
+    }
+
+    /* Product Cards */
+    .product-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        transition: all 0.3s ease;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        position: relative;
+    }
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .discount-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: var(--accent-red);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        z-index: 10;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+    }
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        height: 2.6em;
+        margin-bottom: 10px;
+    }
+    .sale-price { font-weight: 800; font-size: 1.2rem; }
+
+    /* Wishlist Filled Heart Swap Logic */
+    .btn-wishlist {
+        transition: transform 0.2s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+    .btn-wishlist:hover {
+        transform: scale(1.2);
+    }
+    /* Swapping the Bootstrap Icon content on hover */
+    .btn-wishlist:hover .bi-heart::before {
+        content: "\f415"; /* This is the unicode for bi-heart-fill */
+    }
+
+    /* Mobile adjustments for hero mask */
+    @media (max-width: 991px) {
+        .hero-img-fluid {
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+        }
+    }
+</style>
+
+<section class="hero-fluid">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-stretch">
+            <div class="col-lg-6 d-flex align-items-center">
+                <div class="hero-content-area">
+                    <h1 class="hero-title mb-4">Illuminate <br> Your Aura</h1>
                     <p class="hero-text mb-2">Glow Naturally. Feel the Aura. Discover luxury</p>
-                    <p class="hero-text mb-4">skincare that enhances your natural radiance.</p>
-                    <button class="btn btn-shop">Shop Now</button>
+                    <p class="hero-text mb-5">skincare that enhances your natural radiance.</p>
+                    <a href="/products"><button class="btn btn-shop">Shop Now</button></a>
                 </div>
-                <div class="col-lg-6">
-                    <img src="./images/heroimage.png" alt="Hero Image" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-wrap">
+                    <img src="./images/heroimage.png" alt="GlowAura Brand" class="hero-img-fluid">
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Shop by Category -->
-    <section class="py-5" id="products">
-        <div class="container">
-            <h2 class="section-title mb-5">Shop by Category</h2>
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('/images/facewash.jpg');"></div>
-                        <div class="category-title mt-3">
-                            <span>Facewash</span>
-                             <i class="bi bi-arrow-right"></i>
-                        </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('/images/moisturizer2.jpg')"></div>
-                    <div class="category-title mt-3">
-                        <span>Moisturizer</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="category-card" style="background-image: url('./images/sunscreen2.jpg')"></div>
-                    <div class="category-title mt-3">
-                        <span>Sunscreen</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Products -->
-    <section class="py-5 bg-white">
-        <div class="container">
-
-            <h2 class="section-title mb-5">Featured Products</h2>
-            <div class="row g-4">
-                 <%for(let i=0;i<products.length;i++){%>
-                <div class="col-lg-3 col-md-6">       
-                    <div class="card product-card">
-                        <a href="/productDetails?id=<%= products[i]._id %>">
-                            <img src="<%= products[i].images[0] %>" class="product-img" 
-                                      alt="<%= products[i].productName %>">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="product-title"><%=products[i].productName%></h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-
-                                <div class="product-price">
-                               <% if (products[i].variants && products[i].variants.length > 0) { %>
-                                <% const v = products[i].variants[0]; %>
-
-                                <% if (v.sale_price < v.regular_price) { %>
-                                   <span class="sale-price">₹<%= v.sale_price %></span>
-                                      <span class="old-price text-muted" style="text-decoration: line-through; font-size:14px;">
-                                         ₹<%= v.regular_price %>
-                                        </span>
-                                            <% } else { %>
-                                    <span class="regular-price">₹<%= v.regular_price %></span>
-                                  <% } %>
-                                 <% } %>
+<section class="py-5 mt-5">
+    <div class="container-fluid custom-container">
+        <h2 class="mb-5 fw-bold text-center">Shop by Category</h2>
+        <div class="category-slider-container">
+            <div class="swiper categorySwiper">
+                <div class="swiper-wrapper">
+                    <% if (categories && categories.length > 0) { %>
+                        <% for (let i = 0; i < categories.length; i++) { 
+                            let cat = categories[i]; %>
+                            <div class="swiper-slide">
+                                <a href="/products?cat=<%= cat._id %>" class="text-decoration-none text-dark">
+                                    <div class="category-card" style="background-image: url('<%= cat.image %>');"></div>
+                                    <div class="category-title">
+                                        <%= cat.name %> 
+                                    </div>
+                                </a>
                             </div>
-                                <a href="/addToWishlist?id=<%products[i]._id%>" class="btn btn-add-cart">
-                                    <i class="bi bi-heart me-1"></i>Add to Wishlist
+                        <% } %>
+                    <% } %>
+                </div>
+                <div class="swiper-button-next swiper-nav-btn"></div>
+                <div class="swiper-button-prev swiper-nav-btn"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container-fluid custom-container">
+        <h2 class="mb-5 fw-bold text-center">Featured Products</h2>
+        <div class="row g-4">
+            <% for(let i=0; i<products.length; i++) { %>
+                <div class="col-xl-3 col-lg-4 col-6">      
+                    <div class="card product-card">
+                        <% if (products[i].variants && products[i].variants.length > 0) { 
+                            const v = products[i].variants[0];
+                            if (v.sale_price < v.regular_price) { 
+                                const discount = Math.round(((v.regular_price - v.sale_price) / v.regular_price) * 100); %>
+                                <div class="discount-badge"><%= discount %>% OFF</div>
+                            <% } %>
+                        <% } %>
+
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <img src="<%= products[i].images[0] %>" class="product-img" alt="<%= products[i].productName %>">
+                        </a>
+                        <div class="card-body p-4">
+                            <h5 class="product-title"><%= products[i].productName %></h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <% if (products[i].variants && products[i].variants.length > 0) { 
+                                        const v = products[i].variants[0]; %>
+                                        <span class="sale-price">₹<%= v.sale_price || v.regular_price %></span>
+                                        <% if (v.sale_price < v.regular_price) { %>
+                                            <span class="text-muted text-decoration-line-through ms-2 small">₹<%= v.regular_price %></span>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                                <a href="/addToWishlist?id=<%= products[i]._id %>" class="btn-wishlist text-danger fs-5">
+                                    <i class="bi bi-heart"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div><%}%>          
-        </div>
-    </section>
-
-    <!-- Why GlowAura -->
-    <section class="py-5" id="about">
-        <div class="container">
-            <h2 class="section-title mb-5">Why GlowAura</h2>
-            <div class="row g-5">
-                <div class="col-lg-6">
-                    <img src="./images/why.jpg" alt="Why GlowAura" class="why-image">
                 </div>
-                <div class="col-lg-6 d-flex flex-column justify-content-center">
-                    <div class="mb-4">
-                        <h3 class="feature-title mb-2">Natural Ingredients</h3>
-                        <p class="feature-text mb-0">We source the finest natural ingredients from around the world, ensuring our</p>
-                        <p class="feature-text">formulations are gentle yet effective.</p>
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="feature-title mb-2">Sustainable Practices</h3>
-                        <p class="feature-text mb-0">From eco-friendly packaging to ethical sourcing, we're committed to minimizing</p>
-                        <p class="feature-text">our environmental footprint.</p>
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="feature-title mb-2">Cruelty-Free</h3>
-                        <p class="feature-text mb-0">We never test on animals and work only with suppliers who share our</p>
-                        <p class="feature-text">commitment to cruelty-free practices.</p>
-                    </div>
-                    <div>
-                        <h3 class="feature-title mb-2">Science-Backed</h3>
-                        <p class="feature-text mb-0">Our dermatologist-developed formulas combine the best of nature with</p>
-                        <p class="feature-text">scientific innovation for real results.</p>
+            <% } %>          
+        </div>
+    </div>
+</section>
+
+<section class="py-5" id="about">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5">
+                <img src="./images/why.jpg" alt="Why GlowAura" class="img-fluid rounded-4 shadow-lg">
+            </div>
+            <div class="col-lg-7">
+                <div class="ps-lg-5">
+                    <h2 class="mb-4">Crafted for Your Skin's <br><span style="color: var(--primary-brand)">Natural Brilliance</span></h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold"><i class="bi bi-check2-circle text-success me-2"></i>Natural Ingredients</h6>
+                            <p class="text-muted small">Finest organic botanical extracts sourced globally.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold"><i class="bi bi-check2-circle text-success me-2"></i>Cruelty-Free</h6>
+                            <p class="text-muted small">We never test on animals. Ever.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Benefits -->
-    <section class="py-5" style="background-color: var(--bg-cream);">
-        <div class="container">
-            <div class="row g-5">
-                <div class="col-lg-4">
-                    <div class="benefit-card">
-                        <i class="bi bi-truck benefit-icon mb-3"></i>
-                        <h4 class="benefit-title mb-2">Free Shipping</h4>
-                        <p class="benefit-text">On all orders over $50</p>
-                    </div>
+<section class="py-5 bg-light border-top border-bottom">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-4 border-end">
+                <div class="p-3">
+                    <i class="bi bi-truck fs-1 text-muted mb-3 d-block"></i>
+                    <h5 class="fw-bold">Free Shipping</h5>
+                    <p class="text-muted small">On all orders over ₹999</p>
                 </div>
-                <div class="col-lg-4">
-                    <div class="benefit-card">
-                        <i class="bi bi-shield-check benefit-icon mb-3"></i>
-                        <h4 class="benefit-title mb-2">Dermatologist Tested</h4>
-                        <p class="benefit-text">Safe for all skin types</p>
-                    </div>
+            </div>
+            <div class="col-lg-4 border-end">
+                <div class="p-3">
+                    <i class="bi bi-shield-check fs-1 text-muted mb-3 d-block"></i>
+                    <h5 class="fw-bold">Dermatologist Tested</h5>
+                    <p class="text-muted small">Safe for all sensitive skin types</p>
                 </div>
-                <div class="col-lg-4">
-                    <div class="benefit-card">
-                        <i class="bi bi-lock benefit-icon mb-3"></i>
-                        <h4 class="benefit-title mb-2">Secure Payment</h4>
-                        <p class="benefit-text">100% secure checkout</p>
-                    </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="p-3">
+                    <i class="bi bi-lock fs-1 text-muted mb-3 d-block"></i>
+                    <h5 class="fw-bold">Secure Payment</h5>
+                    <p class="text-muted small">100% encrypted transactions</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    new Swiper('.categorySwiper', {
+        slidesPerView: 1.2,
+        spaceBetween: 25,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            768: { slidesPerView: 2.5 },
+            1024: { slidesPerView: 3.5 },
+            1400: { slidesPerView: 4.5 }
+        }
+    });
+</script>
 
-  <%- include('../../views/partials/user/footer.ejs') %>
+<%- include('../../views/partials/user/footer.ejs') %>

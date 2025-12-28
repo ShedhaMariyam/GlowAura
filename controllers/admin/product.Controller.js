@@ -29,6 +29,7 @@ const productInfo = async (req, res) => {
     filter.productName = { $regex: search, $options: "i" };
     }
 
+    
 
     const productData = await Product.find(filter)
       .sort({ createdAt: -1 })
@@ -40,6 +41,7 @@ const productInfo = async (req, res) => {
     const count = await Product.countDocuments(filter);
 
 
+   
     const totalPages = Math.ceil(count / limit);
 
     res.render("products", {
@@ -47,6 +49,7 @@ const productInfo = async (req, res) => {
       currentPage: page,
       totalPages,
       resultsCount: count,
+      Sum,
       search,
       activePage: "products"
     });

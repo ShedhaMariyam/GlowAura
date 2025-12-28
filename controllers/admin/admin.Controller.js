@@ -45,7 +45,7 @@ const login = async (req,res)=>{
     return res.redirect("/admin/dashboard");  
 
   } catch (error) {
-    console.log("login error",error)
+    console.log("login error",error);
     return res.redirect('/page-error');
   }
 }

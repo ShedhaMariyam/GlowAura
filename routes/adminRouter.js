@@ -1,9 +1,9 @@
 const express = require ('express');
 const router = express.Router();
-const adminController = require ('../controllers/admin/adminController');
-const categoryController = require('../controllers/admin/categoryController');
-const customerController = require ('../controllers/admin/customerController');
-const productController = require ('../controllers/admin/productController')
+const adminController = require ('../controllers/admin/admin.Controller');
+const categoryController = require('../controllers/admin/category.Controller');
+const customerController = require ('../controllers/admin/customer.Controller');
+const productController = require ('../controllers/admin/product.Controller')
 const {userAuth,adminAuth} = require('../middlewares/auth');
 const uploadCategoryImage = require('../middlewares/uploadCategoryImage');
 const uploadProductImages = require('../middlewares/uploadProductImages');
