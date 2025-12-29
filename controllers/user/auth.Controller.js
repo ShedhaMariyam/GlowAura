@@ -397,7 +397,6 @@ const logout = async(req,res)=>{
   }
 }
 
-
 module.exports = {
 
 loadSignup,

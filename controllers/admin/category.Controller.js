@@ -2,6 +2,7 @@
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const HTTP_STATUS = require('../../helpers/httpStatus');
+const formattedName = require('../../helpers/formattedName');
 
 const categoryInfo = async (req,res)=>{
     try {
@@ -42,12 +43,7 @@ const categoryInfo = async (req,res)=>{
     }
 };
 
-function formattedName(string)
-{
-    splitted=string.split(" ");
-    edited=splitted.map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase());
-    return edited=edited.join(" ");
-}
+
 
 const addCategory = async (req,res)=>{
   const {name,description} = req.body;
