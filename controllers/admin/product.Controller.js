@@ -5,6 +5,7 @@ const fs=require("fs/promises");
 const path =require('path');
 const sharp = require('sharp');
 const { equal } = require('assert');
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 
@@ -49,7 +50,6 @@ const productInfo = async (req, res) => {
       currentPage: page,
       totalPages,
       resultsCount: count,
-      Sum,
       search,
       activePage: "products"
     });
@@ -93,7 +93,7 @@ const addProducts = async (req, res) => {
         const { productName, description, category, status, featured, variants } = req.body;
         // Validation
         if (!productName || !description || !category) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Product name, description, and category are required'
             });
@@ -114,14 +114,14 @@ const addProducts = async (req, res) => {
                     await fs.unlink(file.path).catch(err => console.error(err));
                 }
             }
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Product with this name already exists'
             });
         }
         // Validate images
         if (!req.files || req.files.length < 3) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'At least 3 product images are required'
             });
@@ -131,13 +131,13 @@ const addProducts = async (req, res) => {
         try {
             variantsArray = JSON.parse(variants);
         } catch (error) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid variants data'
             });
         }
         if (!variantsArray || variantsArray.length === 0) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'At least one variant is required'
             });
@@ -150,7 +150,7 @@ const addProducts = async (req, res) => {
             });
 
         if (!categoryDoc) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid category'
             });
@@ -192,7 +192,7 @@ const addProducts = async (req, res) => {
 
         await newProduct.save();
 
-        res.status(201).json({
+        res.status(HTTP_STATUS.CREATED).json({
             success: true,
             message: 'Product added successfully',
             product: newProduct
@@ -213,7 +213,7 @@ const addProducts = async (req, res) => {
         }
     }
 
-    return res.status(500).json({
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: "Something went wrong while adding the product"
     });
@@ -258,7 +258,7 @@ const updateProduct = async (req, res) => {
 
     // Validation
     if (!productName || !description || !category) {
-      return res.status(400).json({
+      return res.status(HTTP_STATUS. BAD_REQUEST).json({
         success: false,
         message: 'Product name, description, and category are required'
       });
@@ -269,7 +269,7 @@ const updateProduct = async (req, res) => {
 
 
     if (!product) {
-      return res.status(404).json({ 
+      return res.status(HTTP_STATUS.NOT_FOUND ).json({ 
         success: false, 
         message: 'Product not found' 
       });
@@ -289,7 +289,7 @@ if (productExists) {
             await fs.unlink(file.path).catch(err => console.error(err));
         }
     }
-    return res.status(400).json({
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         message: 'Product with this name already exists'
     });
@@ -302,7 +302,7 @@ if (productExists) {
     });
 
     if (!categoryDoc) {
-      return res.status(400).json({ 
+      return res.status(HTTP_STATUS. BAD_REQUEST).json({ 
         success: false, 
         message: 'Invalid category' 
       });
@@ -321,14 +321,14 @@ if (productExists) {
     try {
       parsedVariants = JSON.parse(variants);
     } catch (error) {
-      return res.status(400).json({
+      return res.status(HTTP_STATUS. BAD_REQUEST).json({
         success: false,
         message: 'Invalid variants data'
       });
     }
 
     if (!parsedVariants || parsedVariants.length === 0) {
-      return res.status(400).json({
+      return res.status(HTTP_STATUS. BAD_REQUEST).json({
         success: false,
         message: 'At least one variant is required'
       });
@@ -384,7 +384,7 @@ if (productExists) {
         }
       }
       
-      return res.status(400).json({
+      return res.status(HTTP_STATUS. BAD_REQUEST).json({
         success: false,
         message: `Exactly 3 images required. Current count: ${product.images.length}`
       });
@@ -411,7 +411,7 @@ if (productExists) {
       }
     }
     
-    res.status(500).json({ 
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ 
       success: false, 
       message: error.message || 'Failed to update product'
     });
@@ -433,7 +433,7 @@ const deleteProduct = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Delete failed" });
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ success: false, message: "Delete failed" });
   }
 };
 

@@ -18,6 +18,18 @@
         color: var(--text-dark);
     }
 
+    /* BRAND NAME STYLING: LARGE & PROMINENT */
+    .hero-brand-display {
+        font-size: 5.5rem; /* Larger than the hero-title */
+        font-family: 'Playfair Display', serif; /* Elegant luxury font */
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        display: block;
+        letter-spacing: -2px;
+    }
+
     .custom-container {
         padding-left: 3%;
         padding-right: 3%;
@@ -32,10 +44,10 @@
         padding: 80px 5%;
     }
     .hero-title { 
-        font-weight: 800; 
-        font-size: 4rem; 
-        color: var(--text-dark); 
-        line-height: 1.1; 
+        font-weight: 500; 
+        font-size: 2.5rem; /* Reduced to make Brand Name stand out more */
+        color: #666; 
+        line-height: 1.2; 
     }
     .hero-text { font-size: 1.25rem; color: #555; }
 
@@ -155,8 +167,9 @@
         content: "\f415"; /* This is the unicode for bi-heart-fill */
     }
 
-    /* Mobile adjustments for hero mask */
+    /* Mobile adjustments */
     @media (max-width: 991px) {
+        .hero-brand-display { font-size: 3.5rem; }
         .hero-img-fluid {
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
@@ -169,6 +182,8 @@
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-flex align-items-center">
                 <div class="hero-content-area">
+                    <span class="hero-brand-display">GlowAura</span>
+                    
                     <h1 class="hero-title mb-4">Illuminate <br> Your Aura</h1>
                     <p class="hero-text mb-2">Glow Naturally. Feel the Aura. Discover luxury</p>
                     <p class="hero-text mb-5">skincare that enhances your natural radiance.</p>

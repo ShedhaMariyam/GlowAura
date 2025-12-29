@@ -1,11 +1,8 @@
-const bcrypt = require('bcrypt');
+
 const User = require('../../models/userSchema');
 const Category = require ('../../models/categorySchema');
 const Product = require ('../../models/productSchema');
-const Otp = require('../../models/otpSchema'); 
-const nodemailer = require('nodemailer');
-const env = require('dotenv').config();
-const saltround = 10;
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 const test = async (req, res) => {
@@ -31,7 +28,7 @@ const test = async (req, res) => {
      
   } catch (error) {
     console.log("Home page not found");
-    res.status(500).send("Server error");
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send("Server error");
   }
 };
 
@@ -70,7 +67,7 @@ const loadHomepage = async (req, res) => {
      
   } catch (error) {
     console.log("Home page not found");
-    res.status(500).send("Server error");
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send("Server error");
   }
 };
 
@@ -163,9 +160,6 @@ const loadProductDetails = async (req, res) => {
     res.redirect('/pageNotFound');
   }
 };
-
-
-
 
 
 

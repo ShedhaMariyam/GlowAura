@@ -4,6 +4,7 @@ const Otp = require('../../models/otpSchema');
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 const saltround = 10;
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 // Signup Page
@@ -12,7 +13,7 @@ const loadSignup = async (req, res) => {
     return res.render('signup');
   } catch (error) {
     console.log("Signup page not loading", error);
-    res.status(500).send('Server Error');
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).send('Server Error');
   }
 };
 
@@ -98,18 +99,18 @@ const signup = async (req, res) => {
     const { name, email, phone, password, confirmpassword } = req.body;
     
     if (!name || !email || !password || !phone || !confirmpassword) {
-      return res.status(400).render("signup", { message: 'All fields are required' });
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'All fields are required' });
     }
     console.log(phone);
 
     if (password !== confirmpassword) {
-      return res.status(400).render("signup", { message: 'Passwords do not match' });
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'Passwords do not match' });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).render("signup", { message: 'User with this email already exists' });
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'User with this email already exists' });
     }
 
     const otp = generateOtp();
@@ -128,7 +129,7 @@ const signup = async (req, res) => {
    
     req.session.userData = { name, email, password,phone};
 
-    res.status(200).json({ success: true, redirectUrl:'/verify-otp' });
+    res.status(HTTP_STATUS.OK).json({ success: true, redirectUrl:'/verify-otp' });
     console.log("OTP sent to:", email, "=>", otp);
   } catch (error) {
     console.error("Signup error:", error);
@@ -154,19 +155,19 @@ const verifyOtp = async (req, res) => {
     const { email, name, phone, password } = req.session.userData || {};
 
     if (!email) {
-      return res.status(400).json({ success: false, message: "Session expired. Please sign up again." });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Session expired. Please sign up again." });
     }
 
     //  Find OTP record for email
     let otpRecord = await Otp.findOne({ email });
 
     if (!otpRecord) {
-      return res.status(400).json({ success: false, message: "OTP expired or not found" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "OTP expired or not found" });
     }
 
     if(Date.now() - otpRecord.createdAt.getTime() > 60 * 1000){
       await Otp.deleteOne({ email });
-      return res.status(400).json({ success: false, message: "OTP Expired. Please request a new one" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "OTP Expired. Please request a new one" });
     }
 
     
@@ -176,7 +177,7 @@ const verifyOtp = async (req, res) => {
 
 
     if (otpRecord !== otp) {
-      return res.status(400).json({ success: false, message: "Invalid OTP. Please try again." });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Invalid OTP. Please try again." });
     }
 
     
@@ -201,7 +202,7 @@ const verifyOtp = async (req, res) => {
 
   } catch (error) {
     console.error("Error verifying OTP:", error);
-    res.status(500).json({ success: false, message: "An error occurred" });
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ success: false, message: "An error occurred" });
   }
 };
 
@@ -211,14 +212,14 @@ const resendOtp = async (req, res) => {
     const { email } = req.session.userData || {};
 
     if (!email) {
-      return res.status(400).json({ message: "Session expired. Please sign up again." });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: "Session expired. Please sign up again." });
     }
 
     const newOtp = generateOtp();
     const emailSent = await sendVerificationEmail(email, newOtp);
 
     if (!emailSent) {
-      return res.status(500).json({ message: "Failed to send OTP email." });
+      return res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ message: "Failed to send OTP email." });
     }
 
     // Update OTP collection
@@ -232,7 +233,7 @@ const resendOtp = async (req, res) => {
     res.json({ message: "A new verification code has been sent to your email." });
   } catch (error) {
     console.error("Error resending OTP:", error);
-    res.status(500).json({ message: "Something went wrong. Please try again." });
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ message: "Something went wrong. Please try again." });
   }
 };
 
@@ -287,7 +288,7 @@ const signin = async (req, res) => {
     res.redirect('/');
   } catch (error) {
     console.error("Signin error:", error);
-    res.status(500).render('signin', { message: 'Something went wrong. Please try again later.' });
+    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).render('signin', { message: 'Something went wrong. Please try again later.' });
   }
 };
 

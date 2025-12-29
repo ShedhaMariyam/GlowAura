@@ -1,6 +1,7 @@
 
 const Category = require('../../models/categorySchema');
-const Product = require('../../models/productSchema')
+const Product = require('../../models/productSchema');
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 const categoryInfo = async (req,res)=>{
     try {
@@ -39,7 +40,7 @@ const categoryInfo = async (req,res)=>{
         console.error(error)
         res.redirect('/page-error')
     }
-}
+};
 
 function formattedName(string)
 {
@@ -58,7 +59,7 @@ const addCategory = async (req,res)=>{
     });
 
     if(existingCategory){
-      return res.status(400).json({error : "Category already exists"});
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({error : "Category already exists"});
     }
 
     const deletedCategory = await Category.findOne({
@@ -80,14 +81,14 @@ const addCategory = async (req,res)=>{
       
       await deletedCategory.save();
       
-      return res.status(200).json({ 
+      return res.status(HTTP_STATUS.OK).json({ 
         success: true,
         message: "Category reactivated successfully" 
       });
     }
  
     if (!req.file) {
-      return res.status(400).json({ error: "Category image is required" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Category image is required" });
     }
 
     const imagePath = '/uploads/categories/' + req.file.filename;
@@ -101,10 +102,10 @@ const addCategory = async (req,res)=>{
 
     await newCategory.save();
 
-    return res.status(201).json({success: true, message: "Category Added Successfully" });
+    return res.status(HTTP_STATUS.CREATED).json({success: true, message: "Category Added Successfully" });
   } catch (error) {
     console.error("Add Category Error:", error);
-    return res.status(500).json({error: "Internal server error"});
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({error: "Internal server error"});
   }
 };
 
@@ -144,7 +145,7 @@ const categoryOffer = async (req, res) => {
 
     const category = await Category.findById(id);
     if (!category) {
-      return res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "Category not found" });
     }
 
     await Category.findByIdAndUpdate(id, {
@@ -179,7 +180,7 @@ const categoryOffer = async (req, res) => {
     return res.json({ success: true, message: "Offer updated" });
   } catch (err) {
     console.error("Offer error:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
   }
 };
 
@@ -191,10 +192,10 @@ const editCategory = async (req, res) => {
     const {  name, description } = req.body;
 
     if (!id) {
-      return res.status(400).json({ error: "Category id is required" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Category id is required" });
     }
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: "Category name is required" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Category name is required" });
     }
 
     const formatted = formattedName(name).trim();
@@ -207,7 +208,7 @@ const editCategory = async (req, res) => {
 
 
     if (existingCategory) {
-      return res.status(400).json({ error: "Category with this name already exists" });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Category with this name already exists" });
     }
 
     const update = { name: formatted, description };
@@ -218,7 +219,7 @@ const editCategory = async (req, res) => {
 
     await Category.findByIdAndUpdate(id, { $set: update });
 
-    return res.status(201).json({success: true, message: "Category updated successfully" });
+    return res.status(HTTP_STATUS.CREATED).json({success: true, message: "Category updated successfully" });
 
   } catch (error) {
     console.error("Edit Category Error:", error);
@@ -231,14 +232,14 @@ const deleteCategory = async (req, res) => {
    const {id} = req.params;
 
     await Category.findByIdAndUpdate(id,{is_active : false,is_deleted : true})
-    return res.status(200).json({ 
+    return res.status(HTTP_STATUS.OK).json({ 
       success: true,
       message: "Category deleted successfully" 
     });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server error' });
   }
 };
 

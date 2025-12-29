@@ -1,4 +1,5 @@
 const User =  require ('../../models/userSchema');
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 
@@ -44,10 +45,11 @@ const customerInfo = async(req,res)=>{
             })
 
     } catch (error) {
-        console.error('customerInfo error:', err);
-        res.redirect("/page-error")
-        
-    }
+        console.error('customerInfo error:', error);
+         res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .redirect('/page-error');
+}
+
 }
 
 const userBlocked = async (req,res)=>{
@@ -56,7 +58,9 @@ const userBlocked = async (req,res)=>{
         await User.updateOne({_id:id},{$set:{is_Blocked :true}})
         res.redirect('/admin/users')
     } catch (error) {
-       res.redirect('/page-error')
+        console.error('userBlocked error:', error);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .redirect('/page-error');
     }
 }
 
@@ -66,8 +70,11 @@ const userUnblocked = async (req,res)=>{
         await User.updateOne({_id:id},{$set:{is_Blocked :false}})
         res.redirect('/admin/users')
     } catch (error) {
-       res.redirect('/page-error')
-    }
+        console.error('userUnblocked error:', error);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .redirect('/page-error');
+}
+
 }
 
 module.exports ={

@@ -6,54 +6,38 @@
         padding: 0 40px;
     }
 
-    /* Typography: Premium Ecommerce Sizing */
-    .filter-title {
-        font-size: 1.5rem; 
-        font-weight: 700;
-        color: #000;
-        margin-bottom: 1.5rem;
+    /* --- STICKY LOGIC --- */
+    .sticky-sidebar {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 100px; /* Adjust based on your header height */
+        height: fit-content;
+        z-index: 10;
     }
 
-    .filter-label {
-        font-size: 1.2rem;
-        color: #333;
-        cursor: pointer;
+    .sticky-search {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 80; 
+        z-index: 1020;
+        background-color: #fff; /* Solid background to hide cards passing under */
+        padding-top: 10px;
+        padding-bottom: 20px;
     }
 
-    .product-name {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #2c2c2c;
-        margin-top: 15px;
-        margin-bottom: 8px;
-        letter-spacing: -0.02em;
+    /* --- SEARCH BAR COLOR --- */
+    .custom-search-input {
+        background-color: #f7e1d4 !important; /* Premium Nude/Cream */
+        border: 1px solid #e8e0d9 !important;
+        transition: all 0.3s ease;
     }
 
-    /* Price Styling matched to reference image */
-    .price-container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 15px;
+    .custom-search-input:focus {
+        background-color: #f7e1d4 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
     }
 
-    .sale-price {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #c23b48;
-        letter-spacing: 0;
-    }
-
-   
-
-    /* Wishlist Heart Overlay */
-    .wishlist-btn-box {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        z-index: 5;
-    }
-
+    /* --- MODIFIED: Wishlist Heart Fill Hover --- */
     .btn-heart {
         background: #fff;
         border: none;
@@ -65,25 +49,70 @@
         justify-content: center;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
     }
 
-    .btn-heart:hover i {
-  color: #e63946; /* red */
-  transform: scale(1.1);
-}
+    .btn-heart i {
+        transition: all 0.3s ease;
+        color: #333;
+    }
 
-/* Change outline heart to filled heart on hover */
-.btn-heart:hover i::before {
-  content: "\f415"; /* Bootstrap icon: bi-heart-fill */
-  font-family: "Bootstrap-icons";
-}
+    /* This swaps the icon to fill and changes color on hover */
+    .btn-heart:hover {
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
+    }
+
+    .btn-heart:hover i::before {
+        content: "\f415"; /* Bootstrap Icons: bi-heart-fill */
+        color: #e63946;
+    }
     
+    .btn-heart:hover i {
+        transform: scale(1.1);
+    }
+
+    /* --- PREMIUM CARD STYLING --- */
+    .premium-card {
+        background: #fff;
+        border-radius: 15px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        padding: 15px;
+    }
+
+    .premium-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c2c2c;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+    }
+
+    .price-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .sale-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #c23b48;
+    }
 
     .product-card-img {
         aspect-ratio: 1 / 1;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 10px;
         background-color: #f4f4f4;
     }
 
@@ -93,29 +122,16 @@
         border: none;
         font-weight: 600;
         padding: 10px 25px;
-        border-radius: 4px;
+        border-radius: 8px;
         transition: all 0.2s ease;
-    }
-
-    .btn-buy:hover {
-        background-color: #f0c9b0;
     }
 
     .btn-add-cart {
         background-color: #fff;
         border: 1px solid #e0e0e0;
         padding: 10px 12px;
-        border-radius: 4px;
+        border-radius: 8px;
         transition: all 0.2s ease;
-    }
-
-    .btn-add-cart:hover {
-        background-color: #f5f5f5;
-    }
-
-    .pagination .page-link {
-        color: #5a4a3a;
-        border-color: #e0e0e0;
     }
 
     .pagination .page-item.active .page-link {
@@ -123,26 +139,24 @@
         border-color: #f5d5c1;
         color: #333;
     }
+    .navbar {
+    z-index: 1030;
+}
 
-    .pagination .page-link:hover {
-        background-color: #f5d5c1;
-        border-color: #f5d5c1;
-        color: #333;
-    }
 </style>
 
 <div class="container-fluid main-wrapper py-4">
     <form method="GET" action="/products" id="filterForm">
         
-        <div class="mb-5">
-            <input type="text" name="search" class="form-control rounded-pill border-0 bg-light px-4 py-3 fs-5" 
+        <div class="sticky-search">
+            <input type="text" name="search" class="form-control custom-search-input rounded-pill border-0 px-4 py-3 fs-5" 
                    placeholder="Search products..." value="<%= search %>">
         </div>
 
         <div class="row">
-            <div class="col-md-3 pe-md-5">
+            <div class="col-md-3 pe-md-5 sticky-sidebar">
                 <div class="mb-5">
-                    <h5 class="filter-title">Category</h5>
+                    <h5 class="filter-title" style="font-weight: 700; font-size: 1.5rem;">Category</h5>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="cat" id="catAll" value="" 
                                onchange="this.form.submit()" <%= !selectedCategory ? 'checked' : '' %>>
@@ -161,7 +175,7 @@
                 </div>
 
                 <div class="mb-5">
-                    <h5 class="filter-title">Sort By</h5>
+                    <h5 class="filter-title" style="font-weight: 700; font-size: 1.5rem;">Sort By</h5>
                     <select class="form-select border-0 bg-light py-2 fs-6" name="sort" onchange="this.form.submit()">
                         <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>Latest</option>
                         <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
@@ -175,9 +189,9 @@
                     <% if (products && products.length > 0) { %>
                         <% for(let i=0; i < products.length; i++) { %>
                             <div class="col-md-4">
-                                <div class="card border-0 h-100 position-relative">
+                                <div class="card premium-card border-0 h-100 position-relative">
                                     
-                                    <div class="wishlist-btn-box">
+                                    <div class="wishlist-btn-box" style="position: absolute; top: 25px; right: 25px; z-index: 5;">
                                         <button type="button" class="btn-heart">
                                             <i class="bi bi-heart fs-5"></i>
                                         </button>
@@ -207,7 +221,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="d-flex justify-content-between align-items-center pb-3">
+                                    <div class="d-flex justify-content-between align-items-center pb-2">
                                         <button class="btn btn-buy">Buy Now</button>
                                         <button class="btn btn-add-cart">
                                             <i class="bi bi-cart-plus fs-3"></i>
@@ -241,4 +255,3 @@
     </form>
 </div>
 
-<%- include('../../views/partials/user/footer.ejs') %>

@@ -2,6 +2,7 @@
 const User = require ("../../models/userSchema");
 const mongoose = require ("mongoose");
 const bcrypt = require("bcrypt");
+const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 const pageerror = (req,res)=>{
@@ -28,7 +29,7 @@ const login = async (req,res)=>{
         const {email,password} = req.body;
         const admin = await User.findOne({email ,is_admin:true})
         if (!admin) {
-        return res.status(401).render('admin-login', { message: "Invalid credentials — Admin access denied" });
+        return res.status(HTTP_STATUS.UNAUTHORIZED).render('admin-login', { message: "Invalid credentials — Admin access denied" });
          }
 
     // compare password properly
@@ -36,7 +37,7 @@ const login = async (req,res)=>{
     console.log("passwordMatch:", passwordMatch);
 
     if (!passwordMatch) {
-      return res.status(401).render("admin-login", { message: "Invalid credentials — Admin access denied" });
+      return res.status(HTTP_STATUS.UNAUTHORIZED).render("admin-login", { message: "Invalid credentials — Admin access denied" });
     }
 
     
