@@ -1,10 +1,11 @@
-const bcrypt = require('bcrypt');
-const User = require('../../models/userSchema');
-const Otp = require('../../models/otpSchema'); 
-const nodemailer = require('nodemailer');
-const env = require('dotenv').config();
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+
+import User from "../../models/userSchema.js";
+import Otp from "../../models/otpSchema.js";
+import HTTP_STATUS from "../../helpers/httpStatus.js";
+
 const saltround = 10;
-const HTTP_STATUS = require('../../helpers/httpStatus');
 
 
 // Signup Page
@@ -13,7 +14,7 @@ const loadSignup = async (req, res) => {
     return res.render('signup');
   } catch (error) {
     console.log("Signup page not loading", error);
-    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).send('Server Error');
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Server Error');
   }
 };
 
@@ -64,7 +65,7 @@ function htmlContent(otp) {
         <h1 style="color:#2b2b2b;margin-bottom:6px;">GlowAura</h1>
         <div style="color:#4b5563;font-size:16px;margin-bottom:20px;">Your trusted online shopping partner</div>
         <h2 style="font-size:20px;font-weight:600;margin-bottom:12px;color:#2b2b2b;">Email Verification</h2>
-        <div style="font-size:16px;color:##e9bba2;margin-bottom:18px;">
+        <div style="font-size:16px;color:#e9bba2;margin-bottom:18px;">
           Use the OTP below to verify your email.
         </div>
         <div style="display:inline-block;padding:20px 46px;background:#232d3b;border-radius:7px;font-size:32px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:16px">
@@ -202,7 +203,7 @@ const verifyOtp = async (req, res) => {
 
   } catch (error) {
     console.error("Error verifying OTP:", error);
-    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ success: false, message: "An error occurred" });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "An error occurred" });
   }
 };
 
@@ -219,7 +220,7 @@ const resendOtp = async (req, res) => {
     const emailSent = await sendVerificationEmail(email, newOtp);
 
     if (!emailSent) {
-      return res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ message: "Failed to send OTP email." });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Failed to send OTP email." });
     }
 
     // Update OTP collection
@@ -233,7 +234,7 @@ const resendOtp = async (req, res) => {
     res.json({ message: "A new verification code has been sent to your email." });
   } catch (error) {
     console.error("Error resending OTP:", error);
-    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ message: "Something went wrong. Please try again." });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Something went wrong. Please try again." });
   }
 };
 
@@ -288,7 +289,7 @@ const signin = async (req, res) => {
     res.redirect('/');
   } catch (error) {
     console.error("Signin error:", error);
-    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).render('signin', { message: 'Something went wrong. Please try again later.' });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('signin', { message: 'Something went wrong. Please try again later.' });
   }
 };
 
@@ -397,19 +398,17 @@ const logout = async(req,res)=>{
   }
 }
 
-module.exports = {
-
-loadSignup,
-signup,
-loadVerifyOtp,
-verifyOtp,
-resendOtp,
-loadSignin,
-signin,
-loadForgotPassword,
-sendResetOtp,
-loadResetPassword,
-resetPassword,
-logout
-
-}
+export {
+  loadSignup,
+  signup,
+  loadVerifyOtp,
+  verifyOtp,
+  resendOtp,
+  loadSignin,
+  signin,
+  loadForgotPassword,
+  sendResetOtp,
+  loadResetPassword,
+  resetPassword,
+  logout
+};

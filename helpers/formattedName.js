@@ -5,4 +5,4 @@ function formattedName(string)
     return edited=edited.join(" ");
 }
 
-module.exports = formattedName;
+export default formattedName;

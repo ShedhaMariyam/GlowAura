@@ -1,12 +1,14 @@
-const Product = require('../../models/productSchema');
-const Category = require('../../models/categorySchema');
-const User = require ('../../models/userSchema');
-const fs=require("fs/promises");
-const path =require('path');
-const sharp = require('sharp');
-const { equal } = require('assert');
-const HTTP_STATUS = require('../../helpers/httpStatus');
-const formattedName = require('../../helpers/formattedName');
+import Product from "../../models/productSchema.js";
+import Category from "../../models/categorySchema.js";
+import HTTP_STATUS from "../../helpers/httpStatus.js";
+import formattedName from "../../helpers/formattedName.js";
+
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 
@@ -85,141 +87,117 @@ const loadAddproduct= async (req,res)=>{
 
 
 const addProducts = async (req, res) => {
-    try {
-        const { productName, description, category, status, featured, variants } = req.body;
-        // Validation
-        if (!productName || !description || !category) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'Product name, description, and category are required'
-            });
-        }
-        const name=formattedName(productName);
-        
+  try {
+    const { productName, description, category, status, featured, variants } = req.body;
 
-        const productExists = await Product.findOne({
-        productName: { $regex: new RegExp(`^${name}$`, 'i') },
-        is_deleted: false
-        });
-
-
-        if (productExists) {
-            // Delete uploaded files if product exists
-            if (req.files && req.files.length > 0) {
-                for (const file of req.files) {
-                    await fs.unlink(file.path).catch(err => console.error(err));
-                }
-            }
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'Product with this name already exists'
-            });
-        }
-        // Validate images
-        if (!req.files || req.files.length < 3) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'At least 3 product images are required'
-            });
-        }
-        // Process variants
-        let variantsArray = [];
-        try {
-            variantsArray = JSON.parse(variants);
-        } catch (error) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'Invalid variants data'
-            });
-        }
-        if (!variantsArray || variantsArray.length === 0) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'At least one variant is required'
-            });
-        }
-      
-        const categoryDoc = await Category.findOne({
-                name: category,
-                is_active: true,
-                is_deleted: { $ne: true }
-            });
-
-        if (!categoryDoc) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: 'Invalid category'
-            });
-        }
-
-        // Generate SKU codes and validate variants
-        const processedVariants = variantsArray.map((variant, index) => {
-            if (!variant.size || !variant.price || variant.quantity === undefined) {
-                throw new Error('All variant fields are required');
-            }
-
-            return {
-                size: variant.size,
-                sku_code: `${productName.substring(0, 3).toUpperCase()}-${variant.size.replace(/\s/g, '')}-${Date.now()}-${index}`,
-                quantity: variant.quantity,
-                regular_price: variant.price,
-                sale_price: variant.price
-            };
-        });
-
-        // Get image paths
-        const imagePaths = req.files.map(file => `/uploads/products/${file.filename}`);
-        const totalStock = processedVariants.reduce((sum, v) => sum + v.quantity, 0);
-
-     
-        
-
-        // Create new product
-        const newProduct = new Product({
-            productName: name.trim(),
-            description: description.trim(),
-            category: categoryDoc._id,
-            images: imagePaths,
-            variants: processedVariants,
-            stock: totalStock,
-            status: status || 'Listed',
-            featured: featured === 'true' || featured === true
-        });
-
-        await newProduct.save();
-
-        res.status(HTTP_STATUS.CREATED).json({
-            success: true,
-            message: 'Product added successfully',
-            product: newProduct
-        });
-
-    }  catch (error) {
-    console.error("Error adding product:", error);
-
-    
-    if (req.files && Array.isArray(req.files)) {
-        for (const file of req.files) {
-            try {
-                const filePath = path.join(__dirname, "../../public/uploads/products", file.filename);
-                await fs.unlink(filePath);
-            } catch (err) {
-                console.error("Failed to delete uploaded image:", err);
-            }
-        }
+    //validation
+    if (!productName || !description || !category) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Product name, description, and category are required"
+      });
     }
 
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: "Something went wrong while adding the product"
+    const name = formattedName(productName);
+    //duplicate name checking
+    const productExists = await Product.findOne({
+      productName: { $regex: new RegExp(`^${name}$`, "i") },
+      is_deleted: false
     });
-}
+
+    if (productExists) {
+      // Delete uploaded files if product exists
+      if (req.files) {
+        for (const file of req.files) {
+          await fs.unlink(file.path).catch(() => {});
+        }
+      }
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Product with this name already exists"
+      });
+    }
+    //validating image 
+    if (!req.files || req.files.length < 3) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "At least 3 product images are required"
+      });
+    }
+    //process variants
+    let variantsArray;
+    try {
+      variantsArray = JSON.parse(variants);
+    } catch {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid variants data"
+      });
+    }
+
+    const categoryDoc = await Category.findOne({
+      name: category,
+      is_active: true,
+      is_deleted: { $ne: true }
+    });
+
+    if (!categoryDoc) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid category"
+      });
+    }
+    // Generate SKU codes and validate variants
+    const processedVariants = variantsArray.map((v, i) => ({
+      size: v.size,
+      quantity: v.quantity,
+      regular_price: v.price,
+      sale_price: v.price,
+      sku_code: `${name.substring(0, 3).toUpperCase()}-${v.size}-${Date.now()}-${i}`
+    }));
+
+    const images = req.files.map(f => `/uploads/products/${f.filename}`);
+    const stock = processedVariants.reduce((s, v) => s + v.quantity, 0);
+    
+    // Create new product
+    const newProduct = new Product({
+      productName: name,
+      description: description.trim(),
+      category: categoryDoc._id,
+      images,
+      variants: processedVariants,
+      stock,
+      status: status || "Listed",
+      featured: featured === "true" || featured === true
+    });
+
+    await newProduct.save();
+
+    res.status(HTTP_STATUS.CREATED).json({
+      success: true,
+      message: "Product added successfully"
+    });
+
+  } catch (error) {
+    console.error("Add product error:", error);
+
+    if (req.files) {
+      for (const file of req.files) {
+        try {
+          await fs.unlink(path.join(__dirname, "../../public/uploads/products", file.filename));
+        } catch {}
+      }
+    }
+
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Something went wrong"
+    });
+  }
 };
 
-
-
-
-const loadEditProduct = async (req, res) => {
+//load update product page
+const loadUpdateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
@@ -246,113 +224,111 @@ const loadEditProduct = async (req, res) => {
   }
 };
 
-
+//update product
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { productName, description, category, status, featured, variants } = req.body;
 
-    // Validation
+    //basic validation
     if (!productName || !description || !category) {
-      return res.status(HTTP_STATUS. BAD_REQUEST).json({
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
-        message: 'Product name, description, and category are required'
+        message: "Product name, description, and category are required"
       });
     }
 
     const product = await Product.findOne({ _id: id, is_deleted: false });
-
-
-
     if (!product) {
-      return res.status(HTTP_STATUS.NOT_FOUND ).json({ 
-        success: false, 
-        message: 'Product not found' 
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: "Product not found"
       });
     }
 
-
-     const productExists = await Product.findOne({
-    productName: { $regex: new RegExp(`^${productName}$`, 'i') },
-    is_deleted: false,
-    _id: { $ne: id }  
-});
-
-if (productExists) {
-    
-    if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-            await fs.unlink(file.path).catch(err => console.error(err));
-        }
-    }
-    return res.status(HTTP_STATUS.BAD_REQUEST).json({
-        success: false,
-        message: 'Product with this name already exists'
+    //duplicate name check
+    const productExists = await Product.findOne({
+      productName: { $regex: new RegExp(`^${productName}$`, "i") },
+      is_deleted: false,
+      _id: { $ne: id }
     });
-}
-    
-    const categoryDoc = await Category.findOne({ 
+
+    if (productExists) {
+      if (req.files?.length) {
+        for (const file of req.files) {
+          await fs.unlink(file.path).catch(() => {});
+        }
+      }
+
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Product with this name already exists"
+      });
+    }
+
+    //category validation
+    const categoryDoc = await Category.findOne({
       name: category,
       is_active: true,
       is_deleted: { $ne: true }
     });
 
     if (!categoryDoc) {
-      return res.status(HTTP_STATUS. BAD_REQUEST).json({ 
-        success: false, 
-        message: 'Invalid category' 
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid category"
       });
     }
 
-
-    // Update basic fields
+    //update basic fields
     product.productName = productName.trim();
     product.description = description.trim();
     product.category = categoryDoc._id;
     product.status = status;
-    product.featured = featured === 'true' || featured === true;
+    product.featured = featured === "true" || featured === true;
 
-    // Parse and validate variants
+    //parse and validate variants
     let parsedVariants;
     try {
       parsedVariants = JSON.parse(variants);
-    } catch (error) {
-      return res.status(HTTP_STATUS. BAD_REQUEST).json({
+    } catch {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
-        message: 'Invalid variants data'
+        message: "Invalid variants data"
       });
     }
 
-    if (!parsedVariants || parsedVariants.length === 0) {
-      return res.status(HTTP_STATUS. BAD_REQUEST).json({
+    if (!parsedVariants.length) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
-        message: 'At least one variant is required'
+        message: "At least one variant is required"
       });
     }
 
-    // Update variants with SKU code preservation
     product.variants = parsedVariants.map((v, index) => {
       if (!v.size || !v.price || v.quantity === undefined) {
-        throw new Error('All variant fields are required');
+        throw new Error("All variant fields are required");
       }
 
-      const existingVariant = product.variants.find(
-        existing => existing.size === v.size
-      );
+      const existingVariant = product.variants.find(ev => ev.size === v.size);
 
       return {
         size: v.size,
         quantity: parseInt(v.quantity),
         regular_price: parseFloat(v.price),
         sale_price: parseFloat(v.price),
-        sku_code: existingVariant?.sku_code || 
-                  `${productName.substring(0, 3).toUpperCase()}-${v.size.replace(/\s/g, '')}-${Date.now()}-${index}`
+        sku_code:
+          existingVariant?.sku_code ||
+          `${productName.substring(0, 3).toUpperCase()}-${v.size.replace(/\s/g, "")}-${Date.now()}-${index}`
       };
     });
 
-    product.stock = parsedVariants.reduce((sum, v) => sum + parseInt(v.quantity), 0);
+    product.stock = parsedVariants.reduce(
+      (sum, v) => sum + parseInt(v.quantity),
+      0
+    );
 
-    // Handle image removal
+    //remove image
     if (req.body.removeImages) {
       const removeImages = Array.isArray(req.body.removeImages)
         ? req.body.removeImages
@@ -361,26 +337,27 @@ if (productExists) {
       product.images = product.images.filter(img => !removeImages.includes(img));
     }
 
-    // Add new images
-    if (req.files && req.files.length > 0) {
-      const newImages = req.files.map(f => `/uploads/products/${f.filename}`);
+    //Add new image
+    if (req.files?.length) {
+      const newImages = req.files.map(
+        f => `/uploads/products/${f.filename}`
+      );
       product.images.push(...newImages);
     }
 
-    // Validate EXACTLY 3 images
+    //validate image count
     if (product.images.length !== 3) {
-      // Delete newly uploaded files if validation fails
-      if (req.files && req.files.length > 0) {
+      if (req.files?.length) {
         for (const file of req.files) {
           try {
-            await fs.unlink(path.join(__dirname, '../../public/uploads/products', file.filename));
-          } catch (err) {
-            console.error('Failed to delete uploaded image:', err);
-          }
+            await fs.unlink(
+              path.join(__dirname, "../../public/uploads/products", file.filename)
+            );
+          } catch {}
         }
       }
-      
-      return res.status(HTTP_STATUS. BAD_REQUEST).json({
+
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         message: `Exactly 3 images required. Current count: ${product.images.length}`
       });
@@ -388,33 +365,32 @@ if (productExists) {
 
     await product.save();
 
-    res.json({ 
-      success: true, 
-      message: 'Product updated successfully' 
+    res.json({
+      success: true,
+      message: "Product updated successfully"
     });
 
   } catch (error) {
-    console.error('Error updating product:', error);
-    
-    // Clean up uploaded files on error
-    if (req.files && Array.isArray(req.files)) {
+    console.error("Error updating product:", error);
+
+    if (req.files?.length) {
       for (const file of req.files) {
         try {
-          await fs.unlink(path.join(__dirname, '../../public/uploads/products', file.filename));
-        } catch (err) {
-          console.error('Failed to delete uploaded image:', err);
-        }
+          await fs.unlink(
+            path.join(__dirname, "../../public/uploads/products", file.filename)
+          );
+        } catch {}
       }
     }
-    
-    res.status(HTTP_STATUS. INTERNAL_SERVER_ERROR).json({ 
-      success: false, 
-      message: error.message || 'Failed to update product'
+
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || "Failed to update product"
     });
   }
 };
 
-
+//delete product
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -433,13 +409,12 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-
-
-module.exports={
+//exports
+export{
     productInfo,
     loadAddproduct,
     addProducts,
-    loadEditProduct,
+    loadUpdateProduct,
     updateProduct,
     deleteProduct
 }

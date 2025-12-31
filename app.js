@@ -1,65 +1,70 @@
+import express from "express";
+import path from "path";
+import dotenv from "dotenv";
+import session from "express-session";
+import nocache from "nocache";
+import passport from "./config/passport.js";
+import { fileURLToPath } from "url";
 
-const express = require ('express');
+// Local imports
+import connectDB from "./config/db.js";
+import userRouter from "./routes/userRouter.js";
+import adminRouter from "./routes/adminRouter.js";
+
+// Initialize dotenv
+dotenv.config();
+
+// Fix __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// App init
 const app = express();
-const path = require ('path');
-const dotenv = require ('dotenv');
-const session = require ('express-session')
-const connectDB = require('./config/db');
-const nocache = require ('nocache');
-const passport = require ("./config/passport");
 
-//import route files
-const userRouter = require("./routes/userRouter")
-const adminRouter = require ('./routes/adminRouter');
+// View engine
+app.set("view engine", "ejs");
+app.set("views", [
+  path.join(__dirname, "views/user"),
+  path.join(__dirname, "views/admin")
+]);
 
+// Static files
+app.use(express.static(path.join(__dirname, "public")));
 
+// Middleware
+app.use(nocache());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//view engine and views folder
-app.set('view engine','ejs');
-app.set('views',[path.join(__dirname,'views/user'),path.join(__dirname,'views/admin')])
-
-//serve static files
-app.use(express.static(path.join(__dirname, 'public')))
-
-//Middleware
-app.use(nocache())//Disable caching so that back button doesn't show old pages
-app.use(express.json());// Parse form data (urlencoded) and JSON payloads
-app.use(express.urlencoded({extended :true}))
-
-
-
-
-// Configure session middleware
+// Session config
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, 
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false ,
-              httpOnly :true,
-              maxAge : 72*60*60*1000
-            } 
+    cookie: {
+      secure: false, // set true only in HTTPS
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000
+    }
   })
 );
 
-
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Routes
+app.use("/", userRouter);
+app.use("/admin", adminRouter);
 
-//Routers
-app.use('/',userRouter);
-app.use('/admin',adminRouter);
-
-
-
-//connect MongoDB
+// DB connection
 connectDB();
 
-const PORT=3000|| process.env.PORT;
-app.listen(process.env.PORT, ()=> {
-    console.log("Server Running ");
-    
-})
+// Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(` Server running on port ${PORT}`);
+});
 
-module.exports = app
+export default app;

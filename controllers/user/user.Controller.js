@@ -1,8 +1,8 @@
 
-const User = require('../../models/userSchema');
-const Category = require ('../../models/categorySchema');
-const Product = require ('../../models/productSchema');
-const HTTP_STATUS = require('../../helpers/httpStatus');
+import User from '../../models/userSchema.js';
+import Category from '../../models/categorySchema.js';
+import Product from '../../models/productSchema.js';
+import HTTP_STATUS from '../../helpers/httpStatus.js';
 
 
 const test = async (req, res) => {
@@ -163,7 +163,7 @@ const loadProductDetails = async (req, res) => {
 
 
 
-module.exports = {
+export {
   test,
   loadHomepage,
   pageNotFound,

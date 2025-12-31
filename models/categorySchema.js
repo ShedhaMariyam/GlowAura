@@ -1,41 +1,44 @@
-const mongoose = require ('mongoose');
-const {Schema} = mongoose;
+import mongoose from "mongoose";
 
-const categorySchema = new Schema ({
-    
-    name : {
-        type : String,
-        required : true,
-        unique : true
-    },
-    description : {
-        type : String,
-        required : true,
-    },
-    image : {
-        type : String,
-        required : true,
-    },
-    is_active :{
-        type : Boolean,
-        required : true,
-        default : true
-    },
-    is_deleted:{
-        type: Boolean,
-        required:true,
-        default:false
-    },
-    hasOffer: { 
-        type: Boolean, 
-        default: false },
+const { Schema } = mongoose;
 
-    offerPercent: { 
-        type: Number, 
-        default: 0 },
+const categorySchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    image: {
+      type: String,
+      required: true
+    },
+    is_active: {
+      type: Boolean,
+      required: true,
+      default: true
+    },
+    is_deleted: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    hasOffer: {
+      type: Boolean,
+      default: false
+    },
+    offerPercent: {
+      type: Number,
+      default: 0
+    }
+  },
+  { timestamps: true }
+);
 
-}, { timestamps: true })
+const Category = mongoose.model("Category", categorySchema);
 
-const Category = mongoose.model("Category",categorySchema)
-
-module.exports =Category;
+export default Category;

@@ -1,4 +1,4 @@
-const User = require('../models/userSchema');
+import User from '../models/userSchema';
 
 const userAuth = async (req, res, next) => {
     try {
@@ -49,7 +49,7 @@ const adminAuth = async (req, res, next) => {
     }
 }
 
-module.exports = {
+export {
     userAuth,
     adminAuth
-}
+};

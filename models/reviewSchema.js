@@ -1,25 +1,29 @@
-const mongoose = require('mongoose');
-const {Schema} = mongoose;
+import mongoose from "mongoose";
 
+const { Schema } = mongoose;
 
-const reviewSchema = new Schema ({
+const reviewSchema = new Schema(
+  {
     userId: {
-        type : Schema.Types.ObjectId,
-        ref :"User",
-        required : true
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     },
-    productId : {
-        type : Schema.Types.ObjectId,
-        ref : "Product",
-        required : true
-        },
-    rating :{
-        type : Number,
-
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true
     },
-    comment :{
-        type : String,
-
+    rating: {
+      type: Number
+    },
+    comment: {
+      type: String
     }
+  },
+  { timestamps: true }
+);
 
-},{ timestamps: true })
+const Review = mongoose.model("Review", reviewSchema);
+
+export default Review;

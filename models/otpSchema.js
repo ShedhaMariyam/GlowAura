@@ -1,21 +1,21 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const otpSchema = new mongoose.Schema({
- 
-    email: { 
-        type: String, 
-        required: true 
-            },
-    otp: { 
-        type: String, 
-        required: true 
-        },
-  createdAt: { 
-    type: Date, 
-    default: Date.now, 
-    expires: 60 } 
+  email: {
+    type: String,
+    required: true
+  },
+  otp: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 60 // TTL index: expires after 60 seconds
+  }
 });
 
 const Otp = mongoose.model("OTP", otpSchema);
 
-module.exports = Otp;
+export default Otp;
