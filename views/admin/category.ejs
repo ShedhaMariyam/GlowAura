@@ -101,6 +101,7 @@
         </p>
       </div>
 </div>
+    <form method="GET" action="/admin/categories" class="flex-grow-1"></form>
       <div class="bg-white p-3 rounded-3 shadow-sm mb-3 d-flex flex-wrap align-items-center gap-3">
 
   <!-- Search bar -->
@@ -108,11 +109,12 @@
     <input 
       type="text" 
       id="categorySearch" 
-      class="form-control rounded-pill category-search-input" 
-      placeholder="Search categories..." 
-      value="<%= search || '' %>"
+       name="search"
+    class="form-control rounded-pill category-search-input"
+    placeholder="Search categories..."
+    value="<%= search || '' %>"
     >
-  </div>
+  </div></form>
 
   <!-- Add Category Button -->
   <button type="button"
@@ -597,6 +599,20 @@
     document.getElementById("descriptionError").textContent = "";
     document.getElementById("imageError").textContent = "";
   }
+</script>
+<script>
+  const searchInput = document.getElementById('categorySearch');
+
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      const value = searchInput.value.trim();
+      const url = value
+        ? `/admin/categories?search=${encodeURIComponent(value)}`
+        : `/admin/categories`;
+
+      window.location.href = url;
+    }
+  });
 </script>
 
 <script>

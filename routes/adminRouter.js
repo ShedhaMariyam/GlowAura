@@ -8,7 +8,7 @@ import {
   login,
   pageerror,
   logout
-} from "../controllers/admin/adminController.js";
+} from "../controllers/admin/admin.Controller.js";
 
 import {
   categoryInfo,
@@ -18,22 +18,22 @@ import {
   editCategory,
   categoryOffer,
   deleteCategory
-} from "../controllers/admin/categoryController.js";
+} from "../controllers/admin/category.Controller.js";
 
 import {
   customerInfo,
   userBlocked,
   userUnblocked
-} from "../controllers/admin/customerController.js";
+} from "../controllers/admin/customer.Controller.js";
 
 import {
   productInfo,
   loadAddproduct,
   addProducts,
-  loadEditProduct,
+  loadUpdateProduct,
   updateProduct,
   deleteProduct
-} from "../controllers/admin/productController.js";
+} from "../controllers/admin/product.Controller.js";
 
 //middlewares
 import { userAuth, adminAuth } from "../middlewares/auth.js";
@@ -84,7 +84,7 @@ router.post(
 router.get(
   "/products/edit/:id",
   adminAuth,
-  loadEditProduct
+  loadUpdateProduct
 );
 router.put(
   "/products/edit/:id",

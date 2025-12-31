@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import dotenv from "dotenv";
+import "dotenv/config";
 import session from "express-session";
 import nocache from "nocache";
 import passport from "./config/passport.js";
@@ -10,9 +10,6 @@ import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import userRouter from "./routes/userRouter.js";
 import adminRouter from "./routes/adminRouter.js";
-
-// Initialize dotenv
-dotenv.config();
 
 // Fix __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);

@@ -9,7 +9,8 @@ const categoryInfo = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 4;
     const skip = (page - 1) * limit;
-    const search = req.query.search || "";
+    const search = (req.query.search || "").trim();
+;
 
     const categoryData = await Category.find({
       is_deleted: { $ne: true },
