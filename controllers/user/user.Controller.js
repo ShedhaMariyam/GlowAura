@@ -5,32 +5,7 @@ import Product from '../../models/productSchema.js';
 import HTTP_STATUS from '../../helpers/httpStatus.js';
 
 
-const test = async (req, res) => {
-  try {
-    const userId = req.session.user;
-    const categories = await Category.find({is_active:true,is_deleted:false});
-    let productData = await Product.find({status:'Listed',is_deleted:false,category:{$in:categories.map(category=>category._id)},stock:{$gt:0},featured : true}).sort({ createdAt: -1 }).limit(4);
-    
-    
-    if (userId) {
-      const userData = await User.findById(userId);
-     return res.render('test', 
-      { 
-        user: userData, 
-        products : productData,
-        categories: categories 
-       });
-    }
 
-    else{
-      return res.render('test',{products : productData,categories: categories});
-    }
-     
-  } catch (error) {
-    console.log("Home page not found");
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send("Server error");
-  }
-};
 
 
 // 404 Page
@@ -38,6 +13,7 @@ const pageNotFound = async (req, res) => {
   try {
     res.render('page-404');
   } catch (error) {
+    console.error(error);
     res.redirect('/pageNotFound');
   }
 };
@@ -66,7 +42,7 @@ const loadHomepage = async (req, res) => {
     }
      
   } catch (error) {
-    console.log("Home page not found");
+    console.error("Home page not found :",error);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send("Server error");
   }
 };
@@ -164,7 +140,7 @@ const loadProductDetails = async (req, res) => {
 
 
 export {
-  test,
+  
   loadHomepage,
   pageNotFound,
   loadProducts,

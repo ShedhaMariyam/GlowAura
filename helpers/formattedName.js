@@ -1,7 +1,7 @@
 function formattedName(string)
 {
-    splitted=string.split(" ");
-    edited=splitted.map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase());
+    const splitted=string.split(" ");
+    let edited=splitted.map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase());
     return edited=edited.join(" ");
 }
 

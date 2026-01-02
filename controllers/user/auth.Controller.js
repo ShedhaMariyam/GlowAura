@@ -392,7 +392,7 @@ const logout = async(req,res)=>{
       })
     
   } catch (error) {
-    console.log("Logout Error",err);
+    console.log("Logout Error",error);
     res.redirect('/pageNotFound');
     
   }

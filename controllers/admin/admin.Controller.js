@@ -1,5 +1,4 @@
 import User from "../../models/userSchema.js";
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
 
@@ -8,6 +7,7 @@ const pageerror = (req, res) => {
   try {
     res.render("admin-error");
   } catch (error) {
+    console.error(error);
     res.redirect("/page-error");
   }
 };

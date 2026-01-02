@@ -77,7 +77,8 @@ const loadAddproduct= async (req,res)=>{
         res.render("addProducts",{cat:category,activePage: "products"});
 
     } catch (error) {
-        res.redirect('/pageerror');
+      console.error(error);
+      res.redirect('/pageerror');
     }
 
 };
@@ -158,7 +159,7 @@ const addProducts = async (req, res) => {
 
     const images = req.files.map(f => `/uploads/products/${f.filename}`);
     const stock = processedVariants.reduce((s, v) => s + v.quantity, 0);
-    
+
     // Create new product
     const newProduct = new Product({
       productName: name,
@@ -185,7 +186,9 @@ const addProducts = async (req, res) => {
       for (const file of req.files) {
         try {
           await fs.unlink(path.join(__dirname, "../../public/uploads/products", file.filename));
-        } catch {}
+        } catch (error){
+          console.log("File joining :",error)
+        }
       }
     }
 
@@ -353,7 +356,9 @@ const updateProduct = async (req, res) => {
             await fs.unlink(
               path.join(__dirname, "../../public/uploads/products", file.filename)
             );
-          } catch {}
+          } catch(error) {
+            console.error(error);
+          }
         }
       }
 
@@ -379,7 +384,9 @@ const updateProduct = async (req, res) => {
           await fs.unlink(
             path.join(__dirname, "../../public/uploads/products", file.filename)
           );
-        } catch {}
+        } catch (error){
+          console.error(error);
+        }
       }
     }
 

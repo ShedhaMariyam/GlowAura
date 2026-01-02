@@ -36,7 +36,7 @@ import {
 } from "../controllers/admin/product.Controller.js";
 
 //middlewares
-import { userAuth, adminAuth } from "../middlewares/auth.js";
+import {adminAuth } from "../middlewares/auth.js";
 import uploadCategoryImage from "../middlewares/uploadCategoryImage.js";
 import uploadProductImages from "../middlewares/uploadProductImages.js";
 

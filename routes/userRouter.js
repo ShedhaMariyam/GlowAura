@@ -8,10 +8,10 @@ import * as userController from "../controllers/user/user.Controller.js";
 import * as authController from "../controllers/user/auth.Controller.js";
 
 //middlewares
-import { userAuth, adminAuth } from "../middlewares/auth.js";
+import { userAuth } from "../middlewares/auth.js";
 
 
-router.get("/test", userController.test);
+
 router.get("/pageNotFound", userController.pageNotFound);
 
 router.get("/", userController.loadHomepage);
