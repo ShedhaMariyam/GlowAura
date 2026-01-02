@@ -58,6 +58,8 @@ const addCategory = async (req, res) => {
         .json({ error: "Category already exists" });
     }
 
+
+
     const deletedCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${CategoryName}$`, "i") },
       is_deleted: true
@@ -66,7 +68,7 @@ const addCategory = async (req, res) => {
     if (deletedCategory) {
       deletedCategory.name = CategoryName;
       deletedCategory.description = description;
-      deletedCategory.image = "/uploads/categories/" + req.file.filename;
+      deletedCategory.image =  req.file.filename;
       deletedCategory.is_deleted = false;
       deletedCategory.is_active = true;
       deletedCategory.deletedAt = null;
@@ -85,7 +87,7 @@ const addCategory = async (req, res) => {
         .json({ error: "Category image is required" });
     }
 
-    const imagePath = "/uploads/categories/" + req.file.filename;
+    const imagePath = req.file.filename;
 
     const newCategory = new Category({
       name: CategoryName,
@@ -210,7 +212,7 @@ const editCategory = async (req, res) => {
     const update = { name: formatted, description };
 
     if (req.file) {
-      update.image = "/uploads/categories/" + req.file.filename;
+      update.image = req.file.filename;
     }
 
     await Category.findByIdAndUpdate(id, { $set: update });

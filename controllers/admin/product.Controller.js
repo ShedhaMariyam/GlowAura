@@ -3,12 +3,7 @@ import Category from "../../models/categorySchema.js";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
 import formattedName from "../../helpers/formattedName.js";
 
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 
 
@@ -33,8 +28,6 @@ const productInfo = async (req, res) => {
     filter.productName = { $regex: search, $options: "i" };
     }
 
-    
-
     const productData = await Product.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -43,8 +36,6 @@ const productInfo = async (req, res) => {
       .exec();
 
     const count = await Product.countDocuments(filter);
-
-
    
     const totalPages = Math.ceil(count / limit);
 
@@ -107,12 +98,6 @@ const addProducts = async (req, res) => {
     });
 
     if (productExists) {
-      // Delete uploaded files if product exists
-      if (req.files) {
-        for (const file of req.files) {
-          await fs.unlink(file.path).catch(() => {});
-        }
-      }
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         message: "Product with this name already exists"
@@ -157,7 +142,10 @@ const addProducts = async (req, res) => {
       sku_code: `${name.substring(0, 3).toUpperCase()}-${v.size}-${Date.now()}-${i}`
     }));
 
-    const images = req.files.map(f => `/uploads/products/${f.filename}`);
+    const images = req.files.map(file => ({
+                    url: file.path,
+                    public_id: file.filename
+                  }))
     const stock = processedVariants.reduce((s, v) => s + v.quantity, 0);
 
     // Create new product
@@ -181,18 +169,7 @@ const addProducts = async (req, res) => {
 
   } catch (error) {
     console.error("Add product error:", error);
-
-    if (req.files) {
-      for (const file of req.files) {
-        try {
-          await fs.unlink(path.join(__dirname, "../../public/uploads/products", file.filename));
-        } catch (error){
-          console.log("File joining :",error)
-        }
-      }
-    }
-
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong"
     });
@@ -257,12 +234,6 @@ const updateProduct = async (req, res) => {
     });
 
     if (productExists) {
-      if (req.files?.length) {
-        for (const file of req.files) {
-          await fs.unlink(file.path).catch(() => {});
-        }
-      }
-
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         message: "Product with this name already exists"
@@ -332,36 +303,30 @@ const updateProduct = async (req, res) => {
     );
 
     //remove image
-    if (req.body.removeImages) {
-      const removeImages = Array.isArray(req.body.removeImages)
-        ? req.body.removeImages
-        : [req.body.removeImages];
+if (req.body.removeImages) {
+  const removeImages = Array.isArray(req.body.removeImages)
+    ? req.body.removeImages
+    : [req.body.removeImages];
 
-      product.images = product.images.filter(img => !removeImages.includes(img));
-    }
+  product.images = product.images.filter(
+    img => !removeImages.includes(img.public_id)
+  );
+}
+
 
     //Add new image
     if (req.files?.length) {
-      const newImages = req.files.map(
-        f => `/uploads/products/${f.filename}`
-      );
-      product.images.push(...newImages);
-    }
+  const newImages = req.files.map(file => ({
+    url: file.path,
+    public_id: file.filename
+  }));
+
+  product.images.push(...newImages);
+}
 
     //validate image count
     if (product.images.length !== 3) {
-      if (req.files?.length) {
-        for (const file of req.files) {
-          try {
-            await fs.unlink(
-              path.join(__dirname, "../../public/uploads/products", file.filename)
-            );
-          } catch(error) {
-            console.error(error);
-          }
-        }
-      }
-
+    
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         message: `Exactly 3 images required. Current count: ${product.images.length}`
@@ -377,19 +342,6 @@ const updateProduct = async (req, res) => {
 
   } catch (error) {
     console.error("Error updating product:", error);
-
-    if (req.files?.length) {
-      for (const file of req.files) {
-        try {
-          await fs.unlink(
-            path.join(__dirname, "../../public/uploads/products", file.filename)
-          );
-        } catch (error){
-          console.error(error);
-        }
-      }
-    }
-
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error.message || "Failed to update product"

@@ -196,7 +196,7 @@
       </div>
 
   
-   <!-- PRODUCT IMAGES -->
+
 <!-- PRODUCT IMAGES -->
 <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
   <h5 class="fw-semibold mb-3">Product Images</h5>
@@ -207,8 +207,8 @@
     <small class="text-muted">PNG, JPG, JPEG (MAX. 2MB per image)</small>
 
     <input type="file"
-           name="images[]"
-           id="productImages"
+           name="images"
+           id="Images"
            class="form-control mt-3"
            multiple
            accept="image/png, image/jpeg, image/jpg">
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Image Upload Handler - Support multiple selections
-    document.getElementById('productImages').addEventListener('change', function(e) {
+    document.getElementById('Images').addEventListener('change', function(e) {
         handleImageSelection(e.target.files);
         // Reset input to allow selecting same files again
         e.target.value = '';

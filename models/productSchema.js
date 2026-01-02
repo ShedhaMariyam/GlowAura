@@ -17,10 +17,11 @@ const productSchema = new Schema(
       ref: "Category",
       required: true
     },
-    images: {
-      type: [String],
-      required: true
-    },
+    images:[ {
+      url: [String],
+      public_id: String,
+      
+    }],
     stock: {
       type: Number,
       required: true,
