@@ -68,7 +68,7 @@ const addCategory = async (req, res) => {
     if (deletedCategory) {
       deletedCategory.name = CategoryName;
       deletedCategory.description = description;
-      deletedCategory.image =  req.file.filename;
+      deletedCategory.image =  req.file.path;
       deletedCategory.is_deleted = false;
       deletedCategory.is_active = true;
       deletedCategory.deletedAt = null;
@@ -87,7 +87,7 @@ const addCategory = async (req, res) => {
         .json({ error: "Category image is required" });
     }
 
-    const imagePath = req.file.filename;
+    const imagePath = req.file.path;
 
     const newCategory = new Category({
       name: CategoryName,
@@ -212,7 +212,7 @@ const editCategory = async (req, res) => {
     const update = { name: formatted, description };
 
     if (req.file) {
-      update.image = req.file.filename;
+      update.image = req.file.path;
     }
 
     await Category.findByIdAndUpdate(id, { $set: update });

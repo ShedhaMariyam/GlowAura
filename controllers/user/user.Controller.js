@@ -68,6 +68,7 @@ const loadProducts = async (req, res) => {
     
     let filter = {
       status: 'Listed',
+      is_deleted: false,
       category: selectedCategory ? selectedCategory : { $in: categoryIds }
     };
 
