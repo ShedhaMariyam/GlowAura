@@ -227,46 +227,67 @@
 </section>
 
 <section class="py-5 bg-white">
-    <div class="container-fluid custom-container">
-        <h2 class="mb-5 fw-bold text-center">Featured Products</h2>
-        <div class="row g-4">
-            <% for(let i=0; i<products.length; i++) { %>
-                <div class="col-xl-3 col-lg-4 col-6">      
-                    <div class="card product-card">
-                        <% if (products[i].variants && products[i].variants.length > 0) { 
-                            const v = products[i].variants[0];
-                            if (v.sale_price < v.regular_price) { 
-                                const discount = Math.round(((v.regular_price - v.sale_price) / v.regular_price) * 100); %>
-                                <div class="discount-badge"><%= discount %>% OFF</div>
-                            <% } %>
-                        <% } %>
+  <div class="container-fluid custom-container">
+    <h2 class="mb-5 fw-bold text-center">Featured Products</h2>
 
-                        <a href="/productDetails?id=<%= products[i]._id %>">
-                            <img src="<%= products[i].images[0] %>" class="product-img" alt="<%= products[i].productName %>">
-                        </a>
-                        <div class="card-body p-4">
-                            <h5 class="product-title"><%= products[i].productName %></h5>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <% if (products[i].variants && products[i].variants.length > 0) { 
-                                        const v = products[i].variants[0]; %>
-                                        <span class="sale-price">₹<%= v.sale_price || v.regular_price %></span>
-                                        <% if (v.sale_price < v.regular_price) { %>
-                                            <span class="text-muted text-decoration-line-through ms-2 small">₹<%= v.regular_price %></span>
-                                        <% } %>
-                                    <% } %>
-                                </div>
-                                <a href="/addToWishlist?id=<%= products[i]._id %>" class="btn-wishlist text-danger fs-5">
-                                    <i class="bi bi-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row g-4">
+      <% for (let i = 0; i < products.length; i++) { %>
+
+        <div class="col-xl-3 col-lg-4 col-6">
+          <div class="card product-card">
+
+            <% if (products[i].variants?.length) {
+              const v = products[i].variants[0];
+              if (v.sale_price < v.regular_price) {
+                const discount = Math.round(
+                  ((v.regular_price - v.sale_price) / v.regular_price) * 100
+                );
+            %>
+              <div class="discount-badge"><%= discount %>% OFF</div>
+            <% } } %>
+
+            <!-- Product Image -->
+            <a href="/product/<%= products[i]._id %>">
+              <img
+                src="<%= products[i].images[0].url %>"
+                class="product-img"
+                alt="<%= products[i].productName %>"
+              >
+            </a>
+
+            <div class="card-body p-4">
+              <h5 class="product-title"><%= products[i].productName %></h5>
+
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                  <% if (products[i].variants?.length) {
+                    const v = products[i].variants[0]; %>
+
+                    <span class="sale-price">₹<%= v.sale_price %></span>
+
+                    <% if (v.sale_price < v.regular_price) { %>
+                      <span class="text-muted text-decoration-line-through ms-2 small">
+                        ₹<%= v.regular_price %>
+                      </span>
+                    <% } %>
+
+                  <% } %>
                 </div>
-            <% } %>          
+
+                <a href="/addToWishlist?id=<%= products[i]._id %>" class="text-danger fs-5">
+                  <i class="bi bi-heart"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
         </div>
+
+      <% } %>
     </div>
+  </div>
 </section>
+
 
 <section class="py-5" id="about">
     <div class="container">

@@ -226,9 +226,10 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    const name = formattedName(productName);
     //duplicate name check
     const productExists = await Product.findOne({
-      productName: { $regex: new RegExp(`^${productName}$`, "i") },
+      productName: { $regex: new RegExp(`^${name}$`, "i") },
       is_deleted: false,
       _id: { $ne: id }
     });
@@ -255,7 +256,7 @@ const updateProduct = async (req, res) => {
     }
 
     //update basic fields
-    product.productName = productName.trim();
+    product.productName = name.trim();
     product.description = description.trim();
     product.category = categoryDoc._id;
     product.status = status;

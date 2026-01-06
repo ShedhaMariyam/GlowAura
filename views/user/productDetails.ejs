@@ -31,13 +31,15 @@
     <div class="col-lg-6">
       <img src="<%= product.images[0].url %>" class="img-fluid product-img mb-3" id="mainImage">
 
-      <div class="d-flex gap-2">
-        <% product.images.forEach((img, idx) => { %>
-          <img src="<%= img %>"
-               class="thumb-img <%= idx === 0 ? 'active' : '' %>"
-               onclick="changeImage(this)">
-        <% }) %>
-      </div>
+  <div class="d-flex gap-2">
+    <% product.images.forEach((img, idx) => { %>
+      <img 
+        src="<%= img.url %>"
+        class="thumb-img <%= idx === 0 ? 'active' : '' %>"
+        onclick="changeImage(this)"
+      >
+    <% }) %>
+  </div>
     </div>
 
     <!-- RIGHT: DETAILS -->

@@ -3,7 +3,7 @@ import User from '../../models/userSchema.js';
 import Category from '../../models/categorySchema.js';
 import Product from '../../models/productSchema.js';
 import HTTP_STATUS from '../../helpers/httpStatus.js';
-
+import mongoose from "mongoose";
 
 
 
@@ -61,39 +61,53 @@ const loadProducts = async (req, res) => {
     const limit = 6;
     const skip = (page - 1) * limit;
 
-   
-    const categories = await Category.find({ is_active: true }).select("_id name").lean();
-    const categoryIds = categories.map(cat => cat._id);
-
-    
-    let filter = {
-      status: 'Listed',
-      is_deleted: false,
-      category: selectedCategory ? selectedCategory : { $in: categoryIds }
-    };
-
-    if (search) {
-      filter.productName = { $regex: search, $options: "i" };
-    }
-
-
-    let sortStage = { createdAt: -1 };
-    if (sort === "low") sortStage = { "variants.sale_price": 1 };
-    if (sort === "high") sortStage = { "variants.sale_price": -1 };
-
-
-    const products = await Product.find(filter)
-      .sort(sortStage)
-      .skip(skip)
-      .limit(limit)
+    const categories = await Category.find({ is_active: true })
+      .select("_id name")
       .lean();
 
-    const totalProducts = await Product.countDocuments(filter);
+    const categoryIds = categories.map(cat => cat._id);
+
+   let matchStage = {
+    status: "Listed"
+    };
+
+    if (selectedCategory) {
+     matchStage.category = new mongoose.Types.ObjectId(selectedCategory);
+    } else {
+    matchStage.category = { $in: categoryIds };
+    }
+
+    if (search) {
+    matchStage.productName = { $regex: search, $options: "i" };
+    }
+    let sortStage = { createdAt: -1 };
+
+    if (sort === "low") sortStage = { firstSalePrice: 1 };
+    if (sort === "high") sortStage = { firstSalePrice: -1 };
+
+    const products = await Product.aggregate([
+  { $match: matchStage },
+
+  {
+    $addFields: {
+      firstSalePrice: { $arrayElemAt: ["$variants.sale_price", 0] }
+    }
+  },
+
+  { $sort: sortStage },
+  { $skip: skip },
+  { $limit: limit }
+]);
+
+
+    const totalProducts = await Product.countDocuments(matchStage);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    let userData = req.session.user ? await User.findById(req.session.user).lean() : null;
+    const userData = req.session.user
+      ? await User.findById(req.session.user).lean()
+      : null;
 
-    res.render('shop', {
+    res.render("shop", {
       user: userData,
       products,
       category: categories,
@@ -103,11 +117,13 @@ const loadProducts = async (req, res) => {
       selectedCategory,
       sort
     });
+
   } catch (error) {
     console.error("Shop Error:", error);
-    res.redirect('/pageNotFound');
+    res.redirect("/pageNotFound");
   }
 };
+
 
 
 
