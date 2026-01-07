@@ -121,6 +121,14 @@ const addProducts = async (req, res) => {
       });
     }
 
+  if (!Array.isArray(variantsArray) || variantsArray.length === 0) {
+   return res.status(HTTP_STATUS.BAD_REQUEST).json({
+    success: false,
+    message: "At least one variant is required"
+  });
+}
+
+
     const categoryDoc = await Category.findOne({
       name: category,
       is_active: true,
