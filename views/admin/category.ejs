@@ -216,14 +216,14 @@
             <tbody style="font-size:20px;">
 
             <% if (!cat || cat.length === 0) { %>
-            <tr>
+            <tr >
             <td colspan="5" class="text-center text-muted py-4">
                  No categories found
             </td>
             </tr>
             <% } else { %>
                 <% for(let i=0 ; i< cat.length; i++){ %>
-        <tr>
+        <tr id="category-row-<%= cat[i]._id %>">
             <td class="d-flex align-items-center gap-3">
           <img src="<%= cat[i].image %>" class="rounded" width="45">
           <%= cat[i].name %>
