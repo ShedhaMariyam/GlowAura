@@ -118,7 +118,7 @@
         <div class="col-md-3 col-6">
           <a href="/product/<%= fp._id %>" class="text-decoration-none text-dark">
             <div class="bg-white p-3 rounded-4 shadow-sm routine-card">
-              <img src="<%= fp.images[0] %>" class="img-fluid mb-2">
+              <img src="<%= fp.images[0].url %>" class="img-fluid mb-2">
               <h6 class="small fw-semibold"><%= fp.productName %></h6>
 
               <% const fv = fp.variants[0]; %>

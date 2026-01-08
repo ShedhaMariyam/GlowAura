@@ -1,6 +1,6 @@
 import User from "../../models/userSchema.js";
-import bcrypt from "bcrypt";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
+import { authenticateAdmin } from "../../services/admin/adminAuthService.js";
 
 //page error
 const pageerror = (req, res) => {
@@ -24,20 +24,9 @@ const loadLogin = (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    const admin = await User.findOne({ email, is_admin: true });
+    const admin = await authenticateAdmin(email, password);
 
     if (!admin) {
-      return res
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .render("admin-login", {
-          message: "Invalid credentials — Admin access denied"
-        });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, admin.password);
-
-    if (!passwordMatch) {
       return res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .render("admin-login", {
