@@ -1,6 +1,5 @@
-import User from "../../models/userSchema.js";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
-import { authenticateAdmin } from "../../services/admin/adminAuthService.js";
+import { authenticateAdmin } from "../../services/admin/adminAuth.service.js";
 
 //page error
 const pageerror = (req, res) => {
