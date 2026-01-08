@@ -42,7 +42,8 @@ const signup = async (req, res) => {
     }
 
     await authService.saveOtp(email, otp);
-   
+
+    req.session.otpPurpose = 'signup';
     req.session.userData = { name, email, password,phone};
 
     res.status(HTTP_STATUS.OK).json({ success: true, redirectUrl:'/verify-otp' });
@@ -66,34 +67,57 @@ const loadVerifyOtp = async (req, res) => {
 // Verify OTP Function
 const verifyOtp = async (req, res) => {
   try {
-    let { otp } = req.body;
-    console.log("User entered otp :",otp)
-    
-    const { email, name, phone, password } = req.session.userData || {};
+    const { otp } = req.body;
+    const purpose = req.session.otpPurpose;
 
-    console.log("Email for verification: ",email);
-    if (!email) {
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Session expired. Please sign up again." });
+    if (!purpose) {
+      return res.status(400).json({success: false,message: 'Session expired. Please try again.'});
     }
 
-    const result = await authService.verifyOtpRecord(email, otp);
-    if (!result.success) {
-      return res.status(HTTP_STATUS.BAD_REQUEST)
-        .json({ success: false, message: result.message });
+    // signup flow
+    if (purpose === 'signup') {
+      const { email, name, phone, password } = req.session.userData || {};
+
+      if (!email) {
+        return res.status(400).json({success: false,message: 'Session expired. Please sign up again.'});
+      }
+
+      const result = await authService.verifyOtpRecord(email, otp);
+      if (!result.success) {
+        return res.status(400).json({success: false,message: result.message});
+      }
+
+      await authService.createUser({ name, email, phone, password });
+
+      // cleanup
+      req.session.userData = null;
+      req.session.otpPurpose = null;
+      await authService.deleteOtp(email);
+      return res.json({success: true,redirectUrl: '/signin'});
+  }
+    // reset password flow
+    if (purpose === 'reset') {
+      const email = req.session.resetEmail;
+
+      if (!email) {
+        return res.status(400).json({success: false,message: 'Session expired. Try again.'});
+      }
+
+      const result = await authService.verifyOtpRecord(email, otp);
+      if (!result.success) {
+        return res.status(400).json({success: false,message: result.message});}
+
+      req.session.otpPurpose = null;
+
+      return res.json({success: true,redirectUrl: '/reset-password'});
     }
-   
-    await authService.createUser({ name, email, phone, password });
-
-    // Clear session and set login
-    req.session.userData = null;
-
-    res.json({ success: true, redirectUrl: "/signin" });
 
   } catch (error) {
-    console.error("Error verifying OTP:", error);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "An error occurred" });
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({success: false,message: 'An error occurred'});
   }
 };
+
 
 //  Resend OTP 
 const resendOtp = async (req, res) => {
@@ -175,8 +199,14 @@ const loadForgotPassword = async (req, res) => {
 const sendResetOtp = async (req, res) => {
   try {
     const { email } = req.body;
+    
+    if (!email) {
+      return res.render('forgot-password', {
+        message: 'Email is required.'
+      });
+    }
 
-    const user = authService.findUserByEmail(email);
+    const user = await authService.findUserByEmail(email);
 
     if (!user) {
       return res.render('forgot-password', { message: 'No account found with this email.' });
@@ -193,6 +223,7 @@ const sendResetOtp = async (req, res) => {
    await authService.saveOtp(email, otp);
 
     // Store email in session
+    req.session.otpPurpose = 'reset';
     req.session.resetEmail = email;
 
     res.render('verify-otp', { email, message: null });
@@ -218,7 +249,7 @@ const resetPassword = async (req, res) => {
   try {
     const { otp, password, confirmpassword } = req.body;
     const email = req.session.resetEmail;
-
+    
     if (!email) {
       return res.render('forgot-password', { message: 'Session expired. Try again.' });
     }

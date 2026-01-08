@@ -4,7 +4,7 @@ import passport from "passport";
 const router = express.Router();
 
 //controllers
-import * as userController from "../controllers/user/user.Controller.js";
+import * as homeController from "../controllers/user/home.Controller.js";
 import * as authController from "../controllers/user/auth.Controller.js";
 
 //middlewares
@@ -12,11 +12,11 @@ import { userAuth } from "../middlewares/auth.js";
 
 
 
-router.get("/pageNotFound", userController.pageNotFound);
+router.get("/pageNotFound", homeController.pageNotFound);
 
-router.get("/", userController.loadHomepage);
-router.get("/products", userAuth, userController.loadProducts);
-router.get("/product/:id", userAuth, userController.loadProductDetails);
+router.get("/", homeController.loadHomepage);
+router.get("/products", userAuth, homeController.loadProducts);
+router.get("/product/:id", userAuth, homeController.loadProductDetails);
 
 //auth routes
 router.get("/signup", authController.loadSignup);
