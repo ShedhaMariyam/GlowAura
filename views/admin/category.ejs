@@ -1007,15 +1007,33 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async func
       return;
     }
 
-    bootstrap.Modal.getInstance(
-      document.getElementById('deleteConfirmModal')
-    ).hide();
 
-  showToast('success', 'Category deleted');
 
-setTimeout(() => {
-  window.location.reload();
-}, 1000);
+// Remove row from DOM
+const row = document.getElementById(`category-row-${deleteCategoryId}`);
+if (row) row.remove();
+
+// Close modal
+bootstrap.Modal.getInstance(
+  document.getElementById('deleteConfirmModal')
+).hide();
+
+showToast('success', 'Category deleted');
+
+// If table is empty → show placeholder row
+const tbody = document.querySelector("table tbody");
+if (!tbody.querySelector("tr")) {
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="5" class="text-center text-muted py-4">
+        No categories found
+      </td>
+    </tr>
+  `;
+}
+
+deleteCategoryId = null;
+
 
   } catch (err) {
     console.error(err);
