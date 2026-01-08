@@ -1,6 +1,6 @@
 import User from '../../models/userSchema.js';
 import HTTP_STATUS from '../../helpers/httpStatus.js';
-import {getHomePageData,getShopProducts,getProductDetails} from "../../services/user/product.services.js";
+import {getHomePageData,getShopProducts,getProductDetails} from "../../services/user/shop.services.js";
 
 // 404 Page
 const pageNotFound = async (req, res) => {

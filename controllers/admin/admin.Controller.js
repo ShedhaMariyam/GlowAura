@@ -34,6 +34,7 @@ const login = async (req, res) => {
     }
 
     req.session.admin = admin._id;
+    console.log("Admin logged in")
     return res.redirect("/admin/dashboard");
 
   } catch (error) {
