@@ -100,7 +100,7 @@ const addCategory = async (req, res) => {
 
     return res
       .status(HTTP_STATUS.CREATED)
-      .json({ success: true, message: "Category Added Successfully", });
+      .json({ success: true, message: "Category Added Successfully",category: newCategory });
   } catch (error) {
     console.error("Add Category Error:", error);
     return res
