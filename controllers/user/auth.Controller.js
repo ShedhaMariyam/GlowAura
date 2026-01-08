@@ -1,11 +1,8 @@
-import bcrypt from "bcrypt";
-import nodemailer from "nodemailer";
 
-import User from "../../models/userSchema.js";
-import Otp from "../../models/otpSchema.js";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
-
-const saltround = 10;
+import * as authService from "../../services/user/auth.service.js";
+import { generateOtp } from "../../utils/otp.util.js";
+import { sendVerificationEmail } from "../../utils/mail.util.js";
 
 
 // Signup Page
@@ -18,82 +15,6 @@ const loadSignup = async (req, res) => {
   }
 };
 
-
-// Generate OTP
-function generateOtp() {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-}
-
-// Send OTP Email
-async function sendVerificationEmail(email, otp) {
-  try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.NODEMAILER_EMAIL,
-        pass: process.env.NODEMAILER_PASSWORD
-      }
-    });
-
-    const info = await transporter.sendMail({
-      from: `"GlowAura Support" <${process.env.NODEMAILER_EMAIL}>`,
-      to: email,
-      subject: "GlowAura Email Verification Code",
-      replyTo: "support@glowaura.com",
-      headers: {
-        "X-Mailer": "GlowAuraMailer",
-        "X-Priority": "3"
-      },
-      text: `Your GlowAura OTP is: ${otp}. It expires in 1 minute.`,
-      html: htmlContent(otp)
-    });
-
-    return info.accepted?.length > 0;
-
-  } catch (error) {
-    console.error("Error sending email", error);
-    return false;
-  }
-}
-
-function htmlContent(otp) {
-  return `
-    <div style="max-width:460px;margin:32px auto;font-family:'Inter','Segoe UI',sans-serif;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.10);padding:32px;border:1px solid #eee;">
-      <div style="text-align:center;">
-        <h1 style="color:#2b2b2b;margin-bottom:6px;">GlowAura</h1>
-        <div style="color:#4b5563;font-size:16px;margin-bottom:20px;">Your trusted online shopping partner</div>
-        <h2 style="font-size:20px;font-weight:600;margin-bottom:12px;color:#2b2b2b;">Email Verification</h2>
-        <div style="font-size:16px;color:#e9bba2;margin-bottom:18px;">
-          Use the OTP below to verify your email.
-        </div>
-        <div style="display:inline-block;padding:20px 46px;background:#232d3b;border-radius:7px;font-size:32px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:16px">
-          ${otp}
-        </div>
-        <div style="font-size:15px;margin:14px 0 20px 0;color:#5a5a5a;">
-          This code expires in <strong>1 minute</strong>. Don’t share it.
-        </div>
-        <hr style="margin:24px 0; border: none; border-top: 1px solid #eaeaea;">
-        <div style="font-size:13px;color:#7a7a7a;">
-          If you didn’t request this, ignore this email.<br>
-          &copy; 2025 GlowAura. All rights reserved.
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// Hash Password
-const securePassword = async (password) => {
-  try {
-    const passwordHash = await bcrypt.hash(password, saltround);
-    return passwordHash;
-  } catch (error) {
-    console.error("Error hashing password:", error);
-  }
-};
-
 // Signup Function
 const signup = async (req, res) => {
   try {
@@ -103,13 +24,13 @@ const signup = async (req, res) => {
       return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'All fields are required' });
     }
     console.log(phone);
-
+    
     if (password !== confirmpassword) {
       return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'Passwords do not match' });
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await authService.findUserByEmail(email);
     if (existingUser) {
       return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'User with this email already exists' });
     }
@@ -120,14 +41,9 @@ const signup = async (req, res) => {
       return res.json("email-error");
     }
 
-    //  Save OTP in OTP collection (replace any existing one)
-    await Otp.findOneAndUpdate(
-      { email },
-      { otp, createdAt: new Date() },
-      { upsert: true, new: true }
-    );
+    await authService.saveOtp(email, otp);
 
-   
+    req.session.otpPurpose = 'signup';
     req.session.userData = { name, email, password,phone};
 
     res.status(HTTP_STATUS.OK).json({ success: true, redirectUrl:'/verify-otp' });
@@ -148,64 +64,60 @@ const loadVerifyOtp = async (req, res) => {
   }
 };
 
-
 // Verify OTP Function
 const verifyOtp = async (req, res) => {
   try {
-    let { otp } = req.body;
-    const { email, name, phone, password } = req.session.userData || {};
+    const { otp } = req.body;
+    const purpose = req.session.otpPurpose;
 
-    if (!email) {
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Session expired. Please sign up again." });
+    if (!purpose) {
+      return res.status(400).json({success: false,message: 'Session expired. Please try again.'});
     }
 
-    //  Find OTP record for email
-    let otpRecord = await Otp.findOne({ email });
+    // signup flow
+    if (purpose === 'signup') {
+      const { email, name, phone, password } = req.session.userData || {};
 
-    if (!otpRecord) {
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "OTP expired or not found" });
+      if (!email) {
+        return res.status(400).json({success: false,message: 'Session expired. Please sign up again.'});
+      }
+
+      const result = await authService.verifyOtpRecord(email, otp);
+      if (!result.success) {
+        return res.status(400).json({success: false,message: result.message});
+      }
+
+      await authService.createUser({ name, email, phone, password });
+
+      // cleanup
+      req.session.userData = null;
+      req.session.otpPurpose = null;
+      await authService.deleteOtp(email);
+      return res.json({success: true,redirectUrl: '/signin'});
+  }
+    // reset password flow
+    if (purpose === 'reset') {
+      const email = req.session.resetEmail;
+
+      if (!email) {
+        return res.status(400).json({success: false,message: 'Session expired. Try again.'});
+      }
+
+      const result = await authService.verifyOtpRecord(email, otp);
+      if (!result.success) {
+        return res.status(400).json({success: false,message: result.message});}
+
+      req.session.otpPurpose = null;
+
+      return res.json({success: true,redirectUrl: '/reset-password'});
     }
-
-    if(Date.now() - otpRecord.createdAt.getTime() > 60 * 1000){
-      await Otp.deleteOne({ email });
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "OTP Expired. Please request a new one" });
-    }
-
-    
-
-    otpRecord = otpRecord.otp.toString().trim();
-    otp = otp.toString().trim();
-
-
-    if (otpRecord !== otp) {
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Invalid OTP. Please try again." });
-    }
-
-    
-    //  If OTP matches, register the user
-    const passwordHash = await securePassword(password);
-    const newUser = new User({
-      name,
-      email,
-      phone,
-      password: passwordHash,
-    });
-
-    await newUser.save();
-
-    await Otp.deleteOne({ email });
-
-    // Clear session and set login
- 
-    req.session.userData = null;
-
-    res.json({ success: true, redirectUrl: "/signin" });
 
   } catch (error) {
-    console.error("Error verifying OTP:", error);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "An error occurred" });
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({success: false,message: 'An error occurred'});
   }
 };
+
 
 //  Resend OTP 
 const resendOtp = async (req, res) => {
@@ -223,12 +135,7 @@ const resendOtp = async (req, res) => {
       return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Failed to send OTP email." });
     }
 
-    // Update OTP collection
-    await Otp.findOneAndUpdate(
-      { email },
-      { otp: newOtp, createdAt: new Date() },
-      { upsert: true, new: true }
-    );
+    await authService.saveOtp(email, newOtp);
 
     console.log("Resent OTP to:", email, "=>", newOtp);
     res.json({ message: "A new verification code has been sent to your email." });
@@ -261,31 +168,17 @@ const signin = async (req, res) => {
      
     const { email, password } = req.body;
     console.log(email,password);
-
-    let findUser = await User.findOne({ email, is_admin:false});
+    let findUser = await authService.validateSignin(email, password);
    
-    
     if (!findUser) {
       return res.render('signin', { message: 'Invalid email or password' });
     }
-    
     // if user blocked
-    if(findUser.is_Blocked){
+    if(findUser === "BLOCKED"){
       return res.render('signin',{message :'User is blocked by admin'});
     }
-    
-    //Checking password
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-   
-
-    if (!passwordMatch) {
-      return res.render('signin', { message: 'Invalid email or password' });
-    }
-    findUser.lastLogin = new Date();
-    await findUser.save();
     req.session.user = findUser._id;
-
     res.redirect('/');
   } catch (error) {
     console.error("Signin error:", error);
@@ -306,7 +199,14 @@ const loadForgotPassword = async (req, res) => {
 const sendResetOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    
+    if (!email) {
+      return res.render('forgot-password', {
+        message: 'Email is required.'
+      });
+    }
+
+    const user = await authService.findUserByEmail(email);
 
     if (!user) {
       return res.render('forgot-password', { message: 'No account found with this email.' });
@@ -320,13 +220,10 @@ const sendResetOtp = async (req, res) => {
     }
 
     // Save OTP temporarily
-    await Otp.findOneAndUpdate(
-      { email },
-      { otp, createdAt: new Date() },
-      { upsert: true, new: true }
-    );
+   await authService.saveOtp(email, otp);
 
     // Store email in session
+    req.session.otpPurpose = 'reset';
     req.session.resetEmail = email;
 
     res.render('verify-otp', { email, message: null });
@@ -352,23 +249,22 @@ const resetPassword = async (req, res) => {
   try {
     const { otp, password, confirmpassword } = req.body;
     const email = req.session.resetEmail;
-
+    
     if (!email) {
       return res.render('forgot-password', { message: 'Session expired. Try again.' });
     }
 
-    const otpRecord = await Otp.findOne({ email });
-    if (!otpRecord || otpRecord.otp !== otp) {
-      return res.render('reset-password', { message: 'Invalid or expired OTP.' });
+    const result = await authService.verifyOtpRecord(email, otp);
+    if (!result.success) {
+      return res.status(HTTP_STATUS.BAD_REQUEST)
+        .json({ success: false, message: result.message });
     }
-
+    
     if (password !== confirmpassword) {
-      return res.render('reset-password', { message: 'Passwords do not match.' });
+      return res.render('reset-password', { message: 'Passwords mismatch!!.' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, saltround);
-    await User.updateOne({ email }, { $set: { password: hashedPassword } });
-    await Otp.deleteOne({ email });
+    await authService.newPassword(email,password)
 
     req.session.resetEmail = null;
     res.render('signin', { message: 'Password reset successful! Please log in.' });
@@ -378,8 +274,7 @@ const resetPassword = async (req, res) => {
   }
 }
 
-
-
+//logout
 const logout = async(req,res)=>{
   try {
 

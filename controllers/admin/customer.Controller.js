@@ -1,5 +1,6 @@
-import User from "../../models/userSchema.js";
 import HTTP_STATUS from "../../helpers/httpStatus.js";
+import * as customerService from "../../services/admin/customer.service.js";
+
 
 //customer list
 const customerInfo = async (req, res) => {
@@ -8,28 +9,14 @@ const customerInfo = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 3;
 
-    const userData = await User.find({
-      is_admin: false,
-      $or: [
-        { name: { $regex: ".*" + search + ".*", $options: "i" } },
-        { email: { $regex: ".*" + search + ".*", $options: "i" } }
-      ]
-    })
-      .sort({ createdOn: -1 })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .exec();
-
-    const count = await User.countDocuments({
-      is_admin: false,
-      $or: [
-        { name: { $regex: ".*" + search + ".*", $options: "i" } },
-        { email: { $regex: ".*" + search + ".*", $options: "i" } }
-      ]
+    const { users, count } = await customerService.getCustomers({
+      search,
+      page,
+      limit
     });
 
     res.render("users", {
-      data: userData,
+      data: users,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       resultsCount: count,
@@ -44,11 +31,11 @@ const customerInfo = async (req, res) => {
   }
 };
 
+
 //block user
 const userBlocked = async (req, res) => {
   try {
-    const { id } = req.query;
-    await User.updateOne({ _id: id }, { $set: { is_Blocked: true } });
+    await customerService.updateUserBlockStatus(req.query.id, true);
     res.redirect("/admin/users");
   } catch (error) {
     console.error("userBlocked error:", error);
@@ -61,8 +48,7 @@ const userBlocked = async (req, res) => {
 //unblock user
 const userUnblocked = async (req, res) => {
   try {
-    const { id } = req.query;
-    await User.updateOne({ _id: id }, { $set: { is_Blocked: false } });
+    await customerService.updateUserBlockStatus(req.query.id, false);
     res.redirect("/admin/users");
   } catch (error) {
     console.error("userUnblocked error:", error);
@@ -71,6 +57,7 @@ const userUnblocked = async (req, res) => {
       .redirect("/page-error");
   }
 };
+
 
 //exports
 export {
