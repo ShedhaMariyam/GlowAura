@@ -10,10 +10,10 @@
 .status-pill {
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     text-decoration: none;
-    border: none;
+    border: 1px solid #757372 ;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -879,8 +879,18 @@ document.getElementById("saveCategoryOfferBtn").addEventListener("click", async 
 
     bootstrap.Modal.getInstance(modalEl).hide();
 
-    setTimeout(() => {
-    window.location.reload();}, 1000);
+    const wrapper = document.querySelector(
+  `.offer-toggle[data-id="${categoryId}"]`
+);
+
+wrapper.dataset.offer = percent;
+
+const checkbox = wrapper.querySelector('input');
+const label = wrapper.querySelector('.offer-label');
+
+checkbox.checked = percent > 0;
+label.textContent = percent > 0 ? `${percent}% off` : '';
+
   } catch (err) {
     console.error("Offer save error:", err);
     showToast('error', 'Server error');
@@ -940,9 +950,21 @@ document.getElementById('statusConfirmForm').addEventListener('submit', async fu
 
 showToast('success', msg);
 
-setTimeout(() => {
-  window.location.reload();
-}, 1000);
+const row = document.getElementById(`category-row-${selectedCategoryId}`);
+const statusCell = row.querySelector('.toggle-status');
+
+if (selectedAction === 'inactivate') {
+  statusCell.textContent = 'Inactive';
+  statusCell.classList.remove('status-active');
+  statusCell.classList.add('status-blocked');
+  statusCell.dataset.action = 'activate';
+} else {
+  statusCell.textContent = 'Active';
+  statusCell.classList.remove('status-blocked');
+  statusCell.classList.add('status-active');
+  statusCell.dataset.action = 'inactivate';
+}
+
 
   } catch (err) {
     console.error(err);
