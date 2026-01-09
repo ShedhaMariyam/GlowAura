@@ -36,12 +36,12 @@ const customerInfo = async (req, res) => {
 const userBlocked = async (req, res) => {
   try {
     await customerService.updateUserBlockStatus(req.query.id, true);
-    res.redirect("/admin/users");
+    res.json({ success: true, status: "blocked" });
   } catch (error) {
     console.error("userBlocked error:", error);
     res
       .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .redirect("/page-error");
+      .json({ success: false });
   }
 };
 
@@ -49,12 +49,12 @@ const userBlocked = async (req, res) => {
 const userUnblocked = async (req, res) => {
   try {
     await customerService.updateUserBlockStatus(req.query.id, false);
-    res.redirect("/admin/users");
+    res.json({ success: true, status: "active" });
   } catch (error) {
     console.error("userUnblocked error:", error);
     res
       .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .redirect("/page-error");
+      .json({ success: false });
   }
 };
 
