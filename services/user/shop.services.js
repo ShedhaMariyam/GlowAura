@@ -53,15 +53,26 @@ export const getShopProducts = async ({search,selectedCategory,sort,page,limit})
 };
 
 //product Details
-export const getProductDetails = async(productId)=>{
-    const product = await Product.findById(productId).populate('category');
-    if (!product) return null;
+export const getProductDetails = async (productId) => {
+  const product = await Product
+    .findById(productId)
+    .populate({
+      path: "category",
+      match: { is_active: true }
+    });
 
-    const featuredProducts = await Product.find({featured: true,_id: { $ne: productId }})
-      .sort({ createdAt: -1 })   
-      .limit(4)
-      .lean();
-      
-    return { product, featuredProducts };
-} 
+  // If product or category inactive
+  if (!product || !product.category) return null;
+
+  const featuredProducts = await Product.find({
+    featured: true,
+    _id: { $ne: productId }
+  })
+  .sort({ createdAt: -1 })
+  .limit(4)
+  .lean();
+
+  return { product, featuredProducts };
+};
+
 
