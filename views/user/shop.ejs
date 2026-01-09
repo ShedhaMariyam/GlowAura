@@ -72,6 +72,22 @@
         transform: scale(1.1);
     }
 
+
+    /* --- OFFER BADGE --- */
+.offer-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #c23b48;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    z-index: 6;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
     /* --- PREMIUM CARD STYLING --- */
     .premium-card {
         background: #fff;
@@ -160,14 +176,14 @@
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="cat" id="catAll" value="" 
                                onchange="this.form.submit()" <%= !selectedCategory ? 'checked' : '' %>>
-                        <label class="form-check-label filter-label" for="catAll">All</label>
+                        <label class="form-check-label filter-label" for="catAll" style="font-size: 1.2rem;">All</label>
                     </div>
                     <% for(let i=0; i < category.length; i++) { %>
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="radio" name="cat" id="cat<%= category[i]._id %>" 
                                    value="<%= category[i]._id %>" onchange="this.form.submit()"
                                    <%= selectedCategory == category[i]._id.toString() ? 'checked' : '' %>>
-                            <label class="form-check-label filter-label" for="cat<%= category[i]._id %>">
+                            <label class="form-check-label filter-label" for="cat<%= category[i]._id %>" style="font-size: 1.2rem;">
                                 <%= category[i].name %>
                             </label>
                         </div>
@@ -176,7 +192,7 @@
 
                 <div class="mb-5">
                     <h5 class="filter-title" style="font-weight: 700; font-size: 1.5rem;">Sort By</h5>
-                    <select class="form-select border-0 bg-light py-2 fs-6" name="sort" onchange="this.form.submit()">
+                    <select class="form-select border-0 bg-light py-2 fs-5" name="sort" onchange="this.form.submit()">
                         <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>Latest</option>
                         <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
                         <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: High to Low</option>
@@ -198,9 +214,21 @@
                                     </div>
 
                                     <div class="position-relative">
-                                        <a href="/product/<%= products[i]._id %>">
-                                            <img src="<%= products[i].images[0].url %>" class="product-card-img w-100" alt="<%= products[i].productName %>">
-                                        </a>
+                                       <% if (products[i].variants && products[i].variants.length > 0) {
+        const v = products[i].variants[0];
+        if (v.sale_price < v.regular_price) {
+            const discount = Math.round(
+                ((v.regular_price - v.sale_price) / v.regular_price) * 100
+            );
+    %>
+        <span class="offer-badge"><%= discount %>% OFF</span>
+    <% } } %>
+
+    <a href="/product/<%= products[i]._id %>">
+        <img src="<%= products[i].images[0].url %>" 
+             class="product-card-img w-100" 
+             alt="<%= products[i].productName %>">
+    </a>
                                     </div>
                                     
                                     <div class="card-body px-0">
@@ -242,7 +270,7 @@
                     <ul class="pagination justify-content-center">
                         <% for(let i=1; i <= totalPages; i++) { %>
                             <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                               <a class="page-link" href="/products?page=<%= i %>&search=<%= search || '' %><% if(selectedCategory){ %>&cat=<%= selectedCategory %><% } %>&sort=<%= sort %>">
+                                <a class="page-link shadow-sm" href="/products?page=<%= i %>&search=<%= search %>&cat=<%= selectedCategory %>&sort=<%= sort %>">
                                     <%= i %>
                                 </a>
                             </li>
