@@ -104,17 +104,7 @@ export const getProductForEdit = async (id) => {
 };
 
 //update product
-export const updateProductById = async ({
-  id,
-  productName,
-  description,
-  category,
-  status,
-  featured,
-  variants,
-  files,
-  removeImages
-}) => {
+export const updateProductById = async ({id,productName,description,category,status,featured,variants,files,removeImages}) => {
   const product = await Product.findOne({ _id: id, is_deleted: false });
   if (!product) throw new Error("Product not found");
 
@@ -160,17 +150,13 @@ export const updateProductById = async ({
       ? removeImages
       : [removeImages];
     product.images = product.images.filter(
-      img => !removeArr.includes(img.public_id)
+      img => !removeArr.includes(img.url)
     );
   }
 
   if (files?.length) {
     product.images.push(
-      ...files.map(file => ({
-        url: file.path,
-        public_id: file.filename
-      }))
-    );
+      ...files.map(file => ({url: file.path,public_id: file.filename})));
   }
 
   if (product.images.length !== 3) {
