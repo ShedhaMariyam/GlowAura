@@ -1,5 +1,5 @@
 
-import HTTP_STATUS from "../../helpers/httpStatus.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 import * as authService from "../../services/user/auth.service.js";
 import { generateOtp } from "../../utils/otp.util.js";
 import { sendVerificationEmail } from "../../utils/mail.util.js";

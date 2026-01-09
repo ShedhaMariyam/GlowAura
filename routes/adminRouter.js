@@ -2,10 +2,10 @@ import express from "express";
 const router = express.Router();
 
 //controllers
-import {loadDashboard,loadLogin,login,pageerror,logout} from "../controllers/admin/admin.Controller.js";
-import {categoryInfo, addCategory,activateCategory,inActiveCategory,editCategory,categoryOffer,deleteCategory} from "../controllers/admin/category.Controller.js";
-import {customerInfo,userBlocked,userUnblocked} from "../controllers/admin/customer.Controller.js";
-import {productInfo,loadAddproduct,addProducts,loadUpdateProduct,updateProduct,deleteProduct} from "../controllers/admin/product.Controller.js";
+import {loadDashboard,loadLogin,login,pageerror,logout} from "../controllers/admin/admin.controller.js";
+import {categoryInfo, addCategory,activateCategory,inActiveCategory,editCategory,categoryOffer,deleteCategory} from "../controllers/admin/category.controller.js";
+import {customerInfo,userBlocked,userUnblocked} from "../controllers/admin/customer.controller.js";
+import {productInfo,loadAddproduct,addProducts,loadUpdateProduct,updateProduct,deleteProduct} from "../controllers/admin/product.controller.js";
 
 //middlewares
 import {adminAuth } from "../middlewares/auth.js";

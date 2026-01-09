@@ -1,4 +1,4 @@
-import HTTP_STATUS from "../../helpers/httpStatus.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 import * as productService from "../../services/admin/product.service.js";
 
 const productInfo = async (req, res) => {

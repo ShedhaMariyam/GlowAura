@@ -4,8 +4,8 @@ import passport from "passport";
 const router = express.Router();
 
 //controllers
-import * as homeController from "../controllers/user/home.Controller.js";
-import * as authController from "../controllers/user/auth.Controller.js";
+import * as homeController from "../controllers/user/shop.controller.js";
+import * as authController from "../controllers/user/auth.controller.js";
 
 //middlewares
 import { userAuth } from "../middlewares/auth.js";

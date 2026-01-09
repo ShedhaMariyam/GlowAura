@@ -1,5 +1,5 @@
 
-import HTTP_STATUS from "../../helpers/httpStatus.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 import * as categoryService from "../../services/admin/category.service.js"
 
 //Category List

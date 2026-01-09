@@ -1,4 +1,4 @@
-import HTTP_STATUS from "../../helpers/httpStatus.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 import { authenticateAdmin } from "../../services/admin/adminAuth.service.js";
 
 //page error
