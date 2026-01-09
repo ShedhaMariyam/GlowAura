@@ -67,7 +67,7 @@
 
                 <% for (let i = 0; i < data.length; i++) { %>
              
-              <tr class="user-row">
+              <tr class="user-row" data-user-id="<%= data[i]._id %>">
                 <td >
                   <div class="d-flex align-items-center gap-3">
                     <div class="profile-circle rounded-circle bg-light d-flex align-items-center justify-content-center" style="width:44px;height:44px;font-weight:700;">
@@ -151,11 +151,13 @@
             Cancel
           </button>
 
-          <a href="/admin/blockUser?id=<%= data[i]._id %>" 
-            class="btn"
-            style="background-color:#d6b09c; color:#2b2b2b; border-radius: 8px;">
-            Yes, Block User
-          </a>
+          <button
+  class="btn confirm-block-btn"
+  data-id="<%= data[i]._id %>"
+  style="background-color:#d6b09c;">
+  Yes, Block User
+</button>
+
         </div>
 
       </div>
@@ -187,11 +189,12 @@
             Cancel
           </button>
 
-          <a href="/admin/unblockUser?id=<%= data[i]._id %>" 
-            class="btn"
-            style="background-color:#b7c7a5; color:#2b2b2b; border-radius: 8px;">
-            Yes, Unblock User
-          </a>
+          <button
+  class="btn confirm-unblock-btn"
+  data-id="<%= data[i]._id %>"
+  style="background-color:#b7c7a5;">
+  Yes, Unblock User
+</button>
         </div>
 
       </div>
@@ -234,6 +237,54 @@
     // debounce / fetch filtered results in production
     console.log('search:', e.target.value);
   });
+</script>
+<script>
+document.addEventListener("click", async function (e) {
+
+  // BLOCK USER
+  if (e.target.classList.contains("confirm-block-btn")) {
+    const id = e.target.dataset.id;
+
+    const res = await fetch(`/admin/blockUser?id=${id}`);
+    const data = await res.json();
+
+    if (!data.success) return alert("Failed");
+
+    updateUserRow(id, true);
+    bootstrap.Modal.getInstance(e.target.closest(".modal")).hide();
+  }
+
+  // UNBLOCK USER
+  if (e.target.classList.contains("confirm-unblock-btn")) {
+    const id = e.target.dataset.id;
+
+    const res = await fetch(`/admin/unblockUser?id=${id}`);
+    const data = await res.json();
+
+    if (!data.success) return alert("Failed");
+
+    updateUserRow(id, false);
+    bootstrap.Modal.getInstance(e.target.closest(".modal")).hide();
+  }
+});
+
+// DOM updater
+function updateUserRow(userId, isBlocked) {
+  const row = document.querySelector(`[data-user-id="${userId}"]`);
+
+  // status cell
+  const statusCell = row.querySelector(".status-pill");
+
+  if (isBlocked) {
+    statusCell.textContent = "Blocked";
+    statusCell.classList.remove("status-active");
+    statusCell.classList.add("status-blocked");
+  } else {
+    statusCell.textContent = "Active";
+    statusCell.classList.remove("status-blocked");
+    statusCell.classList.add("status-active");
+  }
+}
 </script>
 
 </body>
