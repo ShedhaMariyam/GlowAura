@@ -40,6 +40,12 @@ export const saveOtp = async (email, otp) => {
     return { success: true };
  };
 
+
+ // Delete OTP
+export const deleteOtp = async (email) => {
+  await Otp.deleteOne({ email });
+};
+
  //Create User
 
 export const createUser = async ({ name, email, phone, password }) => {
