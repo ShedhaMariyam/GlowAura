@@ -1,0 +1,15 @@
+
+  body { background: #faf7f3; font-family: 'Inter', sans-serif; }
+  .product-img { border-radius: 14px; object-fit: cover; }
+  .thumb-img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: .2s; }
+  .thumb-img.active { border-color: #b8c9ae; }
+  .size-btn { border-radius: 999px; padding: 6px 14px; font-size: 14px; }
+  .size-btn.active { background:#b8c9ae; color:#fff; border-color:#b8c9ae; }
+  .price { font-size: 22px; font-weight: 700; }
+  .old-price { text-decoration: line-through; color: #9ca3af; font-size: 14px; }
+  .stock-info { font-size: 14px; color:#16a34a; }
+  .stock-out { color:#dc2626; }
+  .btn-buy { background: #e5c8b8; border: none; border-radius: 10px; padding: 12px; }
+  .btn-cart { border-radius: 10px; padding: 12px; }
+  .btn-cart:disabled,.btn-buy:disabled { opacity:.5; cursor:not-allowed; }
+  .routine-card img { border-radius: 12px; height: 150px; object-fit: cover; }

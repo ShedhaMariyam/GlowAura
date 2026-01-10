@@ -2,24 +2,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-
-<style>
-  body { background: #faf7f3; font-family: 'Inter', sans-serif; }
-  .product-img { border-radius: 14px; object-fit: cover; }
-  .thumb-img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: .2s; }
-  .thumb-img.active { border-color: #b8c9ae; }
-  .size-btn { border-radius: 999px; padding: 6px 14px; font-size: 14px; }
-  .size-btn.active { background:#b8c9ae; color:#fff; border-color:#b8c9ae; }
-  .price { font-size: 22px; font-weight: 700; }
-  .old-price { text-decoration: line-through; color: #9ca3af; font-size: 14px; }
-  .stock-info { font-size: 14px; color:#16a34a; }
-  .stock-out { color:#dc2626; }
-  .btn-buy { background: #e5c8b8; border: none; border-radius: 10px; padding: 12px; }
-  .btn-cart { border-radius: 10px; padding: 12px; }
-  .btn-cart:disabled,.btn-buy:disabled { opacity:.5; cursor:not-allowed; }
-  .routine-card img { border-radius: 12px; height: 150px; object-fit: cover; }
-</style>
-
+<link href="/css/user/shop/productdetails.css">
 </head>
 <body>
 <div class="container px-2 py-4" id="mainContainer" data-variants='<%- JSON.stringify(product.variants) %>'>
@@ -140,106 +123,7 @@
   </div>
 
 </div>
-
+<script src="/js/user/shop/product.detail.js"></script>
 <%- include('../../views/partials/user/footer.ejs') %>
 
-<script>
-  // IMAGE GALLERY
-  function changeImage(el) {
-    document.getElementById("mainImage").src = el.src;
-    document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
-    el.classList.add("active");
-  }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Get variants from data attribute
-    const container = document.getElementById('mainContainer');
-    const variants = JSON.parse(container.getAttribute('data-variants'));
-
-    let currentIndex = 0;
-    const priceNow = document.getElementById('priceNow');
-    const priceOld = document.getElementById('priceOld');
-    const offerBadge = document.getElementById('offerBadge');
-    const stockInfo = document.getElementById('stockInfo');
-    const qtyInput = document.getElementById('qtyInput');
-    const qtyMinus = document.getElementById('qtyMinus');
-    const qtyPlus = document.getElementById('qtyPlus');
-    const qtyError = document.getElementById('qtyError');
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    const buyNowBtn = document.getElementById('buyNowBtn');
-
-    function updateUI() {
-      const v = variants[currentIndex];
-
-      // price
-      if (v.sale_price !== v.regular_price) {
-        priceNow.textContent = v.sale_price;
-        priceOld.textContent = v.regular_price;
-        priceOld.classList.remove('d-none');
-        offerBadge.classList.remove('d-none');
-      } else {
-        priceNow.textContent = v.regular_price;
-        priceOld.classList.add('d-none');
-      }
-
-      // stock
-      if (v.quantity > 0) {
-        stockInfo.innerHTML = 'In stock: ' + v.quantity;
-        stockInfo.classList.remove('stock-out');
-      } else {
-        stockInfo.innerHTML = '<span class="stock-out">Out of stock</span>';
-        stockInfo.classList.add('stock-out');
-      }
-
-      // quantity limits
-      let q = parseInt(qtyInput.value) || 1;
-      if (q > v.quantity) q = v.quantity || 1;
-      if (q < 1) q = 1;
-      qtyInput.value = q;
-
-      qtyMinus.disabled = q <= 1;
-      qtyPlus.disabled = q >= v.quantity || v.quantity === 0;
-
-      qtyError.classList.toggle('d-none', q < v.quantity);
-
-      const disabled = v.quantity === 0;
-      addToCartBtn.disabled = disabled;
-      buyNowBtn.disabled = disabled;
-    }
-
-    // size click
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentIndex = parseInt(btn.dataset.index);
-        updateUI();
-      });
-    });
-
-    // quantity controls
-    qtyMinus.addEventListener('click', () => {
-      let q = parseInt(qtyInput.value) || 1;
-      if (q > 1) {
-        qtyInput.value = q - 1;
-        updateUI();
-      }
-    });
-
-    qtyPlus.addEventListener('click', () => {
-      let q = parseInt(qtyInput.value) || 1;
-      const max = variants[currentIndex].quantity;
-      if (q < max) {
-        qtyInput.value = q + 1;
-        updateUI();
-      }
-    });
-
-    qtyInput.addEventListener('input', () => {
-      updateUI();
-    });
-
-    // initial state
-    updateUI();
-  });
-</script>

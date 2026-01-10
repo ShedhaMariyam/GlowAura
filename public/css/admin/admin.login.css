@@ -1,0 +1,96 @@
+
+    :root {
+      --bg-cream: #f6efe7;
+      --bg-beige: #e5c8b8;
+      --text-dark: #2b2b2b;
+      --text-gray: #4b5563;
+      --primary-border: #d1d5db;
+    }
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background-color:#f6efe7;
+    }
+    .signin-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+      padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .form-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #374151;
+    }
+    .input-group-text {
+      background: transparent;
+      border: none;
+    }
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid var(--primary-border);
+      background: #fff;
+      color: #2b2b2b;
+      font-size: 19px;
+    }
+    .form-control::placeholder {
+      color: #cccccc;
+    }
+    .btn-signin {
+      background-color: var(--bg-beige);
+      color: var(--text-dark);
+      border-radius: 8px;
+      padding: 14px 0;
+      font-size: 16.6px;
+      border: none;
+      width: 100%;
+    }
+    .btn-signin:hover {
+      background-color: #d4b8a8;
+      color: var(--text-dark);
+    }
+    .divider {
+      text-align: center;
+      position: relative;
+      margin: 18px 0;
+    }
+    .divider:before, .divider:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: #e5e7eb;
+    }
+    .divider:before { left: 0; }
+    .divider:after { right: 0; }
+    .divider span {
+      background: #fff;
+      padding: 0 10px;
+      color: #6b7280;
+      font-size: 15px;
+    }
+    .forgot-link, .signup-link {
+      color: #b9c8b0 !important;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .forgot-link:hover, .signup-link:hover { text-decoration: underline; }
+    .form-check-input {
+      border-radius: 2px;
+      border-width: 1px;
+    }
+     .error-message{
+            color: red;
+            font-size: 0.75rem;
+            display: none;
+        }
+
+    .alert-danger {
+      background-color: #fbeae7;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      font-size: 16px;
+}
+
+ 

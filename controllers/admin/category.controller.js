@@ -41,7 +41,11 @@ const addCategory = async (req, res) => {
     res.status(HTTP_STATUS.CREATED).json({
       success: true,
       message: "Category Added Successfully",
-      category
+      category: {
+        "_id": "...",
+        "name": "...",
+        "description": "...",
+        "image": "..."}
     });
   } catch (error) {
     if (error.message === "CATEGORY_EXISTS") {

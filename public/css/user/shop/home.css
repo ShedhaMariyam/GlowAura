@@ -1,0 +1,173 @@
+
+    :root {
+        --primary-brand: #b8c9ae; 
+        --card-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        --card-hover-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        --accent-red: #d7373d;
+        --text-dark: #1a1a1a;
+        --hero-bg: #f8f6f3; /* Defined for consistent blending */
+    }
+
+    body {
+        font-size: 1.1rem;
+        font-family: 'Inter', sans-serif;
+        color: var(--text-dark);
+    }
+
+    /* BRAND NAME STYLING: LARGE & PROMINENT */
+    .hero-brand-display {
+        font-size: 5.5rem; /* Larger than the hero-title */
+        font-family: 'Playfair Display', serif; /* Elegant luxury font */
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        display: block;
+        letter-spacing: -2px;
+    }
+
+    .custom-container {
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+
+    /* Hero Section with Blending Mask */
+    .hero-fluid {
+        background-color: var(--hero-bg);
+        overflow: hidden;
+    }
+    .hero-content-area {
+        padding: 80px 5%;
+    }
+    .hero-title { 
+        font-weight: 500; 
+        font-size: 2.5rem; /* Reduced to make Brand Name stand out more */
+        color: #666; 
+        line-height: 1.2; 
+    }
+    .hero-text { font-size: 1.25rem; color: #555; }
+
+    .btn-shop { 
+        background-color: var(--primary-brand); 
+        color: #fff; 
+        padding: 16px 45px; 
+        border: none;
+        border-radius: 4px; 
+        font-weight: 700; 
+        font-size: 1.1rem;
+        transition: 0.3s ease;
+    }
+    .btn-shop:hover { 
+        background-color: var(--text-dark); 
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .hero-image-wrap {
+        height: 100%;
+        min-height: 500px;
+        background-color: var(--hero-bg);
+    }
+    .hero-img-fluid {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        /* Linear Gradient Mask for Blending */
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%);
+        mask-image: linear-gradient(to right, transparent 0%, black 20%);
+    }
+
+    /* Category Slider - Centered Styling */
+    .category-slider-container { position: relative; padding: 0 10px; }
+    .category-card {
+        width: 100%;
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+        transition: transform 0.4s ease;
+    }
+    .category-card:hover { transform: scale(1.02); }
+    
+    .category-title {
+        display: block;
+        text-align: center; /* Centered Name */
+        font-weight: 600;
+        margin-top: 15px;
+        font-size: 1.2rem;
+    }
+
+    .swiper-nav-btn {
+        width: 45px;
+        height: 45px;
+        background: white !important;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        color: #333 !important;
+    }
+
+    /* Product Cards */
+    .product-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        transition: all 0.3s ease;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        position: relative;
+    }
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .discount-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: var(--accent-red);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        z-index: 10;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+    }
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        height: 2.6em;
+        margin-bottom: 10px;
+    }
+    .sale-price { font-weight: 800; font-size: 1.2rem; }
+
+    /* Wishlist Filled Heart Swap Logic */
+    .btn-wishlist {
+        transition: transform 0.2s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+    .btn-wishlist:hover {
+        transform: scale(1.2);
+    }
+    /* Swapping the Bootstrap Icon content on hover */
+    .btn-wishlist:hover .bi-heart::before {
+        content: "\f415"; /* This is the unicode for bi-heart-fill */
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 991px) {
+        .hero-brand-display { font-size: 3.5rem; }
+        .hero-img-fluid {
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+        }
+    }

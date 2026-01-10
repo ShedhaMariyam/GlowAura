@@ -1,0 +1,70 @@
+.category-thead th {
+  background-color: #f5f1ea;         /* exact beige header */
+  font-size: 16px;                   /* small text like screenshot */
+  font-weight: 600;                  /* semi-bold */
+  text-transform: none;
+  color: #6b6b6b;                    /* muted gray text */
+  border-bottom: 1px solid #e9dfd1;  /* light border */
+}
+.status-pill {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid #757372 ;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-status:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.category-card {
+  border-radius: 18px;
+  overflow: hidden;                  
+}
+
+.category-table tbody td {
+  background: #ffffff;
+}
+
+.offer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.offer-toggle input { display: none; }
+
+.offer-slider {
+  width: 46px;
+  height: 24px;
+  border-radius: 999px;
+  background-color: #d9dde4;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.offer-slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.offer-toggle input:checked + .offer-slider {
+  background-color: #b8c9ae;
+}
+
+.offer-toggle input:checked + .offer-slider::before {
+  transform: translateX(20px);
+}
