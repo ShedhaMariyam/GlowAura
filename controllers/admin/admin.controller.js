@@ -1,12 +1,13 @@
 import HTTP_STATUS from "../../constants/httpStatus.js";
 import { authenticateAdmin } from "../../services/admin/adminAuth.service.js";
+import logger from "../../utils/logger.js"
 
 //page error
 const pageerror = (req, res) => {
   try {
     res.render("admin-error");
   } catch (error) {
-    console.error(error);
+    logger.error("Admin error page render failed", error);
     res.redirect("/page-error");
   }
 };
@@ -26,6 +27,7 @@ const login = async (req, res) => {
     const admin = await authenticateAdmin(email, password);
 
     if (!admin) {
+      logger.warn(`Failed admin login attempt: ${email}`);
       return res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .render("admin-login", {
@@ -34,11 +36,12 @@ const login = async (req, res) => {
     }
 
     req.session.admin = admin._id;
-    console.log("Admin logged in")
+    logger.info(`Admin logged in: ${email}`);
+
     return res.redirect("/admin/dashboard");
 
   } catch (error) {
-    console.error("login error:", error);
+    logger.error("Admin login error", error);
     return res.redirect("/page-error");
   }
 };
@@ -55,7 +58,7 @@ const loadDashboard = async (req, res) => {
       activePage: "dashboard"
     });
   } catch (error) {
-    console.error("load dashboard error:", error);
+    logger.error("Admin dashboard load error", error);
     res.redirect("/page-error");
   }
 };
@@ -65,13 +68,14 @@ const logout = async (req, res) => {
   try {
     req.session.destroy(err => {
       if (err) {
-        console.error("Error destroying session", err);
+        logger.error("Admin logout session destroy failed", err);
         return res.redirect("/page-error");
       }
+      logger.info("Admin logged out");
       res.redirect("/admin/login");
     });
   } catch (error) {
-    console.error("unexpected logout error", error);
+    logger.error("Unexpected admin logout error", error);
     res.redirect("/page-error");
   }
 };
