@@ -5,6 +5,7 @@ import session from "express-session";
 import nocache from "nocache";
 import passport from "./config/passport.js";
 import { fileURLToPath } from "url";
+import logger from "../GlowAura/utils/logger.js"
 
 // Local imports
 import connectDB from "./config/db.js";
@@ -61,7 +62,8 @@ connectDB();
 // Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`--------------------Server running on port ${PORT}--------------------`);
+ logger.info(`
+  --------------------Server running on port ${PORT}--------------------`);
 });
 
 export default app;

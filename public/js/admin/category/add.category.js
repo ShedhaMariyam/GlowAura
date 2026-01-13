@@ -73,11 +73,7 @@ async function handleFormSubmit(event) {
     } else if (name.length < 3) {
       document.getElementById("nameError").textContent = "Category name should be at least 3 characters.";
       isValid = false;
-    }  else if (name.length > 15) {
-      document.getElementById("nameError").textContent = "Category name should be too long.";
-      isValid = false;
-    }
-     else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
       document.getElementById("nameError").textContent = "Category name should contain only alphabetic characters.";
       isValid = false;
     }
