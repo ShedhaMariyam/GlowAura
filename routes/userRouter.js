@@ -12,6 +12,8 @@ import { userAuth } from "../middlewares/auth.js";
 
 
 
+router.get("/profile",profileController.loadProfiel)
+
 router.get("/pageNotFound", homeController.pageNotFound);
 
 router.get("/", homeController.loadHomepage);
