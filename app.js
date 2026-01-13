@@ -5,7 +5,9 @@ import session from "express-session";
 import nocache from "nocache";
 import passport from "./config/passport.js";
 import { fileURLToPath } from "url";
-import logger from "../GlowAura/utils/logger.js"
+import errorHandler from "./middlewares/errorHandler.js";
+import requestLogger from "./middlewares/requestLogger.js";
+import logger from "./utils/logger.js"
 
 // Local imports
 import connectDB from "./config/db.js";
@@ -33,6 +35,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(nocache());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 // Session config
 app.use(
@@ -56,8 +59,11 @@ app.use(passport.session());
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
 
+app.use(errorHandler);
+
 // DB connection
 connectDB();
+
 
 // Server
 const PORT = process.env.PORT || 3000;

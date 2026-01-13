@@ -1,9 +1,10 @@
 
 import HTTP_STATUS from "../../constants/httpStatus.js";
 import * as categoryService from "../../services/admin/category.service.js"
+import logger from "../../utils/logger.js";
 
 //Category List
-const categoryInfo = async (req, res) => {
+const categoryInfo = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 4;
@@ -20,8 +21,7 @@ const categoryInfo = async (req, res) => {
       activePage: "categories"
     });
   } catch (error) {
-    console.error(error);
-    res.redirect("/page-error");
+    next(error);
   }
 };
 
@@ -50,36 +50,41 @@ const addCategory = async (req, res) => {
     if (error.message === "IMAGE_REQUIRED") {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Category image is required" });
     }
-
-    console.error(error);
+    logger.error(error);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
   }
 };
 
 
 //Active or Inactive
-const activateCategory = async (req, res) => {
-  await categoryService.updateCategoryStatus(req.params.id, true);
+const activateCategory = async (req, res, next) => {
+  try {
+    await categoryService.updateCategoryStatus(req.params.id, true);
   res.json({ success: true });
+  } catch (error) {
+    next(error)
+  }
+  
 };
 
-const inActiveCategory = async (req, res) => {
-  await categoryService.updateCategoryStatus(req.params.id, false);
+const inActiveCategory = async (req, res, next) => {
+  try {
+    await categoryService.updateCategoryStatus(req.params.id, false);
   res.json({ success: true });
+  } catch (error) {
+    next (error);
+  }
+  
 };
 
 
 //Category Offer
-const categoryOffer = async (req, res) => {
+const categoryOffer = async (req, res ,next) => {
   try {
     await categoryService.updateCategoryOffer(req.params.id, req.body.percent);
     res.json({ success: true, message: "Offer updated" });
   } catch (error) {
-    console.error(error)
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "Server error"
-    });
+    next(error)
   }
 };
 
@@ -103,22 +108,18 @@ const editCategory = async (req, res) => {
         error: "Category with this name already exists"
       });
     }
-
     res.json({ error: "Internal server error" });
   }
 };
 
 //delete Category
-const deleteCategory = async (req, res) => {
+const deleteCategory = async (req, res, next) => {
   try {
     await categoryService.softDeleteCategory(req.params.id);
     res.json({ success: true, message: "Category deleted successfully" });
   } catch (error) {
     console.error(error)
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "Server error"
-    });
+    next(error);
   }
 };
 
