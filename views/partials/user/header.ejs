@@ -41,23 +41,29 @@
                     </div>
 
                     <div class="d-flex gap-2">  
-                        <%if(locals.user){%>
-                          <div class="dropdown">
-                              <div class="profile-circle" data-bs-toggle="dropdown">
-                                  <%= locals.user.name.substring(0, 2).toUpperCase() %>
-                             </div>
+                        <% if (locals.user) { %>
+  <div class="dropdown">
+    <a href="#" class="profile-avatar" data-bs-toggle="dropdown">
+      <img
+        src="<%= locals.user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(locals.user.name)}&background=E5C8B8&color=2B2B2B` %>"
+        alt="Profile"
+      />
+    </a>
 
-                             <ul class="dropdown-menu dropdown-menu-end">
-                               <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                            </ul>
-                          </div>
-                        <%} else {%>
-                            <a href="/signup" class="btn btn-shop btn-outline">Sign Up</a>
-                            <a href="/signin" class="btn btn-shop btn-outline">Sign In</a>                       
-                    </div>
-              <%}%>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="/profile">Profile</a></li>
+      <li><a class="dropdown-item" href="/logout">Logout</a></li>
+    </ul>
+  </div>
+<% } else { %>
+  <a href="/signup" class="btn btn-shop btn-outline">Sign Up</a>
+  <a href="/signin" class="btn btn-shop btn-outline">Sign In</a>
+<% } %>
+
+                        </div>
+              
                 </div>
             </div>
         </div>
     </nav>
+   

@@ -8,6 +8,9 @@ import { fileURLToPath } from "url";
 import errorHandler from "./middlewares/errorHandler.js";
 import requestLogger from "./middlewares/requestLogger.js";
 import logger from "./utils/logger.js"
+import userSession from './middlewares/userSession.js';
+
+
 
 // Local imports
 import connectDB from "./config/db.js";
@@ -37,6 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
+
 // Session config
 app.use(
   session({
@@ -54,6 +58,7 @@ app.use(
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(userSession);
 
 // Routes
 app.use("/", userRouter);

@@ -1,6 +1,7 @@
-import User from '../../models/userSchema.js';
+
 import HTTP_STATUS from '../../constants/httpStatus.js';
 import {getHomePageData,getShopProducts,getProductDetails} from "../../services/user/shop.services.js";
+//import {findUserById} from "../../services/user/auth.service.js" ;
 
 // 404 Page
 const pageNotFound = async (req, res) => {
@@ -21,9 +22,9 @@ const loadHomepage = async (req, res) => {
     const { categories, products } = await getHomePageData();
 
     if (userId) {
-      const userData = await User.findById(userId).lean();
+      //const userData = await findUserById(userId);
       return res.render("home", {
-        user: userData,
+       // user: userData,
         products,
         categories
       });
@@ -47,11 +48,11 @@ const loadProducts = async (req, res) => {
     const limit = 6;
 
     const {products,categories,totalPages} = await getShopProducts({search,selectedCategory,sort,page: parseInt(page),limit});
-
-    const userData = req.session.user? await User.findById(req.session.user).lean(): null;
+    //const userId =req.session.user
+   // const userData = req.session.user? await findUserById(userId): null;
 
     res.render("shop", {
-      user: userData,
+      //user: userData,
       products,
       category: categories,
       totalPages,

@@ -3,6 +3,7 @@ import HTTP_STATUS from "../../constants/httpStatus.js";
 import * as authService from "../../services/user/auth.service.js";
 import { generateOtp } from "../../utils/otp.util.js";
 import { sendVerificationEmail } from "../../utils/mail.util.js";
+import logger from "../../utils/logger.js";
 
 
 // Signup Page
@@ -23,7 +24,7 @@ const signup = async (req, res) => {
     if (!name || !email || !password || !phone || !confirmpassword) {
       return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'All fields are required' });
     }
-    console.log(phone);
+    logger.info(phone);
     
     if (password !== confirmpassword) {
       return res.status(HTTP_STATUS.BAD_REQUEST).render("signup", { message: 'Passwords do not match' });
@@ -57,7 +58,7 @@ const signup = async (req, res) => {
 //load otp page
 const loadVerifyOtp = async (req, res) => {
   try {
-    res.render('verify-otp', { message: null });
+    res.render('verify-otp');
   } catch (error) {
     console.error("Error loading verify-otp page:", error);
     res.redirect('/pageNotFound');
@@ -71,7 +72,7 @@ const verifyOtp = async (req, res) => {
     const purpose = req.session.otpPurpose;
 
     if (!purpose) {
-      return res.status(400).json({success: false,message: 'Session expired. Please try again.'});
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({success: false,message: 'Session expired. Please try again.'});
     }
 
     // signup flow
@@ -79,12 +80,12 @@ const verifyOtp = async (req, res) => {
       const { email, name, phone, password } = req.session.userData || {};
 
       if (!email) {
-        return res.status(400).json({success: false,message: 'Session expired. Please sign up again.'});
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({success: false,message: 'Session expired. Please sign up again.'});
       }
 
       const result = await authService.verifyOtpRecord(email, otp);
       if (!result.success) {
-        return res.status(400).json({success: false,message: result.message});
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({success: false,message: result.message});
       }
 
       await authService.createUser({ name, email, phone, password });
@@ -93,28 +94,63 @@ const verifyOtp = async (req, res) => {
       req.session.userData = null;
       req.session.otpPurpose = null;
       await authService.deleteOtp(email);
-      return res.json({success: true,redirectUrl: '/signin'});
+      return res.json({success: true,purpose: 'signup',redirectUrl: '/signin'});
   }
     // reset password flow
     if (purpose === 'reset') {
       const email = req.session.resetEmail;
 
       if (!email) {
-        return res.status(400).json({success: false,message: 'Session expired. Try again.'});
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({success: false,message: 'Session expired. Try again.'});
       }
 
       const result = await authService.verifyOtpRecord(email, otp);
       if (!result.success) {
-        return res.status(400).json({success: false,message: result.message});}
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({success: false,message: result.message});}
 
       req.session.otpPurpose = null;
 
-      return res.json({success: true,redirectUrl: '/reset-password'});
+      return res.json({success: true,purpose: 'reset',redirectUrl: '/reset-password'});
     }
+
+    if (purpose === 'email-change') {
+    const pendingEmail = req.session.pendingEmail;
+    const userId = req.session.user;
+
+    if (!pendingEmail || !userId) {
+      return res.status().json({
+      success: false,
+      message: "Session expired. Please try again."
+    });
+  }
+
+  const result = await authService.verifyOtpRecord(pendingEmail, otp);
+  if (!result.success) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      success: false,
+      message: result.message
+    });
+  }
+
+  authService.updateEmail(userId,pendingEmail);
+
+  // cleanup
+  await authService.deleteOtp(pendingEmail);
+  req.session.pendingEmail = null;
+  req.session.userId = null;
+  req.session.otpPurpose = null;
+
+  return res.json({
+    success: true,
+    purpose: 'email-change',
+    redirectUrl: "/profile"
+  });
+}
+
 
   } catch (error) {
     console.error('Error verifying OTP:', error);
-    res.status(500).json({success: false,message: 'An error occurred'});
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({success: false,message: 'An error occurred'});
   }
 };
 
@@ -178,7 +214,7 @@ const signin = async (req, res) => {
       return res.render('signin',{message :'User is blocked by admin'});
     }
 
-    req.session.user = findUser._id;
+    req.session.user = findUser._id.toString();
     res.redirect('/');
   } catch (error) {
     console.error("Signin error:", error);

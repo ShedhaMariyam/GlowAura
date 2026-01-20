@@ -28,7 +28,7 @@ router.get("/unblockUser", adminAuth, userUnblocked);
 router.get("/categories", adminAuth, categoryInfo);
 router.post("/categories/add",adminAuth,
   (req, res, next) => {
-    req.uploadFolder = "categories";
+    req.uploadFolder = "glowaura/categories";
     next();
   },
   upload.single("image"),addCategory);
@@ -36,7 +36,7 @@ router.patch("/categories/:id/activate", adminAuth, activateCategory);
 router.patch("/categories/:id/inactivate", adminAuth, inActiveCategory);
 router.put("/categories/edit/:id",adminAuth,
   (req, res, next) => {
-    req.uploadFolder = "categories";
+    req.uploadFolder = "glowaura/categories";
     next();
   },
   upload.single("image"),editCategory);
@@ -48,14 +48,14 @@ router.get("/products", adminAuth, productInfo);
 router.get("/products/add", adminAuth, loadAddproduct);
 router.post("/products/add",adminAuth,
   (req, res, next) => {
-    req.uploadFolder = "products";
+    req.uploadFolder = "glowaura/products";
     next();
   },
   upload.array("images", 3),addProducts);
 router.get("/products/edit/:id",adminAuth,loadUpdateProduct);
 router.put("/products/edit/:id",adminAuth,
   (req, res, next) => {
-    req.uploadFolder = "products";
+    req.uploadFolder = "glowaura/products";
     next();
   },
   upload.array("images", 3),updateProduct);

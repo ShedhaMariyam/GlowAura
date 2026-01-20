@@ -10,6 +10,10 @@ export const findUserByEmail = async (email) => {
   return await User.findOne({ email });
 };
 
+export const findUserById = async (id)=>{
+  return await User.findById(id);
+}
+
 // Save or update OTP
 export const saveOtp = async (email, otp) => {
   return await Otp.findOneAndUpdate(
@@ -63,6 +67,22 @@ export const createUser = async ({ name, email, phone, password }) => {
 
   return newUser;
 };
+
+export const updateEmail = async (id, newEmail) => {
+  console.log("updating user id:", id);
+  console.log("updating email:", newEmail);
+  
+  const result = await User.updateOne(
+    { _id: id },
+    { $set: { email: newEmail } }
+  );
+  
+  return result;
+}
+
+
+
+
 
 // Validate signin
 export const validateSignin = async (email, password) => {
