@@ -1,0 +1,85 @@
+body {
+  background: #faf7f3;
+}
+
+.sidebar {
+  background: #f4ebe2;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #2b2b2b;
+  text-decoration: none;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.sidebar a.active {
+  background: #e5c8b8;
+  font-weight: 500;
+}
+
+.profile-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.profile-img-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+}
+
+.profile-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.edit-img-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #e5c8b8;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+#global-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 260px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: #4caf50;
+    color: white;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transition: opacity .3s ease;
+  }
+  #global-toast.error { background: #e74c3c; }
+  #global-toast.show { display: block; opacity: 1; }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
